@@ -274,6 +274,45 @@ body {
     color: #1d4ed8;
 }
 
+
+
+.register{
+    color: #070e30;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    margin-left: 10px;
+}
+.container-register {
+    color: #070e30;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    left: 50px;
+}
+.register::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #eb2525;
+    transition: width 0.3s ease;
+}
+
+.register:hover::after {
+    width: 100%;
+}
+
+.register:hover {
+    color: #b80101;
+}
+
 /* Login Button */
 .login-btn {
     width: 100%;
