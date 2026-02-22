@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,58 +8,58 @@
     <link rel="shortcut icon" href="/Frontend/Stylos/img/logo.ico" />
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <div class="company-logo">
-                    <div class="logo-icon">
+    <div class="contenedor-inicio-sesion">
+        <div class="tarjeta-inicio-sesion">
+            <div class="encabezado-inicio-sesion">
+                <div class="logo-empresa">
+                    <div class="icono-logo">
                         <img src="/Frontend/Stylos/img/logo.png" alt="Logo de la empresa" width="100">
                     </div>
                 </div>
-                <p>Welcome to</p>
+                <p>Bienvenido a</p>
                 <h2>Asistencia en carretera</h2>
                 <p>Por favor ingrese con sus credenciales</p>
             </div>
             
-            <form class="login-form" id="loginForm" novalidate>
-                <div class="form-group">
-                    <div class="input-wrapper">
-                        <input type="email" id="email" name="email" required autocomplete="email">
-                        <label for="email">Email</label>
-                        <span class="input-border"></span>
+            <form class="formulario-inicio-sesion" id="formularioInicioSesion" novalidate>
+                <div class="grupo-formulario">
+                    <div class="contenedor-entrada">
+                        <input type="email" id="correo" name="email" required autocomplete="email">
+                        <label for="correo">Correo electrónico</label>
+                        <span class="borde-entrada"></span>
                     </div>
-                    <span class="error-message" id="emailError"></span>
+                    <span class="mensaje-error" id="errorCorreo"></span>
                 </div>
 
-                <div class="form-group">
-                    <div class="input-wrapper password-wrapper">
-                        <input type="password" id="password" name="password" required autocomplete="current-password">
-                        <label for="password">Password</label>
-                        <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
-                            <span class="toggle-icon"></span>
+                <div class="grupo-formulario">
+                    <div class="contenedor-entrada contenedor-contrasena">
+                        <input type="password" id="contrasena" name="password" required autocomplete="current-password">
+                        <label for="contrasena">Contraseña</label>
+                        <button type="button" class="alternar-contrasena" id="alternarContrasena" aria-label="Mostrar u ocultar contraseña">
+                            <span class="icono-alternar"></span>
                         </button>
-                        <span class="input-border"></span>
+                        <span class="borde-entrada"></span>
                     </div>
-                    <span class="error-message" id="passwordError"></span>
+                    <span class="mensaje-error" id="errorContrasena"></span>
                 </div>
 
-                <div class="form-options">
-                    <div class="remember-wrapper">
-                        <input type="checkbox" id="remember" name="remember">
-                        <label for="remember" class="checkbox-label">
-                            <span class="checkbox-custom"></span>
+                <div class="opciones-formulario">
+                    <div class="contenedor-recordar">
+                        <input type="checkbox" id="recordar" name="remember">
+                        <label for="recordar" class="etiqueta-casilla">
+                            <span class="casilla-personalizada"></span>
                             Mantenme registrado
                         </label>
                     </div>
-                    <a href="#" class="forgot-password">Restablecer contraseña</a>
-                    <div class="container-register">No tienes una cuenta?
-                    <a  href="/registro.html"class="register">Registrarme</a>
+                    <a href="#" class="contraseña-olvidada">Restablecer contraseña</a>
+                    <div class="contenedor-registro">No tienes una cuenta?
+                    <a  href="/registro.html"class="enlace-registro">Registrarme</a>
                     </div>
                 </div>
 
-                <button type="submit" class="login-btn">
-                    <span class="btn-text">Sign In</span>
-                    <span class="btn-loader"></span>
+                <button type="submit" class="boton-inicio-sesion">
+                    <span class="texto-boton">Iniciar sesión</span>
+                    <span class="cargador-boton"></span>
                 </button>
             </form>
         </div>
