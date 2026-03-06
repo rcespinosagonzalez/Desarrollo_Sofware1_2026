@@ -1,0 +1,465 @@
+/* Vistas del Buscador de Talleres - misma gama de colores del login */
+/* Login: #2563eb, #3b82f6, #1d4ed8, #f5f7fa, #c3cfe2, #1e293b, #64748b, #e2e8f0, #f8fafc */
+:root {
+    --primary: #2563eb;
+    --primary-light: #3b82f6;
+    --primary-dark: #1d4ed8;
+    --bg: #f5f7fa;
+    --bg-gradient-end: #c3cfe2;
+    --card: #ffffff;
+    --sidebar: #1d4ed8;
+    --sidebar-hover: #2563eb;
+    --sidebar-text: #ffffff;
+    --sidebar-active: #3b82f6;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --input-bg: #f8fafc;
+    --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    --shadow-primary: 0 4px 12px rgba(37, 99, 235, 0.3);
+    --error: #dc2626;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    color: var(--text);
+}
+
+/* ========== LAYOUT APP (menú lateral + contenido) ========== */
+.layout-web {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar-app {
+    width: 280px;
+    min-width: 280px;
+    background: linear-gradient(180deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%);
+    color: var(--sidebar-text);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow:
+        4px 0 24px rgba(0, 0, 0, 0.12),
+        4px 0 48px rgba(29, 78, 216, 0.15);
+}
+
+.sidebar-app::before {
+    content: '';
+    display: block;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-light), var(--primary));
+    border-radius: 0 0 4px 0;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
+
+.sidebar-app h2 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 1.25rem 1.35rem 0.75rem;
+    margin-bottom: 0.5rem;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-app nav {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+}
+
+.sidebar-app nav ul {
+    list-style: none;
+}
+
+.sidebar-app nav li {
+    margin: 0 0 4px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-app nav a {
+    display: block;
+    padding: 0.85rem 1rem 0.85rem 1.25rem;
+    color: rgba(255, 255, 255, 0.95);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: background 0.2s ease, padding-left 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sidebar-app nav li:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-app nav a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    padding-left: 1.5rem;
+}
+
+.sidebar-app nav a.activo {
+    background: rgba(255, 255, 255, 0.22);
+    font-weight: 600;
+    color: #fff;
+    border-left: 4px solid #93c5fd;
+    padding-left: calc(1.25rem - 4px);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-app nav a.activo:hover {
+    padding-left: calc(1.5rem - 4px);
+}
+
+.sidebar-app .cerrar-sesion {
+    padding: 1rem 1.35rem 1.25rem;
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-app .cerrar-sesion a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: rgba(255, 255, 255, 0.95);
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 0.4rem 0;
+    transition: color 0.2s ease;
+}
+
+.sidebar-app .cerrar-sesion a:hover {
+    color: #fff;
+}
+
+.contenido-principal {
+    flex: 1;
+    padding: 1.75rem 2rem;
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg-gradient-end) 100%);
+    overflow: auto;
+}
+
+.contenido-principal h1 {
+    font-size: 1.5rem;
+    color: var(--text);
+    margin-bottom: 1.25rem;
+}
+
+/* Tarjetas - mismo estilo que login */
+.tarjeta {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.tarjeta .linea-placeholder {
+    height: 1em;
+    background: var(--border);
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+}
+
+.tarjeta-taller .nombre-taller {
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 0.35rem;
+}
+
+.tarjeta-taller .direccion-taller {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.tarjeta-taller .info-taller {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.texto-muted {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.bloque-destacado h2 {
+    font-size: 1.25rem;
+    margin-top: 0.25rem;
+}
+
+.tarjeta-busqueda .busqueda-texto {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.tarjeta-busqueda .busqueda-fecha {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.tarjeta-cita .cita-cliente {
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin-bottom: 0.25rem;
+}
+
+.tarjeta-cita .cita-detalle {
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.valoracion-texto {
+    margin: 0.5rem 0;
+    font-style: italic;
+}
+
+/* ========== CAMPOS DE ENTRADA (todas las vistas) ========== */
+.grupo-input {
+    margin-bottom: 1.25rem;
+}
+
+.grupo-input label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="time"],
+textarea {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1rem;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 1rem;
+    background: var(--card);
+    color: var(--text);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.grupo-input input,
+.grupo-input textarea {
+    margin-bottom: 0;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--text-muted);
+    opacity: 0.85;
+}
+
+input:hover,
+textarea:hover {
+    border-color: #cbd5e1;
+}
+
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    background: var(--card);
+}
+
+input:disabled,
+textarea:disabled {
+    background: var(--input-bg);
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* Botones - mismo azul del login */
+.boton-principal {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 0.5rem;
+    box-shadow: var(--shadow-primary);
+    transition: all 0.3s ease;
+}
+
+.boton-principal:hover {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+}
+
+.boton-secundario {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--card);
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 0.5rem;
+}
+
+.boton-secundario:hover {
+    background: rgba(37, 99, 235, 0.1);
+}
+
+/* Lista menú en contenido */
+.lista-menu {
+    list-style: none;
+}
+
+.lista-menu li {
+    margin-bottom: 0.5rem;
+}
+
+.lista-menu a {
+    display: block;
+    padding: 0.85rem 1rem;
+    background: var(--card);
+    border-radius: 8px;
+    text-align: left;
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 500;
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+}
+
+.lista-menu a:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Estrellas */
+.estrellas {
+    display: flex;
+    gap: 0.25rem;
+    margin: 1rem 0;
+    font-size: 1.5rem;
+}
+
+.estrellas span {
+    cursor: pointer;
+    color: var(--border);
+}
+
+.estrellas span.activa {
+    color: var(--primary);
+}
+
+/* Área ubicación / mapa */
+.area-ubicacion {
+    background: var(--card);
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--text-muted);
+}
+
+.area-ubicacion .icono-ubicacion {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Mapa de referencia (Buscar talleres) */
+.area-mapa {
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.area-mapa .img-mapa {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+}
+
+/* Bloque contenido */
+.bloque-contenido {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    min-height: 80px;
+}
+
+.pregunta-enlace {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+.pregunta-enlace a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.pregunta-enlace a:hover {
+    text-decoration: underline;
+}
+
+/* Búsqueda */
+.busqueda-contenedor {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.busqueda-contenedor input {
+    padding-left: 2.75rem;
+}
+
+.busqueda-contenedor .icono-lupa {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+}

@@ -341,3 +341,9 @@ body {
 .boton-inicio-sesion:active {
     transform: translateY(0);
 }
+
+#errorLogin {
+    color: #dc2626;
+    font-size: 14px;
+    margin-bottom: 8px;
+}

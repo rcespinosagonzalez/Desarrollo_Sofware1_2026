@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar talleres</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="layout-web" data-vista="buscar-talleres" data-role="user">
+    <aside class="sidebar-app" id="sidebar-app">
+        <h2 id="titulo-rol">Menú Usuario</h2>
+    </aside>
+    <main class="contenido-principal">
+        <h1>Buscar talleres</h1>
+        <div class="busqueda-contenedor">
+            <span class="icono-lupa">🔍</span>
+            <input type="text" placeholder="Buscar por nombre o servicio...">
+        </div>
+        <div class="area-mapa">
+            <img src="css/mapa.png" alt="Mapa de referencia - Ubicación de talleres" class="img-mapa">
+        </div>
+        <div class="tarjeta tarjeta-taller">
+            <h3 class="nombre-taller">Taller Mecánico El Rápido</h3>
+            <p class="direccion-taller">Av. Pedro de Heredia 45-20, Cartagena</p>
+            <p class="info-taller">Mecánica general · Cambio de aceite · Frenos</p>
+            <p><a href="detalle-taller.html" class="boton-principal">Ver taller</a></p>
+        </div>
+        <div class="tarjeta tarjeta-taller">
+            <h3 class="nombre-taller">AutoServicio Centro</h3>
+            <p class="direccion-taller">Calle 30 # 15-42, Barranquilla</p>
+            <p class="info-taller">Electricidad automotriz · Diagnóstico · Aire acondicionado</p>
+            <p><a href="detalle-taller.html" class="boton-principal">Ver taller</a></p>
+        </div>
+        <div class="tarjeta tarjeta-taller">
+            <h3 class="nombre-taller">Taller Don José</h3>
+            <p class="direccion-taller">Carrera 50 # 80-15, Medellín</p>
+            <p class="info-taller">Mecánica · Suspensión · Alineación y balanceo</p>
+            <p><a href="detalle-taller.html" class="boton-principal">Ver taller</a></p>
+        </div>
+        <button type="button" class="boton-principal">Ver resultados en mapa</button>
+    </main>
+    <script src="js/app.js"></script>
+</body>
+</html>
