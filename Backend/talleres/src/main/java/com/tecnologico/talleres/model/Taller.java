@@ -2,6 +2,8 @@ package com.tecnologico.talleres.model;
 
 public class Taller {
     private String Nombre;
+    private  String Direccion;
+    private int Telefono;
 
     public int getTelefono() {
         return Telefono;
@@ -27,7 +29,6 @@ public class Taller {
         Direccion = direccion;
     }
 
-    private int Telefono;
-    private String Direccion;
+
 
 }
