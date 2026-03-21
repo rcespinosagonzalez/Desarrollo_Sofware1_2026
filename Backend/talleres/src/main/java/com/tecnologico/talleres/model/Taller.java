@@ -4,6 +4,7 @@ public class Taller {
     private String Nombre;
     private  String Direccion;
     private int Telefono;
+    private  String Mecanicos;
 
     public int getTelefono() {
         return Telefono;
