@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistencia en carretera</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="shortcut icon" th:href="@{/css/img/logo.ico}" />
+</head>
+<body>
+    <div class="contenedor-inicio-sesion">
+        <div class="tarjeta-inicio-sesion">
+            <div class="encabezado-inicio-sesion">
+                <div class="logo-empresa">
+                    <div class="icono-logo">
+                        <img th:src= "@{/css/img/logo.png}" alt="Logo de la empresa" width="100">
+                    </div>
+                </div>
+                <p>Bienvenido a</p>
+                <h2>Asistencia en carretera</h2>
+                <p>Por favor ingrese con sus credenciales</p>
+            </div>
+            
+            <form class="formulario-inicio-sesion" id="formularioInicioSesion" novalidate>
+                <div class="grupo-formulario">
+                    <div class="contenedor-entrada">
+                        <input type="email" id="correo" name="email" required autocomplete="email">
+                        <label for="correo">Correo electrónico</label>
+                        <span class="borde-entrada"></span>
+                    </div>
+                    <span class="mensaje-error" id="errorCorreo"></span>
+                </div>
+
+                <div class="grupo-formulario">
+                    <div class="contenedor-entrada contenedor-contrasena">
+                        <input type="password" id="contrasena" name="password" required autocomplete="current-password">
+                        <label for="contrasena">Contraseña</label>
+                        <button type="button" class="alternar-contrasena" id="alternarContrasena" aria-label="Mostrar u ocultar contraseña">
+                            <span class="icono-alternar"></span>
+                        </button>
+                        <span class="borde-entrada"></span>
+                    </div>
+                    <span class="mensaje-error" id="errorContrasena"></span>
+                </div>
+
+                <div class="opciones-formulario">
+                    <div class="contenedor-recordar">
+                        <input type="checkbox" id="recordar" name="remember">
+                        <label for="recordar" class="etiqueta-casilla">
+                            <span class="casilla-personalizada"></span>
+                            Mantenme registrado
+                        </label>
+                    </div>
+                    <a href="#" class="contraseña-olvidada">Restablecer contraseña</a>
+                    <div class="contenedor-registro">No tienes una cuenta?
+                    <a th:href="@{/registro.html}" class="enlace-registro">Registrarme</a>
+                    </div>
+                </div>
+
+                <p class="mensaje-error" id="errorLogin"></p>
+                <button type="submit" class="boton-inicio-sesion">
+                    <span class="texto-boton">Iniciar sesión</span>
+                    <span class="cargador-boton"></span>
+                </button>
+            </form>
+        </div>
+    </div>
+    <script th:src="@{/js/script.js}"></script>
+</body>
+</html>

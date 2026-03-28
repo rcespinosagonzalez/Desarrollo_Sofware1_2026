@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calificar taller</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="layout-web" data-vista="calificar-taller" data-role="user">
+    <aside class="sidebar-app" id="sidebar-app">
+        <h2 id="titulo-rol">Menú Usuario</h2>
+    </aside>
+    <main class="contenido-principal">
+        <h1>Calificar taller</h1>
+        <p style="margin-bottom: 1rem;">Tu última calificación enviada</p>
+        <div class="tarjeta">
+            <p><strong>Taller:</strong> AutoServicio Centro</p>
+            <p><strong>Servicio:</strong> Cambio de aceite</p>
+            <p><strong>Calificación:</strong> ★★★★☆ (4/5)</p>
+            <p><strong>Comentario:</strong> Muy buena atención y precio justo. Recomendado.</p>
+        </div>
+        <h2 style="font-size: 1.15rem; margin: 1.5rem 0 0.75rem;">Nueva calificación</h2>
+        <form action="#" method="get">
+            <input type="text" placeholder="Nombre del taller" value="">
+            <input type="text" placeholder="Servicio que calificas (ej. Cambio de aceite, Frenos)">
+            <p>Calificación:</p>
+            <div class="estrellas">
+                <span class="activa">★</span><span class="activa">★</span><span class="activa">★</span><span class="activa">★</span><span>★</span>
+            </div>
+            <textarea placeholder="Escribe tu comentario o reseña..."></textarea>
+            <button type="submit" class="boton-principal">Enviar calificación</button>
+        </form>
+    </main>
+    <script src="js/app.js"></script>
+</body>
+</html>

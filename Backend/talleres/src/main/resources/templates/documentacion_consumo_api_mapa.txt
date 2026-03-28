@@ -1,0 +1,164 @@
+DOCUMENTACION TECNICA
+Consumo e implementacion de API de mapas (Open Source)
+
+Proyecto:
+- Frontend de busqueda de talleres
+- Ruta de vista: Frontend/buscar-talleres.html
+
+Fecha:
+- 2026-03-20
+
+==================================================
+1) OBJETIVO FUNCIONAL
+==================================================
+Se implemento una vista de busqueda de talleres con mapa real y resultados geograficos.
+Durante la iteracion se probaron dos enfoques:
+
+A) Version estable actual (la que quedo activa):
+- Mapa Leaflet + OpenStreetMap (sin consumo de API de busqueda).
+- Talleres estaticos definidos en el HTML con coordenadas.
+- Marcadores y popup por cada taller.
+
+B) Version avanzada (implementada y probada temporalmente):
+- Geocodificacion de ubicaciones (Nominatim).
+- Busqueda de talleres cercanos (Overpass API) sobre OpenStreetMap.
+- Render dinamico de resultados (tarjetas + marcadores).
+
+==================================================
+2) ARCHIVOS INVOLUCRADOS
+==================================================
+- Frontend/buscar-talleres.html
+- Frontend/js/buscar-talleres.js
+- Frontend/css/estilos.css
+
+==================================================
+3) IMPLEMENTACION BASE (ACTUAL, SIN BUSQUEDA API)
+==================================================
+Tecnologias:
+- Leaflet JS (libreria de mapa)
+- OpenStreetMap Raster Tiles (capa de mapa)
+
+Flujo:
+1. Se inicializa el mapa centrado en Colombia.
+2. Se leen las tarjetas con clase .tarjeta-taller.
+3. De cada tarjeta se extraen:
+   - data-lat
+   - data-lng
+   - nombre, direccion y descripcion
+4. Se crea marcador por taller.
+5. Se enlaza click de la tarjeta para centrar el mapa y abrir popup.
+6. Boton "Ver resultados en mapa" ajusta el zoom a todos los marcadores.
+
+Ventaja:
+- Muy estable y rapido para demo local.
+
+Limitacion:
+- No hay consulta de lugares externos en tiempo real.
+
+==================================================
+4) IMPLEMENTACION AVANZADA (API REAL, HISTORICO)
+==================================================
+Esta version se implemento y funciono, pero luego se retiro por decision funcional
+para volver a una version simple.
+
+Stack:
+- Motor de mapa: Leaflet (y tambien se probo MapLibre en otra iteracion)
+- Geocodificacion: Nominatim
+- POI talleres: Overpass API
+
+4.1 Flujo de consumo
+1. Usuario escribe barrio/ciudad/direccion.
+2. Frontend consulta Nominatim para obtener lat/lon del texto.
+3. Con lat/lon, frontend consulta Overpass buscando amenity=car_repair en radio.
+4. Se normalizan resultados.
+5. Se pintan marcadores y tarjetas dinamicas con distancia aproximada.
+
+4.2 Endpoint de geocodificacion (Nominatim)
+Metodo:
+- GET
+
+Ejemplo:
+https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=co&q=Cartagena
+
+Campos usados:
+- lat
+- lon
+- display_name (opcional para mostrar nombre completo)
+
+4.3 Endpoint de talleres cercanos (Overpass)
+Metodo:
+- GET (con query codificada en parametro data)
+
+Consulta base usada:
+[out:json][timeout:25];
+(
+  node["amenity"="car_repair"](around:8000,LAT,LON);
+  way["amenity"="car_repair"](around:8000,LAT,LON);
+  relation["amenity"="car_repair"](around:8000,LAT,LON);
+);
+out center 35;
+
+URL final:
+https://overpass-api.de/api/interpreter?data=<consulta-url-encoded>
+
+Campos usados de respuesta:
+- elements[].lat / elements[].lon (node)
+- elements[].center.lat / elements[].center.lon (way/relation)
+- elements[].tags.name
+- elements[].tags.addr:*
+
+==================================================
+5) MANEJO DE DATOS Y NORMALIZACION
+==================================================
+Para estandarizar resultados de Overpass:
+- Si es node: usar lat/lon directos.
+- Si es way/relation: usar center.lat/center.lon.
+- Nombre:
+  tags.name o "Taller automotriz" por defecto.
+- Direccion:
+  addr:full -> addr:street + addr:housenumber -> addr:city -> fallback.
+
+Calculo de distancia:
+- Se uso formula Haversine para km aproximados entre punto buscado y taller.
+
+==================================================
+6) CONSIDERACIONES OPERATIVAS
+==================================================
+- Nominatim y Overpass son servicios comunitarios con rate limits.
+- Recomendado para produccion:
+  a) cache local de resultados,
+  b) debounce en input,
+  c) reintentos controlados,
+  d) backend intermedio para evitar abuso desde cliente.
+
+- Para gran escala:
+  usar infraestructura propia o proveedor gestionado.
+
+==================================================
+7) REFERENCIAS OFICIALES
+==================================================
+Mapas y librerias:
+- Leaflet: https://leafletjs.com/
+- OpenStreetMap: https://www.openstreetmap.org/
+- MapLibre GL JS: https://maplibre.org/maplibre-gl-js/docs/
+- OpenMapTiles: https://openmaptiles.org
+
+APIs de geodatos:
+- Nominatim (Search API): https://nominatim.org/release-docs/latest/api/Search/
+- Overpass API: https://overpass-api.de/
+- Overpass QL reference: https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL
+
+Datos OSM:
+- OSM Wiki (car_repair tag): https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dcar_repair
+
+==================================================
+8) ESTADO FINAL DEL PROYECTO
+==================================================
+Estado actual en codigo:
+- Vista de busqueda con mapa real (Leaflet + OSM), talleres estaticos.
+- Sin consumo activo de Nominatim/Overpass en la version final.
+
+Si se desea reactivar la version con APIs reales:
+- Restaurar la logica de busqueda por ubicacion en Frontend/js/buscar-talleres.js
+- Volver a incluir estados de busqueda y render dinamico en HTML.
+
