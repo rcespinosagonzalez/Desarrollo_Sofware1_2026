@@ -1,35 +1,46 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solicitar cita</title>
-    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body class="layout-web" data-vista="solicitar-cita" data-role="user">
     <aside class="sidebar-app" id="sidebar-app">
         <h2 id="titulo-rol">Menú Usuario</h2>
     </aside>
-    <main class="contenido-principal">
+    <main class="contenido-principal" th:if="${taller != null}">
         <h1>Solicitar cita</h1>
         <div class="tarjeta" style="margin-bottom: 1rem;">
             <p class="texto-muted">Taller seleccionado</p>
-            <p><strong>Taller Mecánico El Rápido</strong></p>
-            <p>Av. Pedro de Heredia 45-20, Cartagena · 300 555 1234</p>
+            <p><strong th:text="${taller.nombre}">Nombre</strong></p>
+            <p>
+                <span th:text="${taller.direccion}">Dir</span>
+                · <span th:text="${taller.telefono}">Tel</span>
+            </p>
         </div>
         <div class="area-ubicacion">
             <span style="font-size: 2rem;">📅</span>
             <p>Elige fecha y hora</p>
         </div>
-        <form action="#" method="get">
+        <form th:action="@{/solicitar-cita}" method="post">
+            <input type="hidden" name="tallerId" th:value="${taller.id}">
+            <label for="cliente">Tu nombre</label>
+            <input type="text" id="cliente" name="cliente" placeholder="Nombre y apellido" required>
             <label for="fecha">Fecha</label>
             <input type="date" id="fecha" name="fecha" required>
             <label for="hora">Hora</label>
             <input type="time" id="hora" name="hora" required>
-            <input type="text" placeholder="Motivo o servicio (ej. Cambio de aceite)" name="motivo">
+            <input type="text" name="motivo" placeholder="Motivo o servicio (ej. Cambio de aceite)" required>
             <button type="submit" class="boton-principal">Confirmar cita</button>
         </form>
     </main>
-    <script src="js/app.js"></script>
+    <main class="contenido-principal" th:if="${taller == null}">
+        <h1>Solicitar cita</h1>
+        <p>No hay taller seleccionado.</p>
+        <a th:href="@{/buscar-talleres}" class="boton-principal">Buscar talleres</a>
+    </main>
+    <script th:src="@{/js/app.js}"></script>
 </body>
 </html>

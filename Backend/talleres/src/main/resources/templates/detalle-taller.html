@@ -1,32 +1,39 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle del taller</title>
-    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body class="layout-web" data-vista="detalle-taller" data-role="user">
     <aside class="sidebar-app" id="sidebar-app">
         <h2 id="titulo-rol">Menú Usuario</h2>
     </aside>
-    <main class="contenido-principal">
+    <main class="contenido-principal" th:if="${taller != null}">
         <h1>Detalle del taller</h1>
         <div class="bloque-contenido bloque-destacado">
             <p class="texto-muted">Taller asociado</p>
-            <h2>Taller Mecánico El Rápido</h2>
+            <h2 th:text="${taller.nombre}">Nombre</h2>
         </div>
         <div class="tarjeta">
-            <p><strong>Dirección:</strong> Av. Pedro de Heredia 45-20, Cartagena</p>
-            <p><strong>Teléfono:</strong> 300 555 1234</p>
-            <p><strong>Horario:</strong> Lun - Sáb 8:00 a 18:00</p>
+            <p><strong>Dirección:</strong> <span th:text="${taller.direccion}">—</span></p>
+            <p><strong>Teléfono:</strong> <span th:text="${taller.telefono}">—</span></p>
+            <p><strong>Horario:</strong> <span th:text="${taller.horario}">—</span></p>
         </div>
         <div class="bloque-contenido">
-            <p><strong>Descripción:</strong> Taller especializado en mecánica general, cambio de aceite, frenos y revisión técnico-mecánica. Más de 15 años de experiencia. Atención con cita previa.</p>
-            <p><strong>Servicios:</strong> Mecánica general · Cambio de aceite · Frenos · Electricidad básica · Diagnóstico</p>
-            <p style="margin-top: 1rem;"><a href="solicitar-cita.html" class="boton-principal">Solicitar cita</a></p>
+            <p><strong>Descripción:</strong> <span th:text="${taller.descripcion}">—</span></p>
+            <p><strong>Servicios:</strong> <span th:text="${taller.servicios}">—</span></p>
+            <p style="margin-top: 1rem;">
+                <a th:href="@{/solicitar-cita(tallerId=${taller.id})}" class="boton-principal">Solicitar cita</a>
+            </p>
         </div>
     </main>
-    <script src="js/app.js"></script>
+    <main class="contenido-principal" th:if="${taller == null}">
+        <h1>Detalle del taller</h1>
+        <p>No se encontró el taller.</p>
+        <a th:href="@{/buscar-talleres}" class="boton-principal">Volver a buscar</a>
+    </main>
+    <script th:src="@{/js/app.js}"></script>
 </body>
 </html>

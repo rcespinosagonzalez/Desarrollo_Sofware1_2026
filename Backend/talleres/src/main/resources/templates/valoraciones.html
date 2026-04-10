@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valoraciones</title>
-    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body class="layout-web" data-vista="valoraciones" data-role="admin">
     <aside class="sidebar-app" id="sidebar-app">
@@ -13,22 +13,16 @@
     <main class="contenido-principal">
         <h1>Valoraciones</h1>
         <p style="margin-bottom: 1rem;">Valoraciones recientes de clientes</p>
-        <div class="tarjeta">
-            <p><strong>Ana García</strong> · ★★★★☆</p>
-            <p class="valoracion-texto">"Excelente servicio en el cambio de aceite. Rápidos y con buen precio."</p>
-            <p class="texto-muted">04/03/2026</p>
+        <div class="tarjeta" th:each="v : ${valoraciones}">
+            <p>
+                <strong th:text="${v.cliente}">Cliente</strong>
+                · <span th:text="|${v.estrellas}/5 ★|">0/5</span>
+            </p>
+            <p class="valoracion-texto" th:text="${v.comentario}">Comentario</p>
+            <p class="texto-muted" th:text="${v.fecha}">fecha</p>
         </div>
-        <div class="tarjeta">
-            <p><strong>Luis Rodríguez</strong> · ★★★★★</p>
-            <p class="valoracion-texto">"Solucionaron el problema de frenos al instante. Muy recomendados."</p>
-            <p class="texto-muted">01/03/2026</p>
-        </div>
-        <div class="tarjeta">
-            <p><strong>Carmen Díaz</strong> · ★★★☆☆</p>
-            <p class="valoracion-texto">"Buen trato, pero la espera fue un poco larga. El trabajo bien hecho."</p>
-            <p class="texto-muted">28/02/2026</p>
-        </div>
+        <p th:if="${#lists.isEmpty(valoraciones)}" class="texto-muted">No hay valoraciones todavía.</p>
     </main>
-    <script src="js/app.js"></script>
+    <script th:src="@{/js/app.js}"></script>
 </body>
 </html>

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calificar taller</title>
-    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body class="layout-web" data-vista="calificar-taller" data-role="user">
     <aside class="sidebar-app" id="sidebar-app">
@@ -12,25 +12,31 @@
     </aside>
     <main class="contenido-principal">
         <h1>Calificar taller</h1>
-        <p style="margin-bottom: 1rem;">Tu última calificación enviada</p>
-        <div class="tarjeta">
-            <p><strong>Taller:</strong> AutoServicio Centro</p>
-            <p><strong>Servicio:</strong> Cambio de aceite</p>
-            <p><strong>Calificación:</strong> ★★★★☆ (4/5)</p>
-            <p><strong>Comentario:</strong> Muy buena atención y precio justo. Recomendado.</p>
+        <div th:if="${ultima != null}">
+            <p style="margin-bottom: 1rem;">Tu última calificación enviada</p>
+            <div class="tarjeta">
+                <p><strong>Taller:</strong> <span th:text="${ultima.tallerNombre}">—</span></p>
+                <p><strong>Servicio:</strong> <span th:text="${ultima.servicio}">—</span></p>
+                <p><strong>Calificación:</strong> <span th:text="|${ultima.estrellas}/5 ★|">0/5</span></p>
+                <p><strong>Comentario:</strong> <span th:text="${ultima.comentario}">—</span></p>
+            </div>
         </div>
         <h2 style="font-size: 1.15rem; margin: 1.5rem 0 0.75rem;">Nueva calificación</h2>
-        <form action="#" method="get">
-            <input type="text" placeholder="Nombre del taller" value="">
-            <input type="text" placeholder="Servicio que calificas (ej. Cambio de aceite, Frenos)">
-            <p>Calificación:</p>
-            <div class="estrellas">
-                <span class="activa">★</span><span class="activa">★</span><span class="activa">★</span><span class="activa">★</span><span>★</span>
-            </div>
-            <textarea placeholder="Escribe tu comentario o reseña..."></textarea>
+        <form th:action="@{/calificar-taller}" th:object="${nuevaCalificacion}" method="post">
+            <input type="text" th:field="*{tallerNombre}" placeholder="Nombre del taller" required>
+            <input type="text" th:field="*{servicio}" placeholder="Servicio que calificas (ej. Cambio de aceite)" required>
+            <label for="estrellas">Calificación (1 a 5)</label>
+            <select id="estrellas" th:field="*{estrellas}" required>
+                <option value="5">5 estrellas</option>
+                <option value="4">4 estrellas</option>
+                <option value="3">3 estrellas</option>
+                <option value="2">2 estrellas</option>
+                <option value="1">1 estrella</option>
+            </select>
+            <textarea th:field="*{comentario}" placeholder="Escribe tu comentario o reseña..."></textarea>
             <button type="submit" class="boton-principal">Enviar calificación</button>
         </form>
     </main>
-    <script src="js/app.js"></script>
+    <script th:src="@{/js/app.js}"></script>
 </body>
 </html>

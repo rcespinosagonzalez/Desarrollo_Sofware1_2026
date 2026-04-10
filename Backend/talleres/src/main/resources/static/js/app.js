@@ -6,7 +6,7 @@
     var rolRequerido = body.getAttribute('data-role');
 
     if (!role) {
-        window.location.href = 'index.html';
+        window.location.href = '/';
         return;
     }
     if (rolRequerido && role !== rolRequerido) {
@@ -21,11 +21,11 @@
         { url: '/mi-taller', texto: 'Mi taller', vista: 'mi-taller', icono: 'shop' }
     ];
     var menuUser = [
-        { url: 'buscar-talleres.html', texto: 'Buscar talleres', vista: 'buscar-talleres', icono: 'search' },
-        { url: 'detalle-taller.html', texto: 'Detalle del taller', vista: 'detalle-taller', icono: 'pin' },
-        { url: 'solicitar-cita.html', texto: 'Solicitar cita', vista: 'solicitar-cita', icono: 'edit' },
-        { url: 'historial-busquedas.html', texto: 'Historial de búsquedas', vista: 'historial-busquedas', icono: 'clock' },
-        { url: 'calificar-taller.html', texto: 'Calificar taller', vista: 'calificar-taller', icono: 'thumb' }
+        { url: '/buscar-talleres', texto: 'Buscar talleres', vista: 'buscar-talleres', icono: 'search' },
+        { url: '/detalle-taller?id=1', texto: 'Detalle del taller', vista: 'detalle-taller', icono: 'pin' },
+        { url: '/solicitar-cita?tallerId=1', texto: 'Solicitar cita', vista: 'solicitar-cita', icono: 'edit' },
+        { url: '/historial-busquedas', texto: 'Historial de búsquedas', vista: 'historial-busquedas', icono: 'clock' },
+        { url: '/calificar-taller', texto: 'Calificar taller', vista: 'calificar-taller', icono: 'thumb' }
     ];
 
     var iconosSvg = {
@@ -68,7 +68,7 @@ var nav = document.createElement('nav');
         var cerrar = document.createElement('div');
         cerrar.className = 'cerrar-sesion';
         var a = document.createElement('a');
-        a.href = 'index.html';
+        a.href = '/';
         var iconoCerrar = document.createElement('span');
         iconoCerrar.className = 'item-icono';
         iconoCerrar.innerHTML = iconosSvg.logout;

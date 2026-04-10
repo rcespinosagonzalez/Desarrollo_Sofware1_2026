@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscar talleres</title>
-    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
     <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -28,14 +28,16 @@
             <div id="mapa-talleres" class="mapa-real" aria-label="Mapa de talleres"></div>
         </div>
         <section id="lista-talleres"></section>
+        <p class="texto-muted" style="margin-top: 1rem;">Taller registrado en la app (detalle fijo):</p>
+        <p><a th:href="@{/detalle-taller(id=1)}" class="boton-principal">Ver taller de ejemplo (registrado)</a></p>
         <button type="button" id="btn-ver-en-mapa" class="boton-principal">Ver resultados en mapa</button>
     </main>
-    <script src="js/app.js"></script>
+    <script th:src="@{/js/app.js}"></script>
     <script
         src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin=""
     ></script>
-    <script src="js/buscar-talleres.js"></script>
+    <script th:src="@{/js/buscar-talleres.js}"></script>
 </body>
 </html>

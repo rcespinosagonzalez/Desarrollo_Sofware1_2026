@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Citas pendientes</title>
-    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body class="layout-web" data-vista="citas-pendientes" data-role="admin">
     <aside class="sidebar-app" id="sidebar-app">
@@ -12,26 +12,18 @@
     </aside>
     <main class="contenido-principal">
         <h1>Citas pendientes</h1>
-        <div class="tarjeta tarjeta-cita">
-            <p class="cita-cliente">Carlos Mendoza</p>
-            <p class="cita-detalle">Cambio de aceite y filtro</p>
-            <p><strong>Fecha:</strong> 10/03/2026 · <strong>Hora:</strong> 09:00</p>
-            <p><a href="#" class="boton-principal">Ver detalle</a></p>
+        <div class="tarjeta tarjeta-cita" th:each="c : ${citas}">
+            <p class="cita-cliente" th:text="${c.cliente}">Cliente</p>
+            <p class="cita-detalle" th:text="${c.detalle}">Detalle</p>
+            <p>
+                <strong>Fecha:</strong> <span th:text="${c.fecha}">—</span>
+                · <strong>Hora:</strong> <span th:text="${c.hora}">—</span>
+            </p>
+            <p><a th:href="@{/detalle-taller(id=1)}" class="boton-principal">Ver taller</a></p>
         </div>
-        <div class="tarjeta tarjeta-cita">
-            <p class="cita-cliente">María López</p>
-            <p class="cita-detalle">Revisión de frenos</p>
-            <p><strong>Fecha:</strong> 10/03/2026 · <strong>Hora:</strong> 11:30</p>
-            <p><a href="#" class="boton-principal">Ver detalle</a></p>
-        </div>
-        <div class="tarjeta tarjeta-cita">
-            <p class="cita-cliente">Juan Pérez</p>
-            <p class="cita-detalle">Diagnóstico eléctrico</p>
-            <p><strong>Fecha:</strong> 11/03/2026 · <strong>Hora:</strong> 14:00</p>
-            <p><a href="#" class="boton-principal">Ver detalle</a></p>
-        </div>
-        <a href="#" class="boton-principal">Ver todas</a>
+        <p th:if="${#lists.isEmpty(citas)}" class="texto-muted">No hay citas pendientes.</p>
+        <a th:href="@{/citas-pendientes}" class="boton-principal">Actualizar lista</a>
     </main>
-    <script src="js/app.js"></script>
+    <script th:src="@{/js/app.js}"></script>
 </body>
 </html>

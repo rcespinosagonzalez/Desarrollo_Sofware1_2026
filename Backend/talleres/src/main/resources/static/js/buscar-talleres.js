@@ -47,7 +47,7 @@
             '<h3 class="nombre-taller">' + escapeHtml(item.nombre) + '</h3>' +
             '<p class="direccion-taller">' + escapeHtml(item.direccion) + '</p>' +
             '<p class="info-taller">' + escapeHtml(item.tipo) + '</p>' +
-            '<p><a href="detalle-taller.html" class="boton-principal">Ver taller</a></p>';
+            '<p><a href="/detalle-taller?id=1" class="boton-principal">Ver taller registrado</a></p>';
         tarjeta.addEventListener('click', function (event) {
             if (event.target && event.target.closest('a')) return;
             mapa.setView([item.lat, item.lng], 15, { animate: true });

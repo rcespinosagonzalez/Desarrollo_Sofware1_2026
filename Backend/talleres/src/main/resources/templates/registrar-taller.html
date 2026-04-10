@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar taller</title>
-    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body class="layout-web" data-vista="registrar-taller" data-role="admin">
     <aside class="sidebar-app" id="sidebar-app">
@@ -12,15 +12,17 @@
     </aside>
     <main class="contenido-principal">
         <h1>Registrar taller</h1>
-        <form action="#" method="get">
-            <input type="text" placeholder="Nombre del taller (ej. Taller Mecánico El Rápido)" name="nombre">
-            <input type="text" placeholder="Dirección (ej. Av. Pedro de Heredia 45-20, Cartagena)" name="direccion">
-            <input type="text" placeholder="Teléfono o contacto (ej. 300 555 1234)" name="telefono">
-            <input type="text" placeholder="Información adicional (ej. Horario: Lun-Sáb 8:00-18:00)" name="extra">
-            <textarea placeholder="Descripción del taller y servicios que ofrece (ej. Mecánica general, cambio de aceite, frenos, electricidad, diagnóstico...)"></textarea>
-            <button type="submit" class="boton-principal">Registrar</button>
+        <form th:action="@{/registrar-taller}" th:object="${taller}" method="post">
+            <input type="hidden" th:field="*{id}">
+            <input type="text" th:field="*{nombre}" placeholder="Nombre del taller (ej. Taller Mecánico El Rápido)" required>
+            <input type="text" th:field="*{direccion}" placeholder="Dirección" required>
+            <input type="text" th:field="*{telefono}" placeholder="Teléfono o contacto" required>
+            <input type="text" th:field="*{horario}" placeholder="Horario (ej. Lun-Sáb 8:00-18:00)">
+            <input type="text" th:field="*{servicios}" placeholder="Servicios (ej. Mecánica general · Frenos)">
+            <textarea th:field="*{descripcion}" placeholder="Descripción del taller y servicios que ofrece"></textarea>
+            <button type="submit" class="boton-principal">Guardar</button>
         </form>
     </main>
-    <script src="js/app.js"></script>
+    <script th:src="@{/js/app.js}"></script>
 </body>
 </html>
