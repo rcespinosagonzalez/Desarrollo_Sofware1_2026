@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de búsquedas</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="layout-web" data-vista="historial-busquedas" data-role="user">
+    <aside class="sidebar-app" id="sidebar-app">
+        <h2 id="titulo-rol">Menú Usuario</h2>
+    </aside>
+    <main class="contenido-principal">
+        <h1>Historial de búsquedas</h1>
+        <p style="margin-bottom: 1rem;">Tus búsquedas anteriores</p>
+        <div class="tarjeta tarjeta-busqueda" th:each="b : ${busquedas}">
+            <p class="busqueda-texto" th:text="${b.texto}">texto</p>
+            <p class="busqueda-fecha" th:text="${b.fechaHora}">fecha</p>
+            <p><a th:href="@{/buscar-talleres}" class="boton-principal">Ver resultados</a></p>
+        </div>
+        <p th:if="${#lists.isEmpty(busquedas)}" class="texto-muted">No hay búsquedas guardadas.</p>
+    </main>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

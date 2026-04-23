@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valoraciones</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="layout-web" data-vista="valoraciones" data-role="admin">
+    <aside class="sidebar-app" id="sidebar-app">
+        <h2 id="titulo-rol">Menú Administrador</h2>
+    </aside>
+    <main class="contenido-principal">
+        <h1>Valoraciones</h1>
+        <p style="margin-bottom: 1rem;">Valoraciones recientes de clientes</p>
+        <div class="tarjeta" th:each="v : ${valoraciones}">
+            <p>
+                <strong th:text="${v.cliente}">Cliente</strong>
+                · <span th:text="|${v.estrellas}/5 ★|">0/5</span>
+            </p>
+            <p class="valoracion-texto" th:text="${v.comentario}">Comentario</p>
+            <p class="texto-muted" th:text="${v.fecha}">fecha</p>
+        </div>
+        <p th:if="${#lists.isEmpty(valoraciones)}" class="texto-muted">No hay valoraciones todavía.</p>
+    </main>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

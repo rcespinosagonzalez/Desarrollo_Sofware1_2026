@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citas pendientes</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="layout-web" data-vista="citas-pendientes" data-role="admin">
+    <aside class="sidebar-app" id="sidebar-app">
+        <h2 id="titulo-rol">Menú Administrador</h2>
+    </aside>
+    <main class="contenido-principal">
+        <h1>Citas pendientes</h1>
+        <div class="tarjeta tarjeta-cita" th:each="c : ${citas}">
+            <p class="cita-cliente" th:text="${c.cliente}">Cliente</p>
+            <p class="cita-detalle" th:text="${c.detalle}">Detalle</p>
+            <p>
+                <strong>Fecha:</strong> <span th:text="${c.fecha}">—</span>
+                · <strong>Hora:</strong> <span th:text="${c.hora}">—</span>
+            </p>
+            <p><a th:href="@{/detalle-taller(id=1)}" class="boton-principal">Ver taller</a></p>
+        </div>
+        <p th:if="${#lists.isEmpty(citas)}" class="texto-muted">No hay citas pendientes.</p>
+        <a th:href="@{/citas-pendientes}" class="boton-principal">Actualizar lista</a>
+    </main>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>
