@@ -2,6 +2,7 @@ package com.tecnologico.talleres.controllers;
 
 import com.tecnologico.talleres.model.Usuario;
 import com.tecnologico.talleres.services.UsuarioService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
+
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("usuarios", usuarioService.findAll());
@@ -24,8 +26,9 @@ public class UsuarioController {
     }
 
     @GetMapping("/nuevo")
-    public String mostrarFormularioNuevo(Model model) {
+    public String mostrarFormularioNuevo(Model model, HttpSession session) {
         model.addAttribute("usuario", new Usuario());
+        model.addAttribute("role", session.getAttribute("role"));
         return "usuario/form";
     }
 
@@ -68,4 +71,3 @@ public class UsuarioController {
         return "redirect:/usuario";
     }
 }
-//revicion completada

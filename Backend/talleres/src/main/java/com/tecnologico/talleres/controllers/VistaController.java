@@ -3,7 +3,9 @@ package com.tecnologico.talleres.controllers;
 import com.tecnologico.talleres.model.Cita;
 import com.tecnologico.talleres.model.Taller;
 import com.tecnologico.talleres.model.UltimaCalificacion;
+import com.tecnologico.talleres.model.Usuario;
 import com.tecnologico.talleres.services.TallerService;
+import com.tecnologico.talleres.services.UsuarioService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class VistaController {
 
     private final TallerService tallerService;
+    private final UsuarioService usuarioService;
 
-    public VistaController(TallerService tallerService) {
+    public VistaController(TallerService tallerService, UsuarioService usuarioService) {
         this.tallerService = tallerService;
+        this.usuarioService = usuarioService;
     }
 
     @GetMapping("/")
@@ -120,10 +124,25 @@ public class VistaController {
         return "historial-busquedas";
     }
 
-    private static int estrellasEnteras(Taller taller) {
-        if (taller == null) {
-            return 0;
+    @GetMapping("/registro")
+    public String registroForm(Model model) {
+        model.addAttribute("usuario", new Usuario());
+        return "Registro-usuario";
+    }
+
+    @PostMapping("/registro")
+    public String registroGuardar(@ModelAttribute Usuario usuario, Model model) {
+        try {
+            usuarioService.save(usuario);
+            return "redirect:/";
+        } catch (Exception e) {
+            model.addAttribute("error", "Error al registrar: " + e.getMessage());
+            return "Registro-usuario";
         }
+    }
+
+    private static int estrellasEnteras(Taller taller) {
+        if (taller == null) return 0;
         return (int) Math.floor(taller.getCalificacionPromedio());
     }
 

@@ -44,5 +44,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Optional<Usuario> findByDocumento(String documento) {
         return usuarioRepository.findByDocumento(documento);
     }
+
+    @Override
+    public Optional<Usuario> findByEmail(String email) {
+        return Optional.empty();
+    }
 }
-//revicion completada
