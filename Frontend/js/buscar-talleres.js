@@ -40,16 +40,42 @@
         });
     }
 
+    function etiquetaTipoLegible(tags, tipoCrudo) {
+        var shop = (tags.shop || '').toLowerCase();
+        var amenity = (tags.amenity || '').toLowerCase();
+        var raw = (tipoCrudo || '').toLowerCase();
+        if (amenity === 'car_repair' || shop === 'car_repair' || raw === 'car_repair') {
+            return 'Taller mecánico · autos';
+        }
+        if (shop === 'motorcycle' || raw === 'motorcycle') {
+            return 'Motos y repuestos';
+        }
+        if (amenity || shop) {
+            return 'Servicio al vehículo';
+        }
+        return 'Taller o zona de servicio';
+    }
+
     function crearTarjeta(item, marker) {
         var tarjeta = document.createElement('article');
         tarjeta.className = 'tarjeta tarjeta-taller';
         tarjeta.innerHTML =
             '<h3 class="nombre-taller">' + escapeHtml(item.nombre) + '</h3>' +
             '<p class="direccion-taller">' + escapeHtml(item.direccion) + '</p>' +
-            '<p class="info-taller">' + escapeHtml(item.tipo) + '</p>' +
-            '<p><a href="detalle-taller.html" class="boton-principal">Ver taller</a></p>';
+            '<span class="chip-tipo-taller">' + escapeHtml(item.tipoLegible) + '</span>' +
+            '<div class="acciones-tarjeta-taller">' +
+            '<button type="button" class="btn-centrar-mapa">Centrar en el mapa</button></div>';
+
+        var btn = tarjeta.querySelector('.btn-centrar-mapa');
+        btn.addEventListener('click', function (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            mapa.setView([item.lat, item.lng], 15, { animate: true });
+            marker.openPopup();
+        });
+
         tarjeta.addEventListener('click', function (event) {
-            if (event.target && event.target.closest('a')) return;
+            if (event.target && event.target.closest('button')) return;
             mapa.setView([item.lat, item.lng], 15, { animate: true });
             marker.openPopup();
         });
@@ -66,12 +92,10 @@
         var direccion = tags['addr:full'] ||
             [tags['addr:street'], tags['addr:housenumber']].filter(Boolean).join(' ') ||
             tags['addr:city'] ||
-            'Direccion no disponible';
-        var tipo = tags['service:vehicle:type'] ||
-            tags.shop ||
-            tags.amenity ||
-            'Servicio automotriz';
-        return { nombre: nombre, direccion: direccion, tipo: tipo, lat: lat, lng: lng };
+            'Dirección no disponible';
+        var tipoCrudo = tags['service:vehicle:type'] || tags.shop || tags.amenity || '';
+        var tipoLegible = etiquetaTipoLegible(tags, tipoCrudo);
+        return { nombre: nombre, direccion: direccion, tipoLegible: tipoLegible, lat: lat, lng: lng };
     }
 
     function geocodificarLugar(termino) {
@@ -96,7 +120,7 @@
     function ejecutarBusqueda() {
         var termino = inputBusqueda.value.trim() || 'Cartagena';
         botonBuscar.disabled = true;
-        setEstado('Buscando ubicacion en ' + termino + '...');
+        setEstado('Buscando ubicación en ' + termino + '…');
         limpiarResultados();
 
         geocodificarLugar(termino)
@@ -111,9 +135,9 @@
                     weight: 2,
                     fillColor: '#38bdf8',
                     fillOpacity: 0.9
-                }).addTo(mapa).bindPopup('Ubicacion buscada: ' + termino);
+                }).addTo(mapa).bindPopup('Ubicación buscada: ' + termino);
                 mapa.setView([lat, lng], 12, { animate: true });
-                setEstado('Buscando talleres de moto y carro cercanos...');
+                setEstado('Buscando talleres cercanos…');
                 return buscarTalleres(lat, lng).then(function (data) {
                     var items = (data.elements || [])
                         .map(normalizarResultado)
@@ -125,12 +149,16 @@
 
                     items.forEach(function (item) {
                         var marker = L.marker([item.lat, item.lng]).addTo(mapa);
-                        marker.bindPopup('<strong>' + escapeHtml(item.nombre) + '</strong><br>' + escapeHtml(item.direccion) + '<br><small>' + escapeHtml(item.tipo) + '</small>');
+                        marker.bindPopup(
+                            '<strong>' + escapeHtml(item.nombre) + '</strong><br>' +
+                            escapeHtml(item.direccion) + '<br><small>' + escapeHtml(item.tipoLegible) + '</small>'
+                        );
                         talleres.push({ lat: item.lat, lng: item.lng, marker: marker });
                         crearTarjeta(item, marker);
                     });
                     setEstado('Se encontraron ' + talleres.length + ' talleres cercanos en ' + termino + '.');
                     ajustarMapaAVista();
+                    setTimeout(function () { mapa.invalidateSize(); }, 50);
                 });
             })
             .catch(function () {

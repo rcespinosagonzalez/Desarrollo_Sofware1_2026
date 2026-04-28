@@ -3,37 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi taller</title>
+    <title>Mis talleres (clientes)</title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body class="layout-web" data-vista="mi-taller" data-role="admin">
     <aside class="sidebar-app" id="sidebar-app">
         <h2 id="titulo-rol">Menú Administrador</h2>
     </aside>
-    <main class="contenido-principal" th:if="${taller != null}">
-        <h1>Mi taller</h1>
-        <div class="bloque-contenido bloque-destacado">
-            <p class="texto-muted">Logo</p>
-            <h2 th:text="${taller.nombre}">Nombre</h2>
+    <main class="contenido-principal">
+        <h1>Mis talleres registrados</h1>
+        <p class="texto-muted">Cada fila es un taller en la BD; el correo es el dueño (cliente) que puede usar esa cuenta más adelante.</p>
+        <p>
+            <a th:href="@{/registrar-taller}" class="boton-principal">Registrar otro taller</a>
+        </p>
+        <div th:if="${#lists.isEmpty(talleres)}">
+            <p>No hay talleres todavía.</p>
         </div>
-        <div class="tarjeta">
-            <p><strong>Dirección:</strong> <span th:text="${taller.direccion}">—</span></p>
-            <p><strong>Teléfono:</strong> <span th:text="${taller.telefono}">—</span></p>
-            <p><strong>Descripción:</strong> <span th:text="${taller.descripcion}">—</span></p>
+        <div class="tarjeta" th:each="t : ${talleres}" style="margin-bottom: 1rem;">
+            <h2 th:text="${t.nombre}">Nombre</h2>
+            <p><strong>Id taller:</strong> <span th:text="${t.id}">—</span></p>
+            <p><strong>Dueño (BD):</strong> <span th:text="${t.nombrePropietario}">—</span>
+                · <span th:text="${t.emailPropietario}">correo</span></p>
+            <p><strong>Dirección:</strong> <span th:text="${t.direccion}">—</span></p>
+            <p><strong>Teléfono:</strong> <span th:text="${t.telefono}">—</span></p>
+            <p class="texto-muted" th:text="|Calificación: ${t.calificacionPromedio} / 5 (${t.numValoraciones} valoraciones)|">0 / 5</p>
+            <p>
+                <a th:href="@{/registrar-taller(id=${t.id})}" class="boton-principal">Editar datos del taller</a>
+                <a th:href="@{/detalle-taller(id=${t.id})}" class="boton-principal" style="margin-left: 0.5rem;">Ver como usuario</a>
+            </p>
         </div>
-        <p><strong>Calificación promedio:</strong></p>
-        <div class="estrellas">
-            <span th:each="i : ${#numbers.sequence(1, 5)}"
-                  th:class="${i <= estrellasLlenas} ? 'activa' : ''">★</span>
-        </div>
-        <p class="texto-muted"
-           th:text="|${taller.calificacionPromedio} / 5 (${taller.numValoraciones} valoraciones)|">0 / 5</p>
-        <a th:href="@{/registrar-taller}" class="boton-principal">Editar</a>
-    </main>
-    <main class="contenido-principal" th:if="${taller == null}">
-        <h1>Mi taller</h1>
-        <p>Aún no hay información del taller.</p>
-        <a th:href="@{/registrar-taller}" class="boton-principal">Registrar taller</a>
     </main>
     <script th:src="@{/js/app.js}"></script>
 </body>

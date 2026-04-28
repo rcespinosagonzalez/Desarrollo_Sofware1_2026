@@ -3,6 +3,7 @@ package com.tecnologico.talleres.model;
 public class Cita {
 
     private Long id;
+    private Long tallerId;
     private String cliente;
     private String detalle;
     private String fecha;
@@ -25,6 +26,14 @@ public class Cita {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getTallerId() {
+        return tallerId;
+    }
+
+    public void setTallerId(Long tallerId) {
+        this.tallerId = tallerId;
     }
 
     public String getCliente() {

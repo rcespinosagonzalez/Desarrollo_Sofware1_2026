@@ -1,43 +1,55 @@
-// Login: valida contra JSON y redirige según rol (admin / user)
+// Login contra la tabla usuario en MySQL (POST /api/auth/login).
+// admin -> Mis talleres; cualquier otro rol del menú -> Buscar talleres.
 (function () {
     var form = document.getElementById('formularioInicioSesion');
     if (!form) return;
 
-    var usuarios = [
-        { email: 'admin@gmail.com', password: '123456789', role: 'admin', nombre: 'Administrador' },
-        { email: 'admi@gmail.com', password: '123456789', role: 'admin', nombre: 'Administrador' },
-        { email: 'admi@gmail', password: '123456789', role: 'admin', nombre: 'Administrador' },
-        { email: 'usuario@gmail.com', password: '123456789', role: 'user', nombre: 'Usuario' }
-    ];
+    function mostrarError(texto) {
+        var errorEl = document.getElementById('errorLogin');
+        if (!errorEl) {
+            errorEl = document.createElement('p');
+            errorEl.id = 'errorLogin';
+            errorEl.style.color = '#c00';
+            errorEl.style.marginTop = '0.5rem';
+            errorEl.style.fontSize = '0.9rem';
+            form.appendChild(errorEl);
+        }
+        errorEl.textContent = texto || 'Correo o contraseña incorrectos. Intenta de nuevo.';
+    }
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
         var correo = (document.getElementById('correo') || {}).value || '';
         var contrasena = (document.getElementById('contrasena') || {}).value || '';
         var errorEl = document.getElementById('errorLogin');
+        if (errorEl) errorEl.textContent = '';
 
-        var usuario = usuarios.find(function (u) {
-            return u.email === correo.trim() && u.password === contrasena;
-        });
+        var body = new URLSearchParams();
+        body.set('email', correo.trim());
+        body.set('password', contrasena);
 
-        if (usuario) {
-            try {
-                sessionStorage.setItem('role', usuario.role);
-                sessionStorage.setItem('nombre', usuario.nombre || usuario.email);
-            } catch (err) {}
-            window.location.href = usuario.role === 'admin'
-            ? '/mi-taller'
-            : '/buscar-talleres';
-        } else {
-            if (!errorEl) {
-                errorEl = document.createElement('p');
-                errorEl.id = 'errorLogin';
-                errorEl.style.color = '#c00';
-                errorEl.style.marginTop = '0.5rem';
-                errorEl.style.fontSize = '0.9rem';
-                form.appendChild(errorEl);
-            }
-            errorEl.textContent = 'Correo o contraseña incorrectos. Intenta de nuevo.';
-        }
+        fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body.toString()
+        })
+            .then(function (r) {
+                if (!r.ok) throw new Error('Error de red');
+                return r.json();
+            })
+            .then(function (data) {
+                if (data.ok) {
+                    try {
+                        sessionStorage.setItem('role', data.rol);
+                        sessionStorage.setItem('nombre', data.nombre || correo.trim());
+                    } catch (err) {}
+                    window.location.href = data.rol === 'admin' ? '/mi-taller' : '/buscar-talleres';
+                } else {
+                    mostrarError(data.mensaje);
+                }
+            })
+            .catch(function () {
+                mostrarError('No se pudo conectar con el servidor. ¿Está arrancado Spring Boot?');
+            });
     });
 })();

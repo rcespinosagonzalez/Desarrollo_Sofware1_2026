@@ -563,20 +563,247 @@ label {
     text-decoration: underline;
 }
 
-/* Búsqueda */
+/* Búsqueda (vista buscar-talleres) — misma sección que Backend/static/css/estilos.css */
 .busqueda-contenedor {
     position: relative;
     margin-bottom: 1rem;
 }
 
-.busqueda-contenedor input {
-    padding-left: 2.75rem;
+.contenido-buscar .cabecera-buscar {
+    margin-bottom: 1rem;
 }
 
-.busqueda-contenedor .icono-lupa {
+.contenido-buscar .cabecera-buscar-sub {
+    margin-top: 0.35rem;
+    max-width: 42rem;
+}
+
+.busqueda-fila {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 0.75rem;
+    margin-bottom: 0.35rem;
+}
+
+.busqueda-campo {
+    position: relative;
+    flex: 1;
+    min-width: min(100%, 220px);
+}
+
+.busqueda-campo .input-buscar-ui,
+.busqueda-campo input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.65rem 0.85rem 0.65rem 2.65rem;
+    margin-bottom: 0;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: 1rem;
+}
+
+.busqueda-campo .icono-lupa {
     position: absolute;
-    left: 1rem;
+    left: 0.85rem;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.busqueda-fila .boton-buscar-inline {
+    align-self: center;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+}
+
+.estado-busqueda-linea {
+    min-height: 1.35rem;
+    margin-bottom: 0.85rem;
+}
+
+.layout-mapa-resultados {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+@media (min-width: 900px) {
+    .layout-mapa-resultados {
+        grid-template-columns: 1.1fr 0.9fr;
+        align-items: stretch;
+    }
+}
+
+.area-mapa-compacta .mapa-real {
+    height: 300px;
+    min-height: 260px;
+}
+
+.panel-resultados-osm {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: min(55vh, 420px);
+}
+
+.panel-resultados-osm-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.65rem 0.85rem;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.panel-resultados-titulo {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.boton-ajuste-mapa {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    cursor: pointer;
+}
+
+.boton-ajuste-mapa:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.lista-resultados-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0.65rem 0.75rem 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    flex: 1;
+    min-height: 0;
+}
+
+.pagina-buscar-talleres .tarjeta-taller {
+    margin-bottom: 0;
+    padding: 0.75rem 0.85rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pagina-buscar-talleres .tarjeta-taller:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+}
+
+.pagina-buscar-talleres .tarjeta-taller .nombre-taller {
+    margin: 0 0 0.25rem;
+    font-size: 0.98rem;
+}
+
+.pagina-buscar-talleres .tarjeta-taller .direccion-taller {
+    margin: 0 0 0.35rem;
+    font-size: 0.85rem;
+    line-height: 1.35;
+}
+
+.pagina-buscar-talleres .chip-tipo-taller {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.pagina-buscar-talleres .acciones-tarjeta-taller {
+    margin-top: 0.35rem;
+}
+
+.pagina-buscar-talleres .btn-centrar-mapa {
+    font-size: 0.82rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    border: none;
+    background: var(--primary);
+    color: #fff;
+    cursor: pointer;
+    width: 100%;
+}
+
+.pagina-buscar-talleres .btn-centrar-mapa:hover {
+    filter: brightness(1.05);
+}
+
+.bloque-talleres-bd {
+    margin-top: 1.25rem;
+    padding: 1rem 1.1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.bloque-talleres-bd .subtitulo-seccion {
+    margin: 0 0 0.25rem;
+    font-size: 1.05rem;
+}
+
+.bloque-talleres-bd .subtitulo-seccion-desc {
+    margin: 0 0 0.75rem;
+    font-size: 0.88rem;
+}
+
+.lista-bd-talleres {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.enlace-taller-bd {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--text);
+    font-size: 0.92rem;
+}
+
+.enlace-taller-bd:hover {
+    border-color: var(--primary);
+    background: rgba(37, 99, 235, 0.04);
+}
+
+.enlace-taller-bd-nombre {
+    font-weight: 600;
+}
+
+.enlace-taller-bd-meta {
+    font-size: 0.8rem;
+    white-space: nowrap;
 }

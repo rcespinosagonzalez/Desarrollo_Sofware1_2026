@@ -1,4 +1,5 @@
-// Layout por rol: sidebar y protección de vistas
+// Sidebar: lee el rol guardado en sessionStorage (lo pone script.js al hacer login).
+// admin = dueño de talleres; user = cliente que busca y pide citas.
 (function () {
     var role = sessionStorage.getItem('role');
     var body = document.body;
@@ -14,16 +15,18 @@
         return;
     }
 
+    // Menú ADMIN: gestionar talleres propios, citas y opiniones
     var menuAdmin = [
-        { url: '/registrar-taller', texto: 'Registrar taller', vista: 'registrar-taller', icono: 'tool' },
+        { url: '/mi-taller', texto: 'Mis talleres', vista: 'mi-taller', icono: 'shop' },
+        { url: '/registrar-taller', texto: 'Nuevo taller', vista: 'registrar-taller', icono: 'tool' },
         { url: '/citas-pendientes', texto: 'Citas pendientes', vista: 'citas-pendientes', icono: 'calendar' },
-        { url: '/valoraciones', texto: 'Valoraciones', vista: 'valoraciones', icono: 'star' },
-        { url: '/mi-taller', texto: 'Mi taller', vista: 'mi-taller', icono: 'shop' }
+        { url: '/valoraciones', texto: 'Valoraciones', vista: 'valoraciones', icono: 'star' }
     ];
+    // Menú USER: buscar, ver un taller (sin id = muestra el primero en el servidor) y citas
     var menuUser = [
         { url: '/buscar-talleres', texto: 'Buscar talleres', vista: 'buscar-talleres', icono: 'search' },
-        { url: '/detalle-taller?id=1', texto: 'Detalle del taller', vista: 'detalle-taller', icono: 'pin' },
-        { url: '/solicitar-cita?tallerId=1', texto: 'Solicitar cita', vista: 'solicitar-cita', icono: 'edit' },
+        { url: '/detalle-taller', texto: 'Detalle del taller', vista: 'detalle-taller', icono: 'pin' },
+        { url: '/solicitar-cita', texto: 'Solicitar cita', vista: 'solicitar-cita', icono: 'edit' },
         { url: '/historial-busquedas', texto: 'Historial de búsquedas', vista: 'historial-busquedas', icono: 'clock' },
         { url: '/calificar-taller', texto: 'Calificar taller', vista: 'calificar-taller', icono: 'thumb' }
     ];

@@ -19,7 +19,7 @@
                 <strong>Fecha:</strong> <span th:text="${c.fecha}">—</span>
                 · <strong>Hora:</strong> <span th:text="${c.hora}">—</span>
             </p>
-            <p><a th:href="@{/detalle-taller(id=1)}" class="boton-principal">Ver taller</a></p>
+            <p><a th:if="${c.tallerId != null}" th:href="@{/detalle-taller(id=${c.tallerId})}" class="boton-principal">Ver taller</a></p>
         </div>
         <p th:if="${#lists.isEmpty(citas)}" class="texto-muted">No hay citas pendientes.</p>
         <a th:href="@{/citas-pendientes}" class="boton-principal">Actualizar lista</a>

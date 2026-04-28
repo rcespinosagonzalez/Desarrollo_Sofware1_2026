@@ -10,7 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * Pantallas Thymeleaf. El rol admin/user lo marca el JS en el navegador (sessionStorage).
+ */
 @Controller
 public class VistaController {
 
@@ -25,34 +29,48 @@ public class VistaController {
         return "index";
     }
 
+    /** Usuario: mapa + lista de talleres que vienen de la BD (para elegir cuál ver). */
     @GetMapping("/buscar-talleres")
-    public String buscarTalleres() {
+    public String buscarTalleres(Model model) {
+        model.addAttribute("talleresBd", tallerService.listarTodos());
         return "buscar-talleres";
     }
 
+    /** Admin: todos los talleres = “clientes” registrados; muestra correo del dueño en BD. */
     @GetMapping("/mi-taller")
     public String miTaller(Model model) {
-        Taller taller = tallerService.obtenerPrincipal();
-        model.addAttribute("taller", taller);
-        model.addAttribute("estrellasLlenas", estrellasEnteras(taller));
+        model.addAttribute("talleres", tallerService.listarTodos());
         return "mi-taller";
     }
 
+    /**
+     * Sin ?id → formulario vacío (alta). Con ?id=3 → edición de ese taller.
+     * Importante: en alta NO se envía input hidden id, si no el servidor cree que es edición.
+     */
     @GetMapping("/registrar-taller")
-    public String registrarTallerForm(Model model) {
-        Taller taller = tallerService.obtenerPrincipal();
-        if (taller == null) {
-            taller = new Taller();
+    public String registrarTallerForm(@RequestParam(name = "id", required = false) Long id, Model model) {
+        Taller taller;
+        if (id != null) {
+            Taller existente = tallerService.obtenerPorId(id);
+            taller = existente != null ? copiarParaFormulario(existente) : new Taller();
         } else {
-            taller = copiarParaFormulario(taller);
+            taller = new Taller();
         }
         model.addAttribute("taller", taller);
         return "registrar-taller";
     }
 
     @PostMapping("/registrar-taller")
-    public String registrarTallerGuardar(@ModelAttribute Taller taller) {
-        tallerService.guardar(taller);
+    public String registrarTallerGuardar(@ModelAttribute Taller taller, RedirectAttributes ra) {
+        try {
+            tallerService.guardar(taller);
+        } catch (IllegalArgumentException ex) {
+            ra.addFlashAttribute("msgError", ex.getMessage());
+            if (taller.getId() != null) {
+                return "redirect:/registrar-taller?id=" + taller.getId();
+            }
+            return "redirect:/registrar-taller";
+        }
         return "redirect:/mi-taller";
     }
 
@@ -75,6 +93,7 @@ public class VistaController {
             taller = tallerService.obtenerPrincipal();
         }
         model.addAttribute("taller", taller);
+        model.addAttribute("estrellasLlenas", estrellasEnteras(taller));
         return "detalle-taller";
     }
 
@@ -106,6 +125,7 @@ public class VistaController {
             @RequestParam(name = "tallerId", required = false) Long tallerId,
             @RequestParam(name = "cliente", defaultValue = "Cliente web") String cliente) {
         Cita cita = new Cita();
+        cita.setTallerId(tallerId);
         cita.setCliente(cliente);
         cita.setDetalle(motivo);
         cita.setFecha(fecha);

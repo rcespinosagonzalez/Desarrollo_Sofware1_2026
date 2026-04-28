@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar taller</title>
+    <title th:text="${taller.id != null ? 'Editar taller' : 'Nuevo taller'}">Registrar taller</title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body class="layout-web" data-vista="registrar-taller" data-role="admin">
@@ -11,16 +11,33 @@
         <h2 id="titulo-rol">Menú Administrador</h2>
     </aside>
     <main class="contenido-principal">
-        <h1>Registrar taller</h1>
+        <h1 th:text="${taller.id != null ? 'Editar taller' : 'Registrar nuevo taller'}">Registrar taller</h1>
+        <p class="texto-muted" style="color:#b00;" th:if="${msgError}" th:text="${msgError}"></p>
+        <p class="texto-muted" th:if="${taller.id == null}">
+            Taller nuevo: no se envía id en el formulario (así la BD inserta otra fila y no pisa la #1).
+        </p>
+        <p class="texto-muted" th:if="${taller.id == null}">
+            Datos del <strong>cliente dueño</strong> del taller (se crea un usuario en la tabla <code>usuario</code>):
+        </p>
+        <p class="texto-muted" th:if="${taller.id != null}">
+            Editando taller #<span th:text="${taller.id}">0</span> (solo cambia datos del taller, no la cuenta del dueño aquí).
+        </p>
         <form th:action="@{/registrar-taller}" th:object="${taller}" method="post">
-            <input type="hidden" th:field="*{id}">
-            <input type="text" th:field="*{nombre}" placeholder="Nombre del taller (ej. Taller Mecánico El Rápido)" required>
+            <!-- SOLO en edición mandamos el id; si lo mandamos vacío en un alta, a veces llega 0 y rompe la lógica -->
+            <input type="hidden" th:if="${taller.id != null}" th:field="*{id}">
+            <input type="text" th:field="*{nombre}" placeholder="Nombre del taller" required>
             <input type="text" th:field="*{direccion}" placeholder="Dirección" required>
-            <input type="text" th:field="*{telefono}" placeholder="Teléfono o contacto" required>
+            <input type="text" th:field="*{telefono}" placeholder="Teléfono" required>
             <input type="text" th:field="*{horario}" placeholder="Horario (ej. Lun-Sáb 8:00-18:00)">
-            <input type="text" th:field="*{servicios}" placeholder="Servicios (ej. Mecánica general · Frenos)">
-            <textarea th:field="*{descripcion}" placeholder="Descripción del taller y servicios que ofrece"></textarea>
+            <input type="text" th:field="*{servicios}" placeholder="Servicios">
+            <textarea th:field="*{descripcion}" placeholder="Descripción"></textarea>
+            <div th:if="${taller.id == null}">
+                <input type="text" th:field="*{nombreCliente}" placeholder="Nombre del dueño / cliente" required>
+                <input type="email" th:field="*{emailCliente}" placeholder="Correo del dueño (login futuro)" required>
+                <input type="password" th:field="*{claveCliente}" placeholder="Contraseña del dueño" required>
+            </div>
             <button type="submit" class="boton-principal">Guardar</button>
+            <a th:href="@{/mi-taller}" class="boton-principal" style="margin-left: 0.5rem;">Volver al listado</a>
         </form>
     </main>
     <script th:src="@{/js/app.js}"></script>

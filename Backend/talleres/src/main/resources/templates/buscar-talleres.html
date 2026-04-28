@@ -12,25 +12,56 @@
         crossorigin=""
     >
 </head>
-<body class="layout-web" data-vista="buscar-talleres" data-role="user">
+<body class="layout-web pagina-buscar-talleres" data-vista="buscar-talleres" data-role="user">
     <aside class="sidebar-app" id="sidebar-app">
         <h2 id="titulo-rol">Menú Usuario</h2>
     </aside>
-    <main class="contenido-principal">
-        <h1>Buscar talleres</h1>
-        <div class="busqueda-contenedor">
-            <span class="icono-lupa">🔍</span>
-            <input type="text" id="input-busqueda-lugar" placeholder="Cartagena, barrio o direccion">
-            <button type="button" id="btn-buscar-lugar" class="boton-principal">Buscar</button>
+    <main class="contenido-principal contenido-buscar">
+        <header class="cabecera-buscar">
+            <h1>Buscar talleres</h1>
+            <p class="texto-muted cabecera-buscar-sub">Escribe una ciudad o barrio y revisa los resultados en el mapa y en la lista.</p>
+        </header>
+
+        <div class="busqueda-fila">
+            <div class="busqueda-campo">
+                <span class="icono-lupa" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="11" cy="11" r="7"/>
+                        <path d="M21 21l-4.3-4.3"/>
+                    </svg>
+                </span>
+                <input type="text" id="input-busqueda-lugar" class="input-buscar-ui" placeholder="Ej. Cartagena, Medellín…" autocomplete="off">
+            </div>
+            <button type="button" id="btn-buscar-lugar" class="boton-principal boton-buscar-inline">Buscar</button>
         </div>
-        <p class="texto-muted" id="estado-busqueda"></p>
-        <div class="area-mapa">
-            <div id="mapa-talleres" class="mapa-real" aria-label="Mapa de talleres"></div>
+        <p class="texto-muted estado-busqueda-linea" id="estado-busqueda"></p>
+
+        <div class="layout-mapa-resultados">
+            <div class="area-mapa area-mapa-compacta">
+                <div id="mapa-talleres" class="mapa-real" aria-label="Mapa de talleres"></div>
+            </div>
+            <aside class="panel-resultados-osm">
+                <div class="panel-resultados-osm-cabecera">
+                    <h2 class="panel-resultados-titulo">Resultados en la zona</h2>
+                    <button type="button" id="btn-ver-en-mapa" class="boton-ajuste-mapa" title="Ajustar mapa a todos los puntos">Ajustar mapa</button>
+                </div>
+                <section id="lista-talleres" class="lista-resultados-scroll" aria-live="polite"></section>
+            </aside>
         </div>
-        <section id="lista-talleres"></section>
-        <p class="texto-muted" style="margin-top: 1rem;">Taller registrado en la app (detalle fijo):</p>
-        <p><a th:href="@{/detalle-taller(id=1)}" class="boton-principal">Ver taller de ejemplo (registrado)</a></p>
-        <button type="button" id="btn-ver-en-mapa" class="boton-principal">Ver resultados en mapa</button>
+
+        <section class="bloque-talleres-bd">
+            <h2 class="subtitulo-seccion">Talleres en la aplicación (tu base de datos)</h2>
+            <p class="texto-muted subtitulo-seccion-desc">Estos sí tienen ficha y cita en la app.</p>
+            <ul class="lista-bd-talleres" th:if="${!#lists.isEmpty(talleresBd)}">
+                <li th:each="tb : ${talleresBd}">
+                    <a th:href="@{/detalle-taller(id=${tb.id})}" class="enlace-taller-bd">
+                        <span class="enlace-taller-bd-nombre" th:text="${tb.nombre}">Taller</span>
+                        <span class="enlace-taller-bd-meta texto-muted" th:text="${'Id ' + tb.id}">Id</span>
+                    </a>
+                </li>
+            </ul>
+            <p th:if="${#lists.isEmpty(talleresBd)}" class="texto-muted">Aún no hay talleres en la BD.</p>
+        </section>
     </main>
     <script th:src="@{/js/app.js}"></script>
     <script

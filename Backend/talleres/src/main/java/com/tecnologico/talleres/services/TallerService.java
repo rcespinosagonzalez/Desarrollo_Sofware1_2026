@@ -12,6 +12,9 @@ public interface TallerService {
 
     List<Taller> listarTodos();
 
+    /** Talleres cuyo dueño es el usuario admin (el id viene de application.properties). */
+    List<Taller> listarTalleresDelPropietario(long propietarioUsuarioId);
+
     Taller obtenerPorId(Long id);
 
     Taller obtenerPrincipal();

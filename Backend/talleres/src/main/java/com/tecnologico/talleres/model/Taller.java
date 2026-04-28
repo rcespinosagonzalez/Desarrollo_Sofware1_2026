@@ -12,6 +12,15 @@ public class Taller {
     private double calificacionPromedio;
     private int numValoraciones;
 
+    /** Solo formulario: correo/clave del dueño del taller (nuevo usuario en tabla usuario). */
+    private String emailCliente;
+    private String claveCliente;
+    private String nombreCliente;
+
+    /** Solo lectura en listados: dueño real del taller en la BD. */
+    private String emailPropietario;
+    private String nombrePropietario;
+
     public Long getId() {
         return id;
     }
@@ -82,5 +91,45 @@ public class Taller {
 
     public void setNumValoraciones(int numValoraciones) {
         this.numValoraciones = numValoraciones;
+    }
+
+    public String getEmailCliente() {
+        return emailCliente;
+    }
+
+    public void setEmailCliente(String emailCliente) {
+        this.emailCliente = emailCliente;
+    }
+
+    public String getClaveCliente() {
+        return claveCliente;
+    }
+
+    public void setClaveCliente(String claveCliente) {
+        this.claveCliente = claveCliente;
+    }
+
+    public String getNombreCliente() {
+        return nombreCliente;
+    }
+
+    public void setNombreCliente(String nombreCliente) {
+        this.nombreCliente = nombreCliente;
+    }
+
+    public String getEmailPropietario() {
+        return emailPropietario;
+    }
+
+    public void setEmailPropietario(String emailPropietario) {
+        this.emailPropietario = emailPropietario;
+    }
+
+    public String getNombrePropietario() {
+        return nombrePropietario;
+    }
+
+    public void setNombrePropietario(String nombrePropietario) {
+        this.nombrePropietario = nombrePropietario;
     }
 }

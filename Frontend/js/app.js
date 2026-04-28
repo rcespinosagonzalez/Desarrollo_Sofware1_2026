@@ -1,4 +1,4 @@
-// Layout por rol: sidebar y protección de vistas
+// Sidebar: rol en sessionStorage (login en script.js). admin = talleres; user = cliente.
 (function () {
     var role = sessionStorage.getItem('role');
     var body = document.body;
@@ -15,10 +15,10 @@
     }
 
     var menuAdmin = [
-        { url: 'registrar-taller.html', texto: 'Registrar taller', vista: 'registrar-taller', icono: 'tool' },
+        { url: 'mi-taller.html', texto: 'Mis talleres', vista: 'mi-taller', icono: 'shop' },
+        { url: 'registrar-taller.html', texto: 'Nuevo taller', vista: 'registrar-taller', icono: 'tool' },
         { url: 'citas-pendientes.html', texto: 'Citas pendientes', vista: 'citas-pendientes', icono: 'calendar' },
-        { url: 'valoraciones.html', texto: 'Valoraciones', vista: 'valoraciones', icono: 'star' },
-        { url: 'mi-taller.html', texto: 'Mi taller', vista: 'mi-taller', icono: 'shop' }
+        { url: 'valoraciones.html', texto: 'Valoraciones', vista: 'valoraciones', icono: 'star' }
     ];
     var menuUser = [
         { url: 'buscar-talleres.html', texto: 'Buscar talleres', vista: 'buscar-talleres', icono: 'search' },
