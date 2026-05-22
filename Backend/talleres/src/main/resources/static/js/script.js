@@ -1,9 +1,9 @@
-// Login contra la tabla usuario en MySQL (POST /api/auth/login).
-// admin -> Mis talleres; cualquier otro rol del menú -> Buscar talleres.
+// Formulario de index: login con POST /api/auth/login y redireccion segun rol
 (function () {
     var form = document.getElementById('formularioInicioSesion');
     if (!form) return;
 
+    // Muestra mensaje bajo el formulario de login
     function mostrarError(texto) {
         var errorEl = document.getElementById('errorLogin');
         if (!errorEl) {
@@ -42,8 +42,18 @@
                     try {
                         sessionStorage.setItem('role', data.rol);
                         sessionStorage.setItem('nombre', data.nombre || correo.trim());
+                        if (data.usuarioId != null) {
+                            sessionStorage.setItem('usuarioId', String(data.usuarioId));
+                        }
                     } catch (err) {}
-                    window.location.href = data.rol === 'admin' ? '/mi-taller' : '/buscar-talleres';
+                    // admin -> mi-taller; taller -> panel; user -> mapa
+                    var destino = '/buscar-talleres';
+                    if (data.rol === 'admin') {
+                        destino = '/mi-taller';
+                    } else if (data.rol === 'taller') {
+                        destino = '/panel-taller';
+                    }
+                    window.location.href = destino;
                 } else {
                     mostrarError(data.mensaje);
                 }

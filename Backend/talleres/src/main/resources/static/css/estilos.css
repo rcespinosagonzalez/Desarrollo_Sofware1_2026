@@ -1,4 +1,4 @@
-/* Vistas del Buscador de Talleres - misma gama de colores del login */
+/* Asistencia en carretera — vistas web (misma gama de colores del login) */
 /* Login: #2563eb, #3b82f6, #1d4ed8, #f5f7fa, #c3cfe2, #1e293b, #64748b, #e2e8f0, #f8fafc */
 :root {
     --primary: #2563eb;
@@ -810,4 +810,1706 @@ label {
 .enlace-taller-bd-meta {
     font-size: 0.8rem;
     white-space: nowrap;
+}
+
+/* ========== Recuperado: cliente una sola vista + mapa Leaflet estable ========== */
+.texto-secundario {
+    color: var(--text-muted);
+}
+
+:root {
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --texto-apagado: var(--text-muted);
+    --shadow-lg: 0 18px 40px rgba(15, 23, 42, 0.1);
+    --accent-soft: rgba(37, 99, 235, 0.08);
+}
+
+.marco-pagina.cliente-barra-superior {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.barra-superior-cliente {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.25rem;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.barra-marca {
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.02em;
+}
+
+.barra-superior-acciones a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.barra-superior-acciones a:hover {
+    text-decoration: underline;
+}
+
+.contenido-busqueda-vista {
+    flex: 1;
+}
+
+/* Mapa: no overflow:hidden en el contenedor con Leaflet */
+.zona-mapa {
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    max-width: 100%;
+}
+
+.zona-mapa:has(.img-mapa) {
+    overflow: hidden;
+}
+
+.zona-mapa:has(.mapa-interactivo) {
+    overflow: visible;
+}
+
+.rejilla-mapa-resultados {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    align-items: stretch;
+}
+
+.rejilla-mapa-resultados > .zona-mapa.zona-mapa-compacta {
+    min-height: min(400px, 54vh);
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 900px) {
+    .rejilla-mapa-resultados {
+        grid-template-columns: 1.1fr 0.9fr;
+    }
+}
+
+.zona-mapa-compacta .mapa-interactivo {
+    flex: 1;
+    width: 100%;
+    min-height: 220px;
+    height: min(320px, 50vh);
+}
+
+#mapa-talleres.mapa-interactivo,
+#mapa-talleres.leaflet-container {
+    width: 100% !important;
+    min-height: 240px !important;
+    height: min(400px, 54vh) !important;
+}
+
+.cuadro-resultados-mapa {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: min(55vh, 420px);
+}
+
+.cuadro-resultados-mapa-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.65rem 0.85rem;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.cuadro-resultados-titulo {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.boton-ajustar-mapa {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg, #f8fafc);
+    color: var(--text);
+    cursor: pointer;
+}
+
+.lista-resultados-desplazable {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0.65rem 0.75rem 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    flex: 1;
+    min-height: 0;
+}
+
+.entrada-texto-busqueda {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.65rem 0.85rem 0.65rem 2.65rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: 1rem;
+}
+
+.linea-estado-busqueda {
+    min-height: 1.35rem;
+    margin-bottom: 0.85rem;
+}
+
+.boton-buscar-en-linea {
+    white-space: nowrap;
+}
+
+.seccion-mapa-ancla {
+    margin-bottom: 1rem;
+}
+
+.secciones-cliente {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+}
+
+@media (min-width: 960px) {
+    .secciones-cliente-dos-columnas {
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+    }
+}
+
+.historial-busquedas-scroll {
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 0.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.historial-busquedas-scroll .tarjeta-historial-busqueda {
+    margin-bottom: 0;
+}
+
+.secciones-cliente-formularios .formulario-seccion-cliente {
+    max-width: 100%;
+}
+
+@media (min-width: 960px) {
+    .vista-buscar-talleres .secciones-cliente-formularios.secciones-cliente-dos-columnas {
+        align-items: stretch;
+    }
+}
+
+.vista-buscar-talleres .secciones-cliente-formularios > .seccion-cliente {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.vista-buscar-talleres .secciones-cliente-formularios .formulario-seccion-cliente {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.vista-buscar-talleres .secciones-cliente-formularios .formulario-seccion-cliente > .boton-principal {
+    margin-top: auto;
+}
+
+.vista-buscar-talleres .secciones-cliente-formularios .formulario-seccion-cliente textarea {
+    flex: 1 1 auto;
+    min-height: 6.5rem;
+    resize: vertical;
+}
+
+.seccion-cliente:not(.bloque-talleres-bd) {
+    margin-top: 1.25rem;
+    padding: 1rem 1.1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.bloque-talleres-bd.seccion-cliente {
+    margin-top: 1.25rem;
+    padding: 1rem 1.1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.formulario-seccion-cliente {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    max-width: 540px;
+}
+
+.formulario-seccion-cliente label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.formulario-seccion-cliente input,
+.formulario-seccion-cliente select,
+.formulario-seccion-cliente textarea {
+    padding: 0.5rem 0.65rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-size: 1rem;
+}
+
+.subtitulo-formulario {
+    font-size: 1rem;
+    margin: 0.25rem 0 0.65rem;
+    font-weight: 600;
+}
+
+.subtitulo-seccion {
+    margin: 0 0 0.35rem;
+    font-size: 1.05rem;
+}
+
+.subtitulo-seccion-desc {
+    margin: 0 0 0.85rem;
+    font-size: 0.88rem;
+}
+
+.lista-talleres-bd {
+    list-style: none;
+}
+
+.fila-taller-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.fila-taller-item .enlace-taller-item {
+    flex: 1;
+    min-width: min(100%, 220px);
+    display: flex;
+    flex-direction: column;
+    padding: 0.55rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--text);
+}
+
+.boton-cita-pequeno {
+    align-self: center;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.85rem;
+}
+
+.tarjeta-historial-busqueda,
+.tarjeta-cita {
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.vista-buscar-talleres .tarjeta-resultado-taller {
+    padding: 0.75rem 0.85rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+    cursor: pointer;
+}
+
+.titulo-resultado-taller {
+    margin: 0 0 0.25rem;
+    font-size: 0.98rem;
+}
+
+.texto-direccion-resultado {
+    margin: 0 0 0.35rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.etiqueta-tipo-resultado {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--primary);
+}
+
+.boton-centrar-mapa {
+    font-size: 0.82rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    cursor: pointer;
+}
+
+.pagina-ancho-completo.cliente-barra-superior {
+    width: 100%;
+    max-width: 100%;
+}
+
+.pagina-ancho-completo .barra-superior-cliente.contenedor-bloque-externo {
+    padding-left: clamp(1rem, 3vw, 2rem);
+    padding-right: clamp(1rem, 3vw, 2rem);
+}
+
+.cliente-barra-superior .contenido-principal,
+.pagina-ancho-completo .contenido-principal {
+    max-width: none;
+    margin: 0;
+    width: 100%;
+    padding: clamp(1rem, 2.5vw, 1.75rem) clamp(1rem, 3vw, 2.5rem) 2.5rem;
+    box-sizing: border-box;
+}
+
+.contenedor-bloque {
+    width: 100%;
+    margin-bottom: 1.25rem;
+    padding: clamp(1rem, 2vw, 1.35rem) clamp(1rem, 2.5vw, 1.5rem);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    box-sizing: border-box;
+}
+
+.contenedor-bloque.contenedor-cabecera {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.92) 100%);
+    box-shadow: var(--shadow-lg);
+}
+
+.contenedor-mapa {
+    padding: clamp(1rem, 2vw, 1.25rem);
+}
+
+.contenedor-busqueda-mapa {
+    margin-bottom: 0.85rem;
+}
+
+.vista-buscar-talleres .rejilla-mapa-resultados {
+    min-height: min(480px, 65vh);
+}
+
+@media (min-width: 900px) {
+    .vista-buscar-talleres .rejilla-mapa-resultados {
+        grid-template-columns: 1.35fr 0.85fr;
+        min-height: min(540px, 70vh);
+    }
+
+    .vista-buscar-talleres .cuadro-resultados-mapa.contenedor-mapa-lista {
+        max-height: min(70vh, 540px);
+    }
+
+    .vista-buscar-talleres #mapa-talleres.mapa-interactivo,
+    .vista-buscar-talleres #mapa-talleres.leaflet-container {
+        height: min(540px, 70vh) !important;
+        min-height: 300px !important;
+    }
+}
+
+.rejilla-talleres-bd {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+@media (min-width: 640px) {
+    .rejilla-talleres-bd {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1100px) {
+    .rejilla-talleres-bd {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.contenedor-cliente-dos-columnas,
+.contenedor-cliente-formularios {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+.contenedor-sub-bloque.seccion-cliente {
+    margin-top: 0;
+}
+
+.rejilla-tarjetas-citas {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+
+@media (min-width: 700px) {
+    .rejilla-tarjetas-citas {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1100px) {
+    .rejilla-tarjetas-citas {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.tarjeta-resumen-valoracion {
+    margin-bottom: 1rem;
+}
+
+.aviso-exito {
+    background: #ecfdf5;
+    border: 1px solid #6ee7b7;
+    color: #047857;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.aviso-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.texto-ayuda-demo {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0.75rem 0 0;
+    line-height: 1.45;
+}
+
+.vista-buscar-talleres .etiqueta-rubro-cabecera {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--primary);
+    background: var(--accent-soft);
+    padding: 0.28rem 0.65rem;
+    border-radius: 999px;
+    margin-bottom: 0.55rem;
+}
+
+.vista-buscar-talleres .cabecera-buscar {
+    margin-bottom: 1.5rem;
+    padding: 1.35rem 1.4rem 1.5rem;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.88) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow-lg);
+}
+
+.vista-buscar-talleres .cabecera-busqueda-sub {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+    max-width: 40rem;
+}
+
+.vista-buscar-talleres .contenedor-mapa.seccion-mapa-ancla {
+    margin-bottom: 1.25rem;
+}
+
+.vista-buscar-talleres .zona-mapa-compacta .mapa-interactivo,
+.vista-buscar-talleres #mapa-talleres.leaflet-container {
+    flex: 1;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 8px 24px rgba(15, 23, 42, 0.08);
+    border: 1px solid var(--border);
+}
+
+.vista-buscar-talleres #seccion-calificar .tarjeta {
+    background: linear-gradient(135deg, #fefce8 0%, #fff 55%);
+    border-color: #fde68a;
+}
+
+.boton-secundario {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    text-decoration: none;
+    text-align: center;
+    font-weight: 600;
+}
+
+.boton-secundario:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.vista-buscar-talleres .fila-botones-resultado {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+}
+
+.vista-buscar-talleres .boton-enlace-ficha {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8rem;
+    text-decoration: none;
+}
+
+.vista-buscar-talleres .linea-resumen-taller {
+    font-size: 0.82rem;
+    margin: 0.25rem 0 0;
+}
+
+.vista-detalle-taller .ficha-taller-detalle {
+    padding: 1.1rem 1.2rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--card);
+    box-shadow: var(--shadow);
+}
+
+.vista-detalle-taller .ficha-taller-detalle p {
+    margin-bottom: 0.55rem;
+}
+
+.vista-detalle-taller .lista-valoraciones-taller {
+    margin-top: 1.25rem;
+}
+
+.vista-detalle-taller .tarjeta-valoracion-item {
+    margin-bottom: 0.75rem;
+}
+
+.vista-detalle-taller .fila-acciones-ficha {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 1rem;
+}
+
+.vista-detalle-taller .barra-marca {
+    text-decoration: none;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* ========== Panel admin (mi-taller) — diseño sobrio ========== */
+.vista-admin-gestion.marco-pagina {
+    width: 100%;
+    max-width: 100%;
+    background: #f1f5f9;
+}
+
+.vista-admin-gestion .panel-admin {
+    width: 100%;
+}
+
+.vista-admin-gestion .barra-admin-gestion {
+    flex-wrap: wrap;
+    gap: 0.65rem 1rem;
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    padding: 0.75rem clamp(1rem, 3vw, 2rem);
+}
+
+.vista-admin-gestion .barra-marca,
+.vista-admin-gestion .enlace-marca-admin {
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+}
+
+.vista-admin-gestion .barra-nav-admin {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    flex: 1;
+    justify-content: center;
+}
+
+.vista-admin-gestion .enlace-nav-admin {
+    color: #475569;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+}
+
+.vista-admin-gestion .enlace-nav-admin:hover,
+.vista-admin-gestion .enlace-nav-admin.activo {
+    color: #0f172a;
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+}
+
+.vista-admin-gestion .enlace-nav-destacado {
+    background: #0f172a;
+    border-color: #0f172a;
+    color: #f8fafc;
+}
+
+.vista-admin-gestion .enlace-nav-destacado:hover {
+    background: #334155;
+    border-color: #334155;
+    color: #fff;
+}
+
+.vista-admin-gestion .barra-usuario {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin-right: 0.5rem;
+}
+
+.vista-admin-gestion .barra-superior-acciones a {
+    color: #475569;
+    text-decoration: none;
+    padding: 0.4rem 0.85rem;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    font-size: 0.875rem;
+}
+
+.vista-admin-gestion .barra-superior-acciones a:hover {
+    background: #f8fafc;
+    color: #0f172a;
+}
+
+.vista-admin-gestion .contenido-admin-gestion {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 1.25rem 1.5rem 2rem;
+    box-sizing: border-box;
+}
+
+.vista-admin-gestion .admin-aviso {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.vista-admin-gestion .admin-cabecera-pagina {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.vista-admin-gestion .admin-cabecera-pagina h1 {
+    margin: 0 0 0.35rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.vista-admin-gestion .admin-cabecera-descripcion {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.vista-admin-gestion .admin-estadisticas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.vista-admin-gestion .admin-estadistica {
+    min-width: 5.5rem;
+    padding: 0.65rem 1rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.vista-admin-gestion .admin-estadistica-valor {
+    display: block;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+.vista-admin-gestion .admin-estadistica-etiqueta {
+    display: block;
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 0.15rem;
+}
+
+.vista-admin-gestion .seccion-admin-ancla {
+    scroll-margin-top: 4.5rem;
+}
+
+.vista-admin-gestion .panel-admin {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    overflow: hidden;
+}
+
+.vista-admin-gestion .panel-admin-cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #f1f5f9;
+    background: #fafbfc;
+}
+
+.vista-admin-gestion .titulo-panel-seccion {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.vista-admin-gestion .panel-admin-subtitulo {
+    margin: 0.25rem 0 0;
+    font-size: 0.82rem;
+    color: #64748b;
+}
+
+.vista-admin-gestion .panel-admin-vacio,
+.vista-admin-gestion .panel-admin-sin-coincidencias {
+    padding: 1.25rem;
+    margin: 0;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.vista-admin-gestion .panel-admin-sin-coincidencias {
+    background: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+}
+
+.vista-admin-gestion .panel-admin-herramientas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem 1.25rem;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid #f1f5f9;
+    background: #fff;
+}
+
+.vista-admin-gestion .panel-admin-buscar {
+    flex: 1;
+    min-width: 200px;
+    max-width: 320px;
+}
+
+.vista-admin-gestion .panel-admin-tam-pagina {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.vista-admin-gestion .panel-admin-buscar-etiqueta {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.vista-admin-gestion .panel-admin-buscar input,
+.vista-admin-gestion .panel-admin-tam-pagina select {
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    background: #fff;
+    color: #0f172a;
+}
+
+.vista-admin-gestion .panel-admin-buscar input:focus,
+.vista-admin-gestion .panel-admin-tam-pagina select:focus {
+    outline: 2px solid #94a3b8;
+    outline-offset: 1px;
+    border-color: #94a3b8;
+}
+
+.vista-admin-gestion .panel-admin-contador {
+    margin-left: auto;
+    font-size: 0.82rem;
+    color: #64748b;
+    padding-bottom: 0.5rem;
+}
+
+.vista-admin-gestion .panel-admin-tabla-envoltorio {
+    overflow-x: auto;
+}
+
+.vista-admin-gestion .tabla-admin {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.vista-admin-gestion .tabla-admin thead {
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.vista-admin-gestion .tabla-admin th {
+    text-align: left;
+    padding: 0.65rem 1rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.vista-admin-gestion .tabla-admin td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+    vertical-align: top;
+}
+
+.vista-admin-gestion .tabla-admin tbody tr:hover {
+    background: #fafbfc;
+}
+
+.vista-admin-gestion .tabla-admin tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.vista-admin-gestion .celda-id {
+    color: #64748b;
+    width: 3rem;
+}
+
+.vista-admin-gestion .celda-titulo {
+    display: block;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.vista-admin-gestion .celda-detalle {
+    display: block;
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 0.15rem;
+}
+
+.vista-admin-gestion .celda-sin-dato {
+    color: #94a3b8;
+    font-size: 0.82rem;
+}
+
+.vista-admin-gestion .celda-comentario {
+    max-width: 280px;
+    line-height: 1.45;
+}
+
+.vista-admin-gestion .celda-nota {
+    font-weight: 600;
+}
+
+.vista-admin-gestion .celda-fecha {
+    white-space: nowrap;
+    color: #64748b;
+    font-size: 0.82rem;
+}
+
+.vista-admin-gestion .col-acciones {
+    white-space: nowrap;
+}
+
+.vista-admin-gestion .grupo-acciones-tabla {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.65rem;
+}
+
+.vista-admin-gestion .btn-admin-primario,
+.vista-admin-gestion .btn-admin-secundario {
+    display: inline-block;
+    padding: 0.45rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.vista-admin-gestion .btn-admin-primario {
+    background: #0f172a;
+    color: #f8fafc;
+    border-color: #0f172a;
+}
+
+.vista-admin-gestion .btn-admin-primario:hover {
+    background: #334155;
+    border-color: #334155;
+}
+
+.vista-admin-gestion .btn-admin-secundario {
+    background: #fff;
+    color: #334155;
+    border-color: #cbd5e1;
+}
+
+.vista-admin-gestion .btn-admin-secundario:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+}
+
+.vista-admin-gestion .btn-admin-texto {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #334155;
+    text-decoration: none;
+    padding: 0.2rem 0;
+    border-bottom: 1px solid transparent;
+}
+
+.vista-admin-gestion .btn-admin-texto:hover {
+    color: #0f172a;
+    border-bottom-color: #cbd5e1;
+}
+
+.vista-admin-gestion .paginacion-admin {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.85rem 1rem;
+    border-top: 1px solid #f1f5f9;
+    background: #fafbfc;
+}
+
+.vista-admin-gestion .paginacion-admin-btn {
+    min-width: 2.25rem;
+    padding: 0.4rem 0.65rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #fff;
+    color: #475569;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.vista-admin-gestion .paginacion-admin-btn:hover:not(:disabled) {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.vista-admin-gestion .paginacion-admin-btn.activo {
+    background: #0f172a;
+    border-color: #0f172a;
+    color: #f8fafc;
+}
+
+.vista-admin-gestion .paginacion-admin-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .vista-admin-gestion .panel-admin-contador {
+        width: 100%;
+        margin-left: 0;
+        padding-bottom: 0;
+    }
+}
+
+.vista-admin-gestion .panel-formulario-admin .panel-admin-cabecera h1 {
+    margin: 0;
+}
+
+.vista-admin-gestion .formulario-admin-cuerpo {
+    padding: 1.25rem;
+}
+
+.vista-admin-gestion .formulario-admin-titulo-bloque {
+    margin: 0 0 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.vista-admin-gestion .formulario-admin {
+    border-top: 1px solid #f1f5f9;
+}
+
+.vista-admin-gestion .rejilla-campos-formulario {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 700px) {
+    .vista-admin-gestion .rejilla-campos-formulario {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1100px) {
+    .vista-admin-gestion .panel-formulario-admin .rejilla-campos-formulario {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.vista-admin-gestion .campo-ancho-completo {
+    grid-column: 1 / -1;
+}
+
+.vista-admin-gestion .campo-formulario label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.vista-admin-gestion .campo-formulario input,
+.vista-admin-gestion .campo-formulario textarea {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    background: #fff;
+    color: #0f172a;
+}
+
+.vista-admin-gestion .campo-formulario input:focus,
+.vista-admin-gestion .campo-formulario textarea:focus {
+    outline: 2px solid #94a3b8;
+    outline-offset: 1px;
+    border-color: #94a3b8;
+}
+
+.vista-admin-gestion .bloque-seccion-formulario {
+    margin-top: 1.5rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fafbfc;
+}
+
+.vista-admin-gestion .bloque-seccion-formulario legend {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #334155;
+    padding: 0 0.35rem;
+}
+
+.vista-admin-gestion .fila-botones-formulario-admin {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    padding: 1rem 1.25rem;
+    border-top: 1px solid #f1f5f9;
+    background: #fafbfc;
+}
+
+.vista-admin-gestion .fila-botones-formulario-admin .btn-admin-primario {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.vista-admin-gestion .ayuda-formulario-admin {
+    margin: 0 0 1rem;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.vista-admin-gestion .fila-buscar-coordenadas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.vista-admin-gestion .fila-buscar-coordenadas .btn-admin-secundario {
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* ========== Panel dueño del taller ========== */
+.vista-panel-taller .cabecera-panel-taller {
+    align-items: flex-start;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.vista-panel-taller .etiqueta-panel-taller {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    margin-bottom: 0.35rem;
+}
+
+.vista-panel-taller .admin-estadisticas-panel .admin-estadistica-destacada {
+    border-color: #0f172a;
+    background: #f8fafc;
+}
+
+.vista-panel-taller .admin-estadisticas-panel .admin-estadistica-destacada .admin-estadistica-valor {
+    color: #0f172a;
+}
+
+.vista-panel-taller .panel-taller-mi-negocio .panel-admin-cabecera {
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 1rem;
+}
+
+.vista-panel-taller .cuadro-datos-taller {
+    padding: 0 1.25rem 1.35rem;
+}
+
+.vista-panel-taller .resumen-taller-cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 1.5rem;
+    padding: 1.15rem 1.2rem;
+    margin-bottom: 0;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.vista-panel-taller .resumen-taller-identidad {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: min(100%, 260px);
+}
+
+.vista-panel-taller .taller-inicial {
+    flex-shrink: 0;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 10px;
+    background: #0f172a;
+    color: #f8fafc;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 3.25rem;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.vista-panel-taller .resumen-taller-nombre {
+    margin: 0 0 0.3rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.25;
+}
+
+.vista-panel-taller .resumen-taller-meta {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+.vista-panel-taller .resumen-taller-separador {
+    margin: 0 0.35rem;
+}
+
+.vista-panel-taller .resumen-taller-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.65rem;
+}
+
+.vista-panel-taller .lista-datos-taller {
+    margin: 0;
+    padding: 0;
+}
+
+.vista-panel-taller .fila-dato-taller {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.25rem 0;
+    margin: 0;
+    padding: 0.9rem 1.2rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+@media (min-width: 640px) {
+    .vista-panel-taller .fila-dato-taller {
+        grid-template-columns: 11rem 1fr;
+        gap: 1rem;
+        align-items: baseline;
+    }
+}
+
+.vista-panel-taller .fila-dato-taller-ultima {
+    border-bottom: none;
+}
+
+.vista-panel-taller .fila-dato-taller dt {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.vista-panel-taller .fila-dato-taller dd {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #0f172a;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.vista-panel-taller .texto-alerta-dato {
+    color: #b45309;
+    font-size: 0.88rem;
+}
+
+.vista-panel-taller .panel-estado-vacio {
+    margin: 0 1.25rem 1.25rem;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+}
+
+.vista-panel-taller .panel-estado-vacio-titulo {
+    margin: 0 0 0.35rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.vista-panel-taller .panel-estado-vacio-texto {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #64748b;
+}
+
+.vista-panel-taller .panel-vacio-centrado {
+    text-align: center;
+    padding: 2rem;
+}
+
+.vista-panel-taller .tabla-panel-taller tbody tr:nth-child(even) {
+    background: #fafbfc;
+}
+
+.vista-panel-taller .etiqueta-fecha-tabla,
+.vista-panel-taller .etiqueta-hora-tabla {
+    display: inline-block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #334155;
+    background: #f1f5f9;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.vista-panel-taller .insignia-nota-tabla {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: #92400e;
+    background: #fef3c7;
+    padding: 0.25rem 0.55rem;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+.vista-panel-taller .seccion-admin-ancla {
+    scroll-margin-top: 4.75rem;
+}
+
+/* ========== Vista buscar-talleres (cliente) — diseño completo ========== */
+.vista-buscar-talleres.marco-pagina {
+    background: linear-gradient(165deg, #dce6f5 0%, #eef2f7 35%, #f8fafc 70%, #e8edf4 100%);
+}
+
+.vista-buscar-talleres .barra-superior-cliente {
+    background: linear-gradient(105deg, #0f172a 0%, #1e3a5f 55%, #1d4ed8 100%);
+    border-bottom: none;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.25);
+    padding: 1rem clamp(1rem, 3vw, 2rem);
+}
+
+.vista-buscar-talleres .barra-marca {
+    color: #f8fafc;
+    font-size: 1.15rem;
+    letter-spacing: -0.03em;
+}
+
+.vista-buscar-talleres .barra-superior-acciones a {
+    color: #bfdbfe;
+    padding: 0.4rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid rgba(191, 219, 254, 0.35);
+    text-decoration: none;
+}
+
+.vista-buscar-talleres .barra-superior-acciones a:hover {
+    background: rgba(255, 255, 255, 0.12);
+    text-decoration: none;
+}
+
+.vista-buscar-talleres .cabecera-vista-buscar h1 {
+    font-size: clamp(1.5rem, 3vw, 1.85rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.85rem;
+    color: #0f172a;
+}
+
+.vista-buscar-talleres .caja-demo-credenciales {
+    margin: 0;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+    border: 1px solid #bfdbfe;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    font-size: 0.88rem;
+    color: #334155;
+    line-height: 1.55;
+    word-break: break-word;
+}
+
+.vista-buscar-talleres .panel-mapa-principal {
+    border: 1px solid rgba(148, 163, 184, 0.45);
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+}
+
+.vista-buscar-talleres .busqueda-fila {
+    background: #f8fafc;
+    padding: 0.85rem;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    margin-bottom: 0.5rem;
+}
+
+.vista-buscar-talleres .entrada-texto-busqueda {
+    padding: 0.75rem 0.9rem 0.75rem 2.75rem;
+    border-radius: 12px;
+    border: 1px solid #cbd5e1;
+    font-size: 1rem;
+    background: #fff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.vista-buscar-talleres .entrada-texto-busqueda:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.vista-buscar-talleres .boton-buscar-en-linea {
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    box-shadow: var(--shadow-primary);
+}
+
+.vista-buscar-talleres .linea-estado-busqueda {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #475569;
+    padding-left: 0.15rem;
+}
+
+.vista-buscar-talleres .cuadro-resultados-mapa {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.vista-buscar-talleres .cuadro-resultados-mapa-cabecera {
+    background: linear-gradient(90deg, #1e3a5f 0%, #2563eb 100%);
+    border-bottom: none;
+    padding: 0.85rem 1rem;
+}
+
+.vista-buscar-talleres .cuadro-resultados-titulo {
+    color: #f8fafc;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.vista-buscar-talleres .boton-ajustar-mapa {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+}
+
+.vista-buscar-talleres .boton-ajustar-mapa:hover {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.vista-buscar-talleres .lista-resultados-desplazable {
+    padding: 0.75rem;
+    gap: 0.7rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.vista-buscar-talleres .tarjeta-resultado-taller {
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid var(--primary);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.vista-buscar-talleres .tarjeta-resultado-taller:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.14);
+    border-color: #93c5fd;
+}
+
+.vista-buscar-talleres .tarjeta-taller-cabecera {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.35rem;
+}
+
+.vista-buscar-talleres .titulo-resultado-taller {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.3;
+}
+
+.vista-buscar-talleres .insignia-valoracion {
+    flex-shrink: 0;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #b45309;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    padding: 0.2rem 0.55rem;
+    border-radius: 8px;
+    border: 1px solid #fcd34d;
+}
+
+.vista-buscar-talleres .insignia-valoracion small {
+    font-size: 0.72rem;
+    font-weight: 600;
+    opacity: 0.85;
+}
+
+.vista-buscar-talleres .insignia-sin-datos {
+    color: #94a3b8;
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+}
+
+.vista-buscar-talleres .linea-servicios-taller {
+    font-size: 0.82rem;
+    color: #475569;
+    margin: 0.25rem 0 0.4rem;
+    line-height: 1.4;
+}
+
+.vista-buscar-talleres .fila-meta-taller {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.5rem;
+}
+
+.vista-buscar-talleres .meta-taller {
+    font-size: 0.75rem;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 0.15rem 0.45rem;
+    border-radius: 6px;
+}
+
+.vista-buscar-talleres .boton-accion-tarjeta {
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.4rem 0.7rem;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #334155;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.vista-buscar-talleres .boton-centrar-mapa:hover,
+.vista-buscar-talleres .boton-accion-tarjeta:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: #eff6ff;
+}
+
+.vista-buscar-talleres .boton-cita-tarjeta {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary-dark);
+}
+
+.vista-buscar-talleres .boton-cita-tarjeta:hover {
+    background: var(--primary-dark);
+    color: #fff;
+    filter: brightness(1.05);
+}
+
+.vista-buscar-talleres .panel-seccion {
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+    background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
+    overflow: hidden;
+}
+
+.vista-buscar-talleres .titulo-panel-seccion {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #0f172a;
+    padding-bottom: 0.65rem;
+    margin-bottom: 0.85rem;
+    border-bottom: 2px solid #e2e8f0;
+    position: relative;
+}
+
+.vista-buscar-talleres .titulo-panel-seccion::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 3.5rem;
+    height: 2px;
+    background: var(--primary);
+}
+
+.vista-buscar-talleres .tarjeta-historial-busqueda {
+    background: #fff;
+    border-left: 3px solid #38bdf8;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
+}
+
+.vista-buscar-talleres .texto-busqueda-historial {
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 0.2rem;
+}
+
+.vista-buscar-talleres .tarjeta-cita {
+    background: linear-gradient(135deg, #f0fdf4 0%, #fff 70%);
+    border-color: #86efac;
+    border-left-width: 4px;
+}
+
+.vista-buscar-talleres .formulario-seccion-cliente input,
+.vista-buscar-talleres .formulario-seccion-cliente select,
+.vista-buscar-talleres .formulario-seccion-cliente textarea {
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.vista-buscar-talleres .formulario-seccion-cliente input:focus,
+.vista-buscar-talleres .formulario-seccion-cliente select:focus,
+.vista-buscar-talleres .formulario-seccion-cliente textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.vista-buscar-talleres .formulario-seccion-cliente .boton-principal {
+    border-radius: 12px;
+    padding: 0.7rem 1.25rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-primary);
+}
+
+.vista-buscar-talleres #seccion-calificar .tarjeta-resumen-valoracion {
+    border-radius: 12px;
+    padding: 1rem;
 }

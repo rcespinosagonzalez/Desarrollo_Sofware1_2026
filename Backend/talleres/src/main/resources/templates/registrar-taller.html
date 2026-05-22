@@ -1,45 +1,121 @@
 <!DOCTYPE html>
+<!-- Alta o edicion de taller; registrar-taller.js busca coordenadas en Nominatim -->
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${taller.id != null ? 'Editar taller' : 'Nuevo taller'}">Registrar taller</title>
+    <title th:text="${taller.id != null ? 'Editar taller — Asistencia en carretera' : 'Nuevo taller — Asistencia en carretera'}">Registrar taller</title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
-<body class="layout-web" data-vista="registrar-taller" data-role="admin">
-    <aside class="sidebar-app" id="sidebar-app">
-        <h2 id="titulo-rol">Menú Administrador</h2>
-    </aside>
-    <main class="contenido-principal">
-        <h1 th:text="${taller.id != null ? 'Editar taller' : 'Registrar nuevo taller'}">Registrar taller</h1>
-        <p class="texto-muted" style="color:#b00;" th:if="${msgError}" th:text="${msgError}"></p>
-        <p class="texto-muted" th:if="${taller.id == null}">
-            Taller nuevo: no se envía id en el formulario (así la BD inserta otra fila y no pisa la #1).
-        </p>
-        <p class="texto-muted" th:if="${taller.id == null}">
-            Datos del <strong>cliente dueño</strong> del taller (se crea un usuario en la tabla <code>usuario</code>):
-        </p>
-        <p class="texto-muted" th:if="${taller.id != null}">
-            Editando taller #<span th:text="${taller.id}">0</span> (solo cambia datos del taller, no la cuenta del dueño aquí).
-        </p>
-        <form th:action="@{/registrar-taller}" th:object="${taller}" method="post">
-            <!-- SOLO en edición mandamos el id; si lo mandamos vacío en un alta, a veces llega 0 y rompe la lógica -->
-            <input type="hidden" th:if="${taller.id != null}" th:field="*{id}">
-            <input type="text" th:field="*{nombre}" placeholder="Nombre del taller" required>
-            <input type="text" th:field="*{direccion}" placeholder="Dirección" required>
-            <input type="text" th:field="*{telefono}" placeholder="Teléfono" required>
-            <input type="text" th:field="*{horario}" placeholder="Horario (ej. Lun-Sáb 8:00-18:00)">
-            <input type="text" th:field="*{servicios}" placeholder="Servicios">
-            <textarea th:field="*{descripcion}" placeholder="Descripción"></textarea>
-            <div th:if="${taller.id == null}">
-                <input type="text" th:field="*{nombreCliente}" placeholder="Nombre del dueño / cliente" required>
-                <input type="email" th:field="*{emailCliente}" placeholder="Correo del dueño (login futuro)" required>
-                <input type="password" th:field="*{claveCliente}" placeholder="Contraseña del dueño" required>
+<body class="marco-pagina cliente-barra-superior vista-admin-gestion pagina-ancho-completo" data-pantalla="registrar-taller"
+      th:attr="data-rol=${esPropietario} ? 'taller' : 'admin'">
+    <header class="barra-superior-cliente barra-admin-gestion">
+        <a th:href="${urlVolver}" class="barra-marca enlace-marca-admin">← Asistencia en carretera</a>
+        <nav class="barra-superior-acciones" aria-label="Sesión">
+            <a href="/logout">Salir</a>
+        </nav>
+    </header>
+
+    <main class="contenido-principal contenido-admin-gestion">
+        <p th:if="${msgError}" class="aviso-error admin-aviso" th:text="${msgError}">Error</p>
+
+        <section class="panel-admin panel-formulario-admin">
+            <div class="panel-admin-cabecera">
+                <div>
+                    <h1 class="titulo-panel-seccion" th:text="${taller.id != null ? 'Editar taller' : 'Registrar taller'}">Registrar taller</h1>
+                    <p class="panel-admin-subtitulo" th:if="${taller.id != null}">
+                        Taller #<span th:text="${taller.id}">0</span> — actualiza los datos y guarda los cambios.
+                    </p>
+                    <p class="panel-admin-subtitulo" th:if="${taller.id == null and !esPropietario}">
+                        Completa el formulario para dar de alta un taller y su usuario dueño.
+                    </p>
+                    <p class="panel-admin-subtitulo" th:if="${esPropietario}">
+                        Actualiza los datos que ven los clientes en el mapa.
+                    </p>
+                </div>
+                <a th:href="${urlVolver}" class="btn-admin-secundario">Volver al panel</a>
             </div>
-            <button type="submit" class="boton-principal">Guardar</button>
-            <a th:href="@{/mi-taller}" class="boton-principal" style="margin-left: 0.5rem;">Volver al listado</a>
-        </form>
+
+            <form th:action="@{/registrar-taller}" th:object="${taller}" method="post" class="formulario-admin">
+                <input type="hidden" th:if="${taller.id != null}" th:field="*{id}">
+
+                <div class="formulario-admin-cuerpo">
+                    <h2 class="formulario-admin-titulo-bloque">Datos del taller</h2>
+                    <div class="rejilla-campos-formulario">
+                        <div class="campo-formulario">
+                            <label for="nom-taller">Nombre del taller</label>
+                            <input id="nom-taller" type="text" th:field="*{nombre}" required>
+                        </div>
+                        <div class="campo-formulario">
+                            <label for="dir-taller">Direccion</label>
+                            <input id="dir-taller" type="text" th:field="*{direccion}" required>
+                        </div>
+                        <div class="campo-formulario">
+                            <label for="tel-taller">Telefono</label>
+                            <input id="tel-taller" type="text" th:field="*{telefono}" required>
+                        </div>
+                        <div class="campo-formulario">
+                            <label for="hor-taller">Horario</label>
+                            <input id="hor-taller" type="text" th:field="*{horario}" placeholder="Lun - Sab 8:00 a 18:00">
+                        </div>
+                        <div class="campo-formulario campo-ancho-completo">
+                            <label for="serv-taller">Servicios</label>
+                            <input id="serv-taller" type="text" th:field="*{servicios}">
+                        </div>
+                        <div class="campo-formulario campo-ancho-completo">
+                            <label for="desc-taller">Descripcion</label>
+                            <textarea id="desc-taller" th:field="*{descripcion}" rows="4"></textarea>
+                        </div>
+                    </div>
+
+                    <h2 class="formulario-admin-titulo-bloque">Ubicacion en el mapa</h2>
+                    <p class="ayuda-formulario-admin">Con direccion y ciudad el sistema puede ubicar el taller. Tambien puedes escribir latitud y longitud.</p>
+                    <div class="rejilla-campos-formulario">
+                        <div class="campo-formulario">
+                            <label for="ciudad-taller">Ciudad</label>
+                            <input id="ciudad-taller" type="text" th:field="*{ciudad}" placeholder="Cartagena" required>
+                        </div>
+                        <div class="campo-formulario">
+                            <label for="lat-taller">Latitud</label>
+                            <input id="lat-taller" type="number" step="0.000001" th:field="*{lat}" placeholder="10.391049">
+                        </div>
+                        <div class="campo-formulario">
+                            <label for="lng-taller">Longitud</label>
+                            <input id="lng-taller" type="number" step="0.000001" th:field="*{lng}" placeholder="-75.479426">
+                        </div>
+                        <div class="campo-formulario campo-ancho-completo fila-buscar-coordenadas">
+                            <button type="button" id="btn-buscar-coordenadas" class="btn-admin-secundario">Buscar coordenadas (OpenStreetMap)</button>
+                            <span id="texto-buscar-coordenadas" class="ayuda-formulario-admin"></span>
+                        </div>
+                    </div>
+
+                    <fieldset class="bloque-seccion-formulario" th:if="${taller.id == null and !esPropietario}">
+                        <legend>Usuario dueno del taller</legend>
+                        <div class="rejilla-campos-formulario">
+                            <div class="campo-formulario">
+                                <label for="nom-dueno">Nombre del dueno</label>
+                                <input id="nom-dueno" type="text" th:field="*{nombreCliente}" required autocomplete="name">
+                            </div>
+                            <div class="campo-formulario">
+                                <label for="email-dueno">Correo</label>
+                                <input id="email-dueno" type="email" th:field="*{emailCliente}" required autocomplete="off">
+                            </div>
+                            <div class="campo-formulario">
+                                <label for="clave-dueno">Contrasena</label>
+                                <input id="clave-dueno" type="password" th:field="*{claveCliente}" required autocomplete="new-password">
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="fila-botones-formulario-admin">
+                    <button type="submit" class="btn-admin-primario">Guardar</button>
+                    <a th:href="${urlVolver}" class="btn-admin-secundario">Cancelar</a>
+                </div>
+            </form>
+        </section>
     </main>
     <script th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/registrar-taller.js}"></script>
 </body>
 </html>

@@ -1,10 +1,14 @@
 package com.tecnologico.talleres.model;
 
+// Datos de tabla taller + ubicacion + promedio de valoraciones (JOIN en el servicio)
 public class Taller {
 
     private Long id;
     private String nombre;
     private String direccion;
+    private String ciudad;
+    private Double lat;
+    private Double lng;
     private String telefono;
     private String descripcion;
     private String horario;
@@ -12,12 +16,12 @@ public class Taller {
     private double calificacionPromedio;
     private int numValoraciones;
 
-    /** Solo formulario: correo/clave del dueño del taller (nuevo usuario en tabla usuario). */
+    // Solo en formulario alta admin: creo usuario con rol taller
     private String emailCliente;
     private String claveCliente;
     private String nombreCliente;
 
-    /** Solo lectura en listados: dueño real del taller en la BD. */
+    // Solo lectura: dueno real del registro en BD
     private String emailPropietario;
     private String nombrePropietario;
 
@@ -37,12 +41,38 @@ public class Taller {
         this.nombre = nombre;
     }
 
+    // Direccion en ubicacion_taller
     public String getDireccion() {
         return direccion;
     }
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+    }
+
+    public String getCiudad() {
+        return ciudad;
+    }
+
+    public void setCiudad(String ciudad) {
+        this.ciudad = ciudad;
+    }
+
+    // Para marcador en Leaflet
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLng() {
+        return lng;
+    }
+
+    public void setLng(Double lng) {
+        this.lng = lng;
     }
 
     public String getTelefono() {
@@ -69,6 +99,7 @@ public class Taller {
         this.horario = horario;
     }
 
+    // Mapea a servicios_texto en BD
     public String getServicios() {
         return servicios;
     }
@@ -77,6 +108,7 @@ public class Taller {
         this.servicios = servicios;
     }
 
+    // AVG de tabla valoracion
     public double getCalificacionPromedio() {
         return calificacionPromedio;
     }
@@ -93,6 +125,7 @@ public class Taller {
         this.numValoraciones = numValoraciones;
     }
 
+    // Correo del nuevo dueno al dar de alta taller
     public String getEmailCliente() {
         return emailCliente;
     }

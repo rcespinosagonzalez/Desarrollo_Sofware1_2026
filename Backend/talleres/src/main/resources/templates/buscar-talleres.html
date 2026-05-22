@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+<!-- Cliente: mapa Leaflet, historial, citas y valoraciones (buscar-talleres.js) -->
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscar talleres</title>
+    <title>Asistencia en carretera</title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
     <link
         rel="stylesheet"
@@ -12,56 +13,134 @@
         crossorigin=""
     >
 </head>
-<body class="layout-web pagina-buscar-talleres" data-vista="buscar-talleres" data-role="user">
-    <aside class="sidebar-app" id="sidebar-app">
-        <h2 id="titulo-rol">Menú Usuario</h2>
-    </aside>
-    <main class="contenido-principal contenido-buscar">
-        <header class="cabecera-buscar">
-            <h1>Buscar talleres</h1>
-            <p class="texto-muted cabecera-buscar-sub">Escribe una ciudad o barrio y revisa los resultados en el mapa y en la lista.</p>
-        </header>
+<body class="marco-pagina cliente-barra-superior vista-buscar-talleres pagina-ancho-completo" data-pantalla="buscar-talleres" data-rol="user">
+    <header class="barra-superior-cliente contenedor-bloque-externo">
+        <span class="barra-marca">Asistencia en carretera</span>
+        <nav class="barra-superior-acciones" aria-label="Sesión">
+            <a href="/logout">Salir</a>
+        </nav>
+    </header>
 
-        <div class="busqueda-fila">
-            <div class="busqueda-campo">
-                <span class="icono-lupa" aria-hidden="true">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                        <circle cx="11" cy="11" r="7"/>
-                        <path d="M21 21l-4.3-4.3"/>
-                    </svg>
-                </span>
-                <input type="text" id="input-busqueda-lugar" class="input-buscar-ui" placeholder="Ej. Cartagena, Medellín…" autocomplete="off">
-            </div>
-            <button type="button" id="btn-buscar-lugar" class="boton-principal boton-buscar-inline">Buscar</button>
+    <main class="contenido-principal contenido-busqueda-vista">
+        <p th:if="${msgOk}" class="aviso-exito contenedor-bloque" th:text="${msgOk}">OK</p>
+        <p th:if="${msgError}" class="aviso-error contenedor-bloque" th:text="${msgError}">Error</p>
+
+        <div class="contenedor-bloque contenedor-cabecera cabecera-vista-buscar">
+            <h1>Buscar taller en carretera</h1>
         </div>
-        <p class="texto-muted estado-busqueda-linea" id="estado-busqueda"></p>
 
-        <div class="layout-mapa-resultados">
-            <div class="area-mapa area-mapa-compacta">
-                <div id="mapa-talleres" class="mapa-real" aria-label="Mapa de talleres"></div>
-            </div>
-            <aside class="panel-resultados-osm">
-                <div class="panel-resultados-osm-cabecera">
-                    <h2 class="panel-resultados-titulo">Resultados en la zona</h2>
-                    <button type="button" id="btn-ver-en-mapa" class="boton-ajuste-mapa" title="Ajustar mapa a todos los puntos">Ajustar mapa</button>
+        <div id="seccion-mapa" class="contenedor-bloque contenedor-mapa panel-mapa-principal seccion-mapa-ancla">
+            <div class="contenedor-busqueda-mapa">
+                <div class="busqueda-fila">
+                    <div class="busqueda-campo">
+                        <span class="icono-lupa" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                <circle cx="11" cy="11" r="7"/>
+                                <path d="M21 21l-4.3-4.3"/>
+                            </svg>
+                        </span>
+                        <input type="text" id="entrada-busqueda-lugar" class="entrada-texto-busqueda" placeholder="Ej. Cartagena, Medellín…" autocomplete="off">
+                    </div>
+                    <button type="button" id="boton-buscar-lugar" class="boton-principal boton-buscar-en-linea">Buscar</button>
                 </div>
-                <section id="lista-talleres" class="lista-resultados-scroll" aria-live="polite"></section>
-            </aside>
+                <p class="texto-secundario linea-estado-busqueda" id="texto-estado-busqueda"></p>
+            </div>
+
+            <div class="rejilla-mapa-resultados">
+                <div class="zona-mapa zona-mapa-compacta contenedor-mapa-mapa">
+                    <div id="mapa-talleres" class="mapa-interactivo" aria-label="Mapa de talleres"></div>
+                </div>
+                <aside class="cuadro-resultados-mapa contenedor-mapa-lista">
+                    <div class="cuadro-resultados-mapa-cabecera">
+                        <h2 class="cuadro-resultados-titulo">Talleres en el mapa</h2>
+                        <button type="button" id="boton-ver-mapa-completo" class="boton-ajustar-mapa" title="Ajustar mapa a todos los puntos">Ajustar mapa</button>
+                    </div>
+                    <section id="lista-resultados-talleres" class="lista-resultados-desplazable" aria-live="polite"></section>
+                </aside>
+            </div>
         </div>
 
-        <section class="bloque-talleres-bd">
-            <h2 class="subtitulo-seccion">Talleres en la aplicación (tu base de datos)</h2>
-            <p class="texto-muted subtitulo-seccion-desc">Estos sí tienen ficha y cita en la app.</p>
-            <ul class="lista-bd-talleres" th:if="${!#lists.isEmpty(talleresBd)}">
-                <li th:each="tb : ${talleresBd}">
-                    <a th:href="@{/detalle-taller(id=${tb.id})}" class="enlace-taller-bd">
-                        <span class="enlace-taller-bd-nombre" th:text="${tb.nombre}">Taller</span>
-                        <span class="enlace-taller-bd-meta texto-muted" th:text="${'Id ' + tb.id}">Id</span>
-                    </a>
-                </li>
-            </ul>
-            <p th:if="${#lists.isEmpty(talleresBd)}" class="texto-muted">Aún no hay talleres en la BD.</p>
-        </section>
+        <div th:if="${panelCliente}" class="contenedor-bloque contenedor-cliente-dos-columnas secciones-cliente secciones-cliente-dos-columnas panel-zona-cliente">
+            <section class="seccion-cliente contenedor-sub-bloque panel-seccion" id="seccion-historial">
+                <h2 class="subtitulo-seccion titulo-panel-seccion">Historial de búsquedas</h2>
+                <div id="historial-busquedas-contenedor" class="historial-busquedas-scroll"></div>
+                <p id="historial-vacio" class="texto-secundario">Sin búsquedas guardadas.</p>
+            </section>
+
+            <section class="seccion-cliente contenedor-sub-bloque panel-seccion" id="seccion-citas">
+                <h2 class="subtitulo-seccion titulo-panel-seccion">Mis citas</h2>
+                <div class="tarjeta tarjeta-cita" th:each="c : ${citasCliente}">
+                    <p class="cita-detalle"><strong th:text="${c.tallerNombre}">Taller</strong></p>
+                    <p class="cita-detalle texto-secundario" th:text="${c.detalle}">Detalle</p>
+                    <p>
+                        <span class="texto-secundario" th:text="${c.fecha}">fecha</span>
+                        · <span class="texto-secundario" th:text="${c.hora}">hora</span>
+                    </p>
+                </div>
+                <p th:if="${#lists.isEmpty(citasCliente)}" class="texto-secundario">Sin citas.</p>
+            </section>
+        </div>
+
+        <div th:if="${panelCliente}" class="contenedor-bloque contenedor-cliente-formularios secciones-cliente secciones-cliente-dos-columnas secciones-cliente-formularios panel-zona-cliente">
+            <section class="seccion-cliente contenedor-sub-bloque panel-seccion" id="seccion-solicitar">
+                <h2 class="subtitulo-seccion titulo-panel-seccion">Pedir cita</h2>
+                <form th:action="@{/solicitar-cita}" method="post" class="formulario-seccion-cliente">
+                    <label for="select-taller-cita">Taller</label>
+                    <select id="select-taller-cita" name="tallerId" required>
+                        <option value="" disabled th:selected="${tallerParaCita == null}">—</option>
+                        <option
+                            th:each="tb : ${talleresBd}"
+                            th:value="${tb.id}"
+                            th:selected="${tallerParaCita != null && tallerParaCita.id != null && tallerParaCita.id == tb.id}"
+                            th:text="${tb.nombre}">
+                            Taller
+                        </option>
+                    </select>
+                    <label for="cliente-cita">Nombre de contacto</label>
+                    <input type="text" id="cliente-cita" name="cliente" placeholder="Nombre y apellido">
+                    <label for="fecha-cita">Fecha</label>
+                    <input type="date" id="fecha-cita" name="fecha" required>
+                    <label for="hora-cita">Hora</label>
+                    <input type="time" id="hora-cita" name="hora" required>
+                    <label for="motivo-cita">Motivo o servicio</label>
+                    <input type="text" id="motivo-cita" name="motivo" placeholder="Ej. Cambio de aceite" required>
+                    <button type="submit" class="boton-principal">Confirmar cita</button>
+                </form>
+            </section>
+
+            <section class="seccion-cliente contenedor-sub-bloque panel-seccion" id="seccion-calificar">
+                <h2 class="subtitulo-seccion titulo-panel-seccion">Valorar un taller</h2>
+                <div th:if="${ultima != null}">
+                    <div class="tarjeta tarjeta-resumen-valoracion">
+                        <p><strong>Taller:</strong> <span th:text="${ultima.tallerNombre}">—</span></p>
+                        <p><strong>Servicio:</strong> <span th:text="${ultima.servicio}">—</span></p>
+                        <p><strong>Calificación:</strong> <span th:text="|${ultima.estrellas}/5 ★|">0/5</span></p>
+                        <p><strong>Comentario:</strong> <span th:text="${ultima.comentario}">—</span></p>
+                    </div>
+                </div>
+                <h3 class="subtitulo-formulario">Nueva valoración</h3>
+                <form th:action="@{/calificar-taller}" th:object="${nuevaCalificacion}" method="post" class="formulario-seccion-cliente">
+                    <label for="nom-taller-val">Nombre del taller</label>
+                    <input id="nom-taller-val" type="text" th:field="*{tallerNombre}" list="lista-nombres-talleres" placeholder="Nombre del taller" required>
+                    <datalist id="lista-nombres-talleres">
+                        <option th:each="tb : ${talleresBd}" th:value="${tb.nombre}"></option>
+                    </datalist>
+                    <label for="servicio-val">Servicio que valoras</label>
+                    <input id="servicio-val" type="text" th:field="*{servicio}" placeholder="Ej. Cambio de aceite" required>
+                    <label for="estrellas-val">Calificación (1 a 5)</label>
+                    <select id="estrellas-val" th:field="*{estrellas}" required>
+                        <option value="5">5 estrellas</option>
+                        <option value="4">4 estrellas</option>
+                        <option value="3">3 estrellas</option>
+                        <option value="2">2 estrellas</option>
+                        <option value="1">1 estrella</option>
+                    </select>
+                    <label for="com-val">Comentario</label>
+                    <textarea id="com-val" th:field="*{comentario}" placeholder="Comentario breve"></textarea>
+                    <button type="submit" class="boton-principal">Enviar valoración</button>
+                </form>
+            </section>
+        </div>
     </main>
     <script th:src="@{/js/app.js}"></script>
     <script
@@ -70,5 +149,21 @@
         crossorigin=""
     ></script>
     <script th:src="@{/js/buscar-talleres.js}"></script>
+    <script>
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+            var ver = params.get('ver');
+            if (ver) {
+                var el = document.getElementById('seccion-' + ver);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                params.delete('ver');
+                var qs = params.toString();
+                var path = window.location.pathname + (qs ? '?' + qs : '');
+                history.replaceState({}, '', path);
+            }
+        })();
+    </script>
 </body>
 </html>

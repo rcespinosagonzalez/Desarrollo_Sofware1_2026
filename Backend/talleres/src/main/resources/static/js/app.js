@@ -1,34 +1,55 @@
-// Sidebar: lee el rol guardado en sessionStorage (lo pone script.js al hacer login).
-// admin = dueño de talleres; user = cliente que busca y pide citas.
+// Armo el menu lateral segun rol en sessionStorage (lo guarda script.js al login)
 (function () {
     var role = sessionStorage.getItem('role');
     var body = document.body;
-    var vista = body.getAttribute('data-vista');
-    var rolRequerido = body.getAttribute('data-role');
+
+    if (body.classList.contains('cliente-barra-superior')) {
+        if (!role) {
+            window.location.href = '/';
+            return;
+        }
+        var rolPagina = body.getAttribute('data-rol');
+        if (rolPagina && role !== rolPagina) {
+            if (role === 'admin') window.location.href = '/mi-taller';
+            else if (role === 'taller') window.location.href = '/panel-taller';
+            else window.location.href = '/buscar-talleres';
+        }
+        return;
+    }
+
+    var vista = body.getAttribute('data-vista') || body.getAttribute('data-pantalla');
+    var rolRequerido = body.getAttribute('data-role') || body.getAttribute('data-rol');
 
     if (!role) {
         window.location.href = '/';
         return;
     }
     if (rolRequerido && role !== rolRequerido) {
-        window.location.href = role === 'admin' ? '/mi-taller' : '/buscar-talleres';
+        if (role === 'admin') {
+            window.location.href = '/mi-taller';
+        } else if (role === 'taller') {
+            window.location.href = '/panel-taller';
+        } else {
+            window.location.href = '/buscar-talleres';
+        }
         return;
     }
 
-    // Menú ADMIN: gestionar talleres propios, citas y opiniones
+    var menuTaller = [
+        { url: '/panel-taller', texto: 'Mis citas', vista: 'panel-taller', icono: 'calendar' }
+    ];
+
     var menuAdmin = [
         { url: '/mi-taller', texto: 'Mis talleres', vista: 'mi-taller', icono: 'shop' },
         { url: '/registrar-taller', texto: 'Nuevo taller', vista: 'registrar-taller', icono: 'tool' },
         { url: '/citas-pendientes', texto: 'Citas pendientes', vista: 'citas-pendientes', icono: 'calendar' },
         { url: '/valoraciones', texto: 'Valoraciones', vista: 'valoraciones', icono: 'star' }
     ];
-    // Menú USER: buscar, ver un taller (sin id = muestra el primero en el servidor) y citas
     var menuUser = [
-        { url: '/buscar-talleres', texto: 'Buscar talleres', vista: 'buscar-talleres', icono: 'search' },
-        { url: '/detalle-taller', texto: 'Detalle del taller', vista: 'detalle-taller', icono: 'pin' },
-        { url: '/solicitar-cita', texto: 'Solicitar cita', vista: 'solicitar-cita', icono: 'edit' },
-        { url: '/historial-busquedas', texto: 'Historial de búsquedas', vista: 'historial-busquedas', icono: 'clock' },
-        { url: '/calificar-taller', texto: 'Calificar taller', vista: 'calificar-taller', icono: 'thumb' }
+        { url: '/buscar-talleres', texto: 'Mapa y talleres', vista: 'buscar-talleres', icono: 'search' },
+        { url: '/buscar-talleres?ver=solicitar', texto: 'Pedir cita', vista: 'buscar-talleres', icono: 'edit' },
+        { url: '/buscar-talleres?ver=historial', texto: 'Historial', vista: 'buscar-talleres', icono: 'clock' },
+        { url: '/buscar-talleres?ver=calificar', texto: 'Valorar', vista: 'buscar-talleres', icono: 'thumb' }
     ];
 
     var iconosSvg = {
@@ -44,7 +65,7 @@
         logout: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5h4.2A1.8 1.8 0 0 1 20 6.3v11.4a1.8 1.8 0 0 1-1.8 1.8H14M10.8 8.5 6.5 12l4.3 3.5M6.8 12H20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
     };
 
-    var items = role === 'admin' ? menuAdmin : menuUser;
+    var items = role === 'admin' ? menuAdmin : (role === 'taller' ? menuTaller : menuUser);
     var sidebarEl = document.getElementById('sidebar-app');
     if (sidebarEl) {
 var nav = document.createElement('nav');
@@ -71,7 +92,7 @@ var nav = document.createElement('nav');
         var cerrar = document.createElement('div');
         cerrar.className = 'cerrar-sesion';
         var a = document.createElement('a');
-        a.href = '/';
+        a.href = '/logout';
         var iconoCerrar = document.createElement('span');
         iconoCerrar.className = 'item-icono';
         iconoCerrar.innerHTML = iconosSvg.logout;
@@ -85,5 +106,7 @@ var nav = document.createElement('nav');
     }
 
     var tituloRol = document.getElementById('titulo-rol');
-    if (tituloRol) tituloRol.textContent = role === 'admin' ? 'Menú Administrador' : 'Menú Usuario';
+    if (tituloRol) {
+        tituloRol.textContent = role === 'admin' ? 'Menú Administrador' : (role === 'taller' ? 'Mi taller' : 'Menú Usuario');
+    }
 })();

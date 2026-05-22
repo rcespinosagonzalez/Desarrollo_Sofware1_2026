@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Login publico: script.js llama /api/auth/login -->
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -24,7 +25,7 @@
             <form class="formulario-inicio-sesion" id="formularioInicioSesion" novalidate>
                 <div class="grupo-formulario">
                     <div class="contenedor-entrada">
-                        <input type="email" id="correo" name="email" required autocomplete="email">
+                        <input type="email" id="correo" name="email" required autocomplete="email" placeholder=" ">
                         <label for="correo">Correo electrónico</label>
                         <span class="borde-entrada"></span>
                     </div>
@@ -33,7 +34,7 @@
 
                 <div class="grupo-formulario">
                     <div class="contenedor-entrada contenedor-contrasena">
-                        <input type="password" id="contrasena" name="password" required autocomplete="current-password">
+                        <input type="password" id="contrasena" name="password" required autocomplete="current-password" placeholder=" ">
                         <label for="contrasena">Contraseña</label>
                         <button type="button" class="alternar-contrasena" id="alternarContrasena" aria-label="Mostrar u ocultar contraseña">
                             <span class="icono-alternar"></span>

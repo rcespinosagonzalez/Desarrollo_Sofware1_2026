@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+// JSON de talleres para el mapa del cliente (Leaflet)
 @RestController
 @RequestMapping("/api/talleres")
 public class TalleresController {
@@ -18,6 +19,7 @@ public class TalleresController {
         this.tallerService = tallerService;
     }
 
+    // GET /api/talleres -> JSON para buscar-talleres.js
     @GetMapping
     public List<Taller> listar() {
         return tallerService.listarTodos();
