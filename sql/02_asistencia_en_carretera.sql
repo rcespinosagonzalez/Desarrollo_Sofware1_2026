@@ -1,4 +1,4 @@
-﻿-- Asistencia en carretera - base de datos completa (esquema ER + datos demo).
+-- Asistencia en carretera - base de datos completa (esquema ER + datos demo).
 -- Ejecutar como root (crea la BD). Antes o despues: sql/01_crear_usuario_mysql.sql
 -- App Spring: usuario taller_app / taller123 (ver application.properties)
 
