@@ -3,7 +3,7 @@ package com.tecnologico.talleres.controllers;
 import com.tecnologico.talleres.dto.HistorialBusquedaRequest;
 import com.tecnologico.talleres.model.BusquedaHistorial;
 import com.tecnologico.talleres.services.TallerService;
-import jakarta.servlet.http.HttpSession;
+import com.tecnologico.talleres.security.SesionActual;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,8 +27,8 @@ public class HistorialBusquedaApiController {
 
     // Ultimas busquedas del cliente logueado
     @GetMapping
-    public ResponseEntity<List<BusquedaHistorial>> listar(HttpSession session) {
-        Long uid = (Long) session.getAttribute("usuarioId");
+    public ResponseEntity<List<BusquedaHistorial>> listar() {
+        Long uid = SesionActual.usuarioId();
         if (uid == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -37,8 +37,8 @@ public class HistorialBusquedaApiController {
 
     // Lo llama buscar-talleres.js al buscar un lugar en el mapa
     @PostMapping
-    public ResponseEntity<Void> registrar(@RequestBody HistorialBusquedaRequest body, HttpSession session) {
-        Long uid = (Long) session.getAttribute("usuarioId");
+    public ResponseEntity<Void> registrar(@RequestBody HistorialBusquedaRequest body) {
+        Long uid = SesionActual.usuarioId();
         if (uid == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

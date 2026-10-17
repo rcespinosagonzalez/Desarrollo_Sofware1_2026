@@ -196,19 +196,20 @@ CREATE TABLE valoracion (
 -- Datos demo (contrasena de todos los usuarios: demo)
 -- ---------------------------------------------------------------------------
 
+-- Contrasena de TODOS los usuarios demo: demo (guardada con BCrypt, ya no en texto plano)
 INSERT INTO usuario (id, email, password_hash, nombre, rol, activo) VALUES
-(1,  'admin@demo.local',    'demo', 'Admin Demo',              'admin',  TRUE),
-(2,  'cliente@demo.local',  'demo', 'Cliente Web',             'user',   TRUE),
-(3,  'taller1@demo.local',  'demo', 'Dueno El Rapido',         'taller', TRUE),
-(4,  'taller2@demo.local',  'demo', 'Dueno La Candelaria',     'taller', TRUE),
-(5,  'taller3@demo.local',  'demo', 'Dueno Mecanica del Caribe','taller', TRUE),
-(6,  'taller4@demo.local',  'demo', 'Dueno San Francisco',     'taller', TRUE),
-(7,  'taller5@demo.local',  'demo', 'Dueno Bocagrande',        'taller', TRUE),
-(8,  'taller6@demo.local',  'demo', 'Dueno Getsemani',         'taller', TRUE),
-(9,  'taller7@demo.local',  'demo', 'Dueno Motos Manga',       'taller', TRUE),
-(10, 'taller8@demo.local',  'demo', 'Dueno Turbaco',           'taller', TRUE),
-(11, 'taller9@demo.local',  'demo', 'Dueno Bazurto',           'taller', TRUE),
-(12, 'taller10@demo.local', 'demo', 'Dueno El Bosque',         'taller', TRUE);
+(1,  'admin@demo.local',    '$2a$10$0rP4WFSGgHa/nvpqZwVR8eUilSuo1N4gC2L6is9sufuUD0lqNur8O', 'Admin Demo',              'admin',  TRUE),
+(2,  'cliente@demo.local',  '$2a$10$uIcZS22P.EtVtluhdghaYO4OO2nIzdeAZmDP4PA4CBZ4AIPFMooje', 'Cliente Web',             'user',   TRUE),
+(3,  'taller1@demo.local',  '$2a$10$0EtYS6uRhUS19AIeqbXfKeDiR6BQ2MhcEdaZMuY6tgBS5uy45Ivoi', 'Dueno El Rapido',         'taller', TRUE),
+(4,  'taller2@demo.local',  '$2a$10$EA4GrROng38MD2bVfTRZlOV0q3LCDg7w6vtgEMb8EiFkljOXvkMbi', 'Dueno La Candelaria',     'taller', TRUE),
+(5,  'taller3@demo.local',  '$2a$10$EihzE8.B3m29xF3FuCLG7OgcYrVRqMZUBnK6MMC/EpO9OkGfSC8f2', 'Dueno Mecanica del Caribe','taller', TRUE),
+(6,  'taller4@demo.local',  '$2a$10$Z9e/zx8rbtPmX8oJ.W.aZOlU.RGcTfhHH37H67hwQ3u1s5vFiCaYK', 'Dueno San Francisco',     'taller', TRUE),
+(7,  'taller5@demo.local',  '$2a$10$0cq5R7qTf8S2rqd4UQvbe./K4eXH31yKCSRf99JzU4SRXHSCEx.vW', 'Dueno Bocagrande',        'taller', TRUE),
+(8,  'taller6@demo.local',  '$2a$10$9IhQFSAphfD4TJ8iv2B2oeGlMPJPDDbTzR2qhgJPU9zxwLNQ/xot.', 'Dueno Getsemani',         'taller', TRUE),
+(9,  'taller7@demo.local',  '$2a$10$50gpKtod8XlxaJwihJqYSu94Cnn4npsRsSFOcC3.uWGsW1vN6DNZe', 'Dueno Motos Manga',       'taller', TRUE),
+(10, 'taller8@demo.local',  '$2a$10$vlDhcTWQOzkirNqO04/2BeSw//CBcIOvSVOSxVSV4dkmlaSg9LWVe', 'Dueno Turbaco',           'taller', TRUE),
+(11, 'taller9@demo.local',  '$2a$10$UXrrkwpkL/IWz447YJatt.T9uu7VFJf.8a.ZVFt/0J47j/Nlw60Da', 'Dueno Bazurto',           'taller', TRUE),
+(12, 'taller10@demo.local', '$2a$10$ioylmLnHXePQQUTXjy8oRu3M03gY588987IrJcjjL0LSpUmKDnId.', 'Dueno El Bosque',         'taller', TRUE);
 
 INSERT INTO taller (id, propietario_usuario_id, nombre, telefono, descripcion, estado, horario, servicios_texto) VALUES
 (1, 3, 'Taller Mecanico El Rapido', '300 555 1234',

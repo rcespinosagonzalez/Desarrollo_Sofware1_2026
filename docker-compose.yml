@@ -31,6 +31,7 @@ services:
       DB_USER: ${MYSQL_USER}
       DB_PASSWORD: ${MYSQL_PASSWORD}
       DB_TIMEZONE: ${TZ}
+      JWT_SECRET: ${JWT_SECRET:-clave-solo-para-desarrollo-cambiala-en-produccion-0123456789}
     depends_on:
       db:
         condition: service_healthy

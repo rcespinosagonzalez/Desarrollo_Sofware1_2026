@@ -4,7 +4,10 @@ import com.tecnologico.talleres.model.Cita;
 import com.tecnologico.talleres.model.Taller;
 import com.tecnologico.talleres.model.UltimaCalificacion;
 import com.tecnologico.talleres.services.TallerService;
-import jakarta.servlet.http.HttpSession;
+import com.tecnologico.talleres.security.JwtService;
+import com.tecnologico.talleres.security.SesionActual;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,15 +16,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-// Paginas HTML (Thymeleaf). El interceptor ya valido sesion en la mayoria de rutas
+// Paginas HTML (Thymeleaf). Spring Security + JWT ya valido login y rol en SecurityConfig
 @Controller
 public class VistaController {
 
     private final TallerService tallerService;
+    private final JwtService jwtService;
 
-    // Inyeccion del servicio que habla con MySQL
-    public VistaController(TallerService tallerService) {
+    // Inyeccion del servicio que habla con MySQL y del que maneja la cookie del JWT
+    public VistaController(TallerService tallerService, JwtService jwtService) {
         this.tallerService = tallerService;
+        this.jwtService = jwtService;
     }
 
     // Pantalla de login (publica)
@@ -30,10 +35,10 @@ public class VistaController {
         return "index";
     }
 
-    // Borro la sesion y vuelvo al inicio
+    // Borro la cookie del JWT y vuelvo al inicio
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
+    public String logout(HttpServletResponse response) {
+        response.addHeader(HttpHeaders.SET_COOKIE, jwtService.borrarCookie().toString());
         return "redirect:/";
     }
 
@@ -41,13 +46,12 @@ public class VistaController {
     @GetMapping("/buscar-talleres")
     public String buscarTalleres(
             @RequestParam(name = "tallerCita", required = false) Long tallerCita,
-            Model model,
-            HttpSession session) {
+            Model model) {
         model.addAttribute("talleresBd", tallerService.listarTodos());
-        boolean esCliente = "user".equals(session.getAttribute("rol"));
+        boolean esCliente = "user".equals(SesionActual.rol());
         model.addAttribute("panelCliente", esCliente);
         if (esCliente) {
-            long uid = (Long) session.getAttribute("usuarioId");
+            long uid = SesionActual.usuarioId();
             model.addAttribute("ultima", tallerService.obtenerUltimaCalificacion(uid));
             model.addAttribute("nuevaCalificacion", new UltimaCalificacion());
             model.addAttribute("citasCliente", tallerService.listarCitasPorCliente(uid));
@@ -59,8 +63,8 @@ public class VistaController {
 
     // Admin: tablas de todos los talleres, citas y valoraciones
     @GetMapping("/mi-taller")
-    public String miTaller(Model model, HttpSession session) {
-        String redir = redirectSiNoEsAdmin(session);
+    public String miTaller(Model model) {
+        String redir = redirectSiNoEsAdmin();
         if (redir != null) {
             return redir;
         }
@@ -69,20 +73,20 @@ public class VistaController {
         model.addAttribute("citas", tallerService.listarTodasCitas());
         model.addAttribute("valoraciones", tallerService.listarTodasValoraciones());
         model.addAttribute("totalTalleres", talleres.size());
-        model.addAttribute("nombreAdmin", session.getAttribute("nombre"));
+        model.addAttribute("nombreAdmin", SesionActual.nombre());
         return "mi-taller";
     }
 
     // Alta o edicion de taller. El dueno solo puede editar el suyo (id en URL)
     @GetMapping("/registrar-taller")
-    public String registrarTallerForm(@RequestParam(name = "id", required = false) Long id, Model model, HttpSession session) {
-        String redir = redirectSiNoPuedeGestionarTaller(session);
+    public String registrarTallerForm(@RequestParam(name = "id", required = false) Long id, Model model) {
+        String redir = redirectSiNoPuedeGestionarTaller();
         if (redir != null) {
             return redir;
         }
-        long uid = (Long) session.getAttribute("usuarioId");
-        boolean esAdmin = "admin".equals(session.getAttribute("rol"));
-        boolean esPropietario = "taller".equals(session.getAttribute("rol"));
+        long uid = SesionActual.usuarioId();
+        boolean esAdmin = "admin".equals(SesionActual.rol());
+        boolean esPropietario = "taller".equals(SesionActual.rol());
         if (esPropietario && id == null) {
             var propios = tallerService.listarTalleresDelPropietario(uid);
             if (!propios.isEmpty()) {
@@ -119,14 +123,14 @@ public class VistaController {
     // Guardo en MySQL (taller + ubicacion + usuario dueno si es nuevo)
     @PostMapping("/registrar-taller")
     public String registrarTallerGuardar(
-            @ModelAttribute Taller taller, RedirectAttributes ra, HttpSession session) {
-        String redir = redirectSiNoPuedeGestionarTaller(session);
+            @ModelAttribute Taller taller, RedirectAttributes ra) {
+        String redir = redirectSiNoPuedeGestionarTaller();
         if (redir != null) {
             return redir;
         }
-        long uid = (Long) session.getAttribute("usuarioId");
-        boolean esAdmin = "admin".equals(session.getAttribute("rol"));
-        boolean esPropietario = "taller".equals(session.getAttribute("rol"));
+        long uid = SesionActual.usuarioId();
+        boolean esAdmin = "admin".equals(SesionActual.rol());
+        boolean esPropietario = "taller".equals(SesionActual.rol());
         if (esPropietario && taller.getId() == null) {
             ra.addFlashAttribute("msgError", "Solo puedes editar tu taller registrado.");
             return "redirect:/panel-taller";
@@ -149,8 +153,8 @@ public class VistaController {
 
     // Atajo del menu admin hacia la seccion valoraciones en mi-taller
     @GetMapping("/valoraciones")
-    public String valoraciones(HttpSession session) {
-        String redir = redirectSiNoEsAdmin(session);
+    public String valoraciones() {
+        String redir = redirectSiNoEsAdmin();
         if (redir != null) {
             return redir;
         }
@@ -158,8 +162,8 @@ public class VistaController {
     }
 
     @GetMapping("/citas-pendientes")
-    public String citasPendientes(HttpSession session) {
-        String redir = redirectSiNoEsAdmin(session);
+    public String citasPendientes() {
+        String redir = redirectSiNoEsAdmin();
         if (redir != null) {
             return redir;
         }
@@ -168,12 +172,12 @@ public class VistaController {
 
     // Dueno del taller: datos del negocio, citas recibidas y valoraciones
     @GetMapping("/panel-taller")
-    public String panelTaller(Model model, HttpSession session) {
-        String redir = redirectSiNoEsTaller(session);
+    public String panelTaller(Model model) {
+        String redir = redirectSiNoEsTaller();
         if (redir != null) {
             return redir;
         }
-        long uid = (Long) session.getAttribute("usuarioId");
+        long uid = SesionActual.usuarioId();
         var misTalleres = tallerService.listarTalleresDelPropietario(uid);
         var citas = tallerService.listarCitasPorPropietario(uid);
         var valoraciones = tallerService.listarValoracionesPorPropietario(uid);
@@ -184,7 +188,7 @@ public class VistaController {
         model.addAttribute("valoraciones", valoraciones);
         model.addAttribute("totalCitas", citas.size());
         model.addAttribute("totalValoraciones", valoraciones.size());
-        model.addAttribute("nombreUsuario", session.getAttribute("nombre"));
+        model.addAttribute("nombreUsuario", SesionActual.nombre());
         model.addAttribute(
                 "nombreTaller",
                 miTaller != null ? miTaller.getNombre() : "Mi taller");
@@ -208,8 +212,8 @@ public class VistaController {
 
     // Redirige al panel cliente en seccion calificar
     @GetMapping("/calificar-taller")
-    public String calificarTaller(HttpSession session) {
-        String redir = redirectSiNoEsCliente(session);
+    public String calificarTaller() {
+        String redir = redirectSiNoEsCliente();
         if (redir != null) {
             return redir;
         }
@@ -220,9 +224,8 @@ public class VistaController {
     @PostMapping("/calificar-taller")
     public String calificarTallerEnviar(
             @ModelAttribute UltimaCalificacion calificacion,
-            HttpSession session,
             RedirectAttributes ra) {
-        String redir = redirectSiNoEsCliente(session);
+        String redir = redirectSiNoEsCliente();
         if (redir != null) {
             return redir;
         }
@@ -232,7 +235,7 @@ public class VistaController {
             ra.addFlashAttribute("msgError", "Falta nombre del taller.");
             return "redirect:/buscar-talleres?ver=calificar";
         }
-        long uid = (Long) session.getAttribute("usuarioId");
+        long uid = SesionActual.usuarioId();
         tallerService.registrarCalificacion(calificacion, uid);
         ra.addFlashAttribute("msgOk", "Valoración guardada.");
         return "redirect:/buscar-talleres?ver=calificar";
@@ -240,8 +243,8 @@ public class VistaController {
 
     // Abre formulario de cita con tallerId opcional en query
     @GetMapping("/solicitar-cita")
-    public String solicitarCita(@RequestParam(name = "tallerId", required = false) Long tallerId, HttpSession session) {
-        String redir = redirectSiNoEsCliente(session);
+    public String solicitarCita(@RequestParam(name = "tallerId", required = false) Long tallerId) {
+        String redir = redirectSiNoEsCliente();
         if (redir != null) {
             return redir;
         }
@@ -258,14 +261,13 @@ public class VistaController {
             @RequestParam String hora,
             @RequestParam String motivo,
             @RequestParam(name = "tallerId", required = false) Long tallerId,
-            @RequestParam(name = "cliente", required = false) String cliente,
-            HttpSession session) {
-        String redir = redirectSiNoEsCliente(session);
+            @RequestParam(name = "cliente", required = false) String cliente) {
+        String redir = redirectSiNoEsCliente();
         if (redir != null) {
             return redir;
         }
-        long uid = (Long) session.getAttribute("usuarioId");
-        String nombreSesion = (String) session.getAttribute("nombre");
+        long uid = SesionActual.usuarioId();
+        String nombreSesion = SesionActual.nombre();
         String nombreCliente = cliente != null && !cliente.isBlank() ? cliente : nombreSesion;
         if (nombreCliente == null || nombreCliente.isBlank()) {
             nombreCliente = "Cliente web";
@@ -282,8 +284,8 @@ public class VistaController {
 
     // Atajo de menu al historial en buscar-talleres
     @GetMapping("/historial-busquedas")
-    public String historialBusquedas(HttpSession session) {
-        String redir = redirectSiNoEsCliente(session);
+    public String historialBusquedas() {
+        String redir = redirectSiNoEsCliente();
         if (redir != null) {
             return redir;
         }
@@ -291,8 +293,8 @@ public class VistaController {
     }
 
     // Si no soy admin, mando al panel que corresponda a mi rol
-    private static String redirectSiNoEsAdmin(HttpSession session) {
-        Object rol = session.getAttribute("rol");
+    private static String redirectSiNoEsAdmin() {
+        Object rol = SesionActual.rol();
         if ("admin".equals(rol)) {
             return null;
         }
@@ -303,8 +305,8 @@ public class VistaController {
     }
 
     // Solo admin y rol taller entran a registrar-taller
-    private static String redirectSiNoPuedeGestionarTaller(HttpSession session) {
-        Object rol = session.getAttribute("rol");
+    private static String redirectSiNoPuedeGestionarTaller() {
+        Object rol = SesionActual.rol();
         if ("admin".equals(rol) || "taller".equals(rol)) {
             return null;
         }
@@ -315,8 +317,8 @@ public class VistaController {
     }
 
     // Citas y valoraciones solo para rol user (cliente)
-    private static String redirectSiNoEsCliente(HttpSession session) {
-        Object rol = session.getAttribute("rol");
+    private static String redirectSiNoEsCliente() {
+        Object rol = SesionActual.rol();
         if ("taller".equals(rol)) {
             return "redirect:/panel-taller";
         }
@@ -327,12 +329,12 @@ public class VistaController {
     }
 
     // panel-taller solo para rol taller
-    private static String redirectSiNoEsTaller(HttpSession session) {
-        if (!"taller".equals(session.getAttribute("rol"))) {
-            if ("admin".equals(session.getAttribute("rol"))) {
+    private static String redirectSiNoEsTaller() {
+        if (!"taller".equals(SesionActual.rol())) {
+            if ("admin".equals(SesionActual.rol())) {
                 return "redirect:/mi-taller";
             }
-            if ("user".equals(session.getAttribute("rol"))) {
+            if ("user".equals(SesionActual.rol())) {
                 return "redirect:/buscar-talleres";
             }
             return "redirect:/";
