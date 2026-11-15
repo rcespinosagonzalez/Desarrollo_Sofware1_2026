@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<!-- Cliente: pantalla propia para pedir cita en un taller (antes estaba en la pantalla principal) -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="|Pedir cita · ${taller.nombre}|">Pedir cita</title>
+    <link rel="shortcut icon" th:href="@{/css/img/logo.ico}" />
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <link rel="stylesheet" th:href="@{/css/marca.css}">
+    <link rel="stylesheet" th:href="@{/css/mis-citas.css}">
+    <link rel="stylesheet" th:href="@{/css/perfil.css}">
+    <link rel="stylesheet" th:href="@{/css/ficha-taller.css}">
+</head>
+<body class="marco-pagina cliente-barra-superior vista-mis-citas vista-ficha pagina-ancho-completo" data-pantalla="pedir-cita" data-rol="user">
+    <header class="barra-superior-cliente contenedor-bloque-externo">
+        <a href="/buscar-talleres" class="barra-marca barra-marca-logo"><img th:src="@{/css/img/logo.png}" alt="" class="barra-logo" width="38" height="25"><span>Asistencia en carretera</span></a>
+        <nav class="barra-superior-acciones" aria-label="Sesión">
+            <a href="/buscar-talleres">Mapa y talleres</a>
+            <a href="/mis-citas">Mis citas</a>
+            <a href="/perfil" class="enlace-perfil"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20c.8-3.6 3.8-5.5 7.5-5.5s6.7 1.9 7.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Perfil</a>
+            <a href="/logout">Salir</a>
+        </nav>
+    </header>
+
+    <main class="contenido-principal ficha-contenido">
+        <p th:if="${msgError}" class="aviso-error" th:text="${msgError}">Error</p>
+        <p><a th:href="@{/detalle-taller(id=${taller.id})}" class="ficha-volver">← Volver a la ficha del taller</a></p>
+        <h1>Pedir cita</h1>
+
+        <div class="ficha-columnas pedir-columnas">
+            <section class="ficha-tarjeta">
+                <h2>Datos de tu cita</h2>
+                <form th:action="@{/solicitar-cita}" method="post" class="perfil-form">
+                    <input type="hidden" name="tallerId" th:value="${taller.id}">
+                    <!-- cita-disponibilidad.js lee este campo para pedir las horas libres del taller -->
+                    <input type="hidden" id="select-taller-cita" th:value="${taller.id}">
+
+                    <label class="perfil-campo">
+                        <span>Nombre de contacto</span>
+                        <input type="text" name="cliente" th:value="${nombreContacto}" required maxlength="120" autocomplete="name">
+                    </label>
+
+                    <label class="perfil-campo" th:if="${!#lists.isEmpty(vehiculos)}">
+                        <span>Vehículo <em>(opcional)</em></span>
+                        <select name="vehiculoId">
+                            <option value="">Sin especificar</option>
+                            <option th:each="v : ${vehiculos}" th:value="${v.id}" th:text="|${v.placa} · ${v.descripcion}|">ABC123 · Mazda 3</option>
+                        </select>
+                    </label>
+                    <p class="ficha-aviso" th:if="${#lists.isEmpty(vehiculos)}">
+                        Aún no tienes vehículos guardados. <a href="/perfil#vehiculos">Agrégalos en tu perfil</a> para elegirlos al pedir una cita.
+                    </p>
+
+                    <div class="perfil-fila">
+                        <label class="perfil-campo">
+                            <span>Fecha</span>
+                            <input type="date" id="fecha-cita" name="fecha" required>
+                        </label>
+                        <label class="perfil-campo">
+                            <span>Hora (turnos de 1 hora)</span>
+                            <select id="hora-cita" name="hora" required>
+                                <option value="" disabled selected>Elige primero la fecha</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <label class="perfil-campo">
+                        <span>¿Qué necesitas?</span>
+                        <input type="text" id="motivo-cita" name="motivo" required maxlength="300" placeholder="Ej. Cambio de frenos">
+                    </label>
+                    <ul class="ficha-chips ficha-chips-accion" th:if="${!#lists.isEmpty(taller.serviciosLista)}" aria-label="Servicios del taller">
+                        <li th:each="sv : ${taller.serviciosLista}"><button type="button" class="chip-servicio" th:attr="data-servicio=${sv}" th:text="${sv}">Servicio</button></li>
+                    </ul>
+
+                    <button type="submit" class="boton-principal">Solicitar cita</button>
+                </form>
+            </section>
+
+            <aside class="ficha-columna ficha-lateral">
+                <section class="ficha-tarjeta">
+                    <h2 th:text="${taller.nombre}">Taller</h2>
+                    <p class="ficha-direccion">
+                        <span th:text="${taller.direccion}">Dirección</span><span th:if="${!#strings.isEmpty(taller.ciudad)}"> · <span th:text="${taller.ciudad}">Ciudad</span></span>
+                    </p>
+                    <p class="ficha-nota" th:if="${taller.numValoraciones > 0}">
+                        <span class="ficha-estrellas">★</span>
+                        <strong th:text="${#numbers.formatDecimal(taller.calificacionPromedio, 1, 1)}">4.5</strong>
+                        <span th:text="|(${taller.numValoraciones} valoraciones)|">(12)</span>
+                    </p>
+                    <p class="texto-secundario" th:if="${!#strings.isEmpty(taller.horario)}" th:text="${taller.horario}">Lun–Vie 08:00–18:00</p>
+                </section>
+                <section class="ficha-tarjeta">
+                    <h2>Cómo funciona</h2>
+                    <ol class="ficha-pasos">
+                        <li>Eliges el día y la hora libre.</li>
+                        <li>El taller revisa y confirma tu solicitud.</li>
+                        <li>Puedes cambiarla o cancelarla desde «Mis citas».</li>
+                    </ol>
+                </section>
+            </aside>
+        </div>
+    </main>
+    <th:block th:replace="~{fragments/pie :: pie(true)}"></th:block>
+    <script th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/cita-disponibilidad.js}"></script>
+    <script th:src="@{/js/pedir-cita.js}"></script>
+</body>
+</html>

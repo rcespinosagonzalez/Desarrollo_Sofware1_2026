@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<!-- Ficha de un taller (cualquier rol con sesion). Sin data-rol: la ven clientes, admin y duenos y app.js no redirige.
+     Clientes: pedir cita y valorar (valoraciones verificadas por cita completada). -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="|${taller.nombre} · Asistencia en carretera|">Taller</title>
+    <link rel="shortcut icon" th:href="@{/css/img/logo.ico}" />
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <link rel="stylesheet" th:href="@{/css/marca.css}">
+    <link rel="stylesheet" th:href="@{/css/mis-citas.css}">
+    <link rel="stylesheet" th:href="@{/css/ficha-taller.css}">
+</head>
+<body class="marco-pagina cliente-barra-superior vista-mis-citas vista-ficha pagina-ancho-completo" data-pantalla="detalle-taller">
+    <header class="barra-superior-cliente contenedor-bloque-externo">
+        <a th:href="${urlVolver}" class="barra-marca barra-marca-logo"><img th:src="@{/css/img/logo.png}" alt="" class="barra-logo" width="38" height="25"><span>Asistencia en carretera</span></a>
+        <nav class="barra-superior-acciones" aria-label="Sesión">
+            <a th:href="${urlVolver}" th:text="|← ${textoVolver}|">← Mapa</a>
+            <th:block th:if="${esCliente}">
+                <a href="/mis-citas">Mis citas</a>
+                <a href="/perfil" class="enlace-perfil"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20c.8-3.6 3.8-5.5 7.5-5.5s6.7 1.9 7.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Perfil</a>
+            </th:block>
+            <a href="/logout">Salir</a>
+        </nav>
+    </header>
+
+    <main class="contenido-principal ficha-contenido">
+        <p th:if="${msgOk}" class="aviso-exito" th:text="${msgOk}">OK</p>
+        <p th:if="${msgError}" class="aviso-error" th:text="${msgError}">Error</p>
+
+        <section class="ficha-hero">
+            <div class="ficha-hero-texto">
+                <div class="ficha-etiquetas">
+                    <span class="etiqueta-patrocinado" th:if="${taller.destacado}">Patrocinado</span>
+                    <span class="ficha-estado" th:classappend="${abiertoAhora ? 'ficha-abierto' : 'ficha-cerrado'}"
+                          th:text="${abiertoAhora ? 'Abierto ahora' : 'Cerrado ahora'}">Abierto ahora</span>
+                </div>
+                <h1 th:text="${taller.nombre}">Nombre del taller</h1>
+                <p class="ficha-direccion">
+                    <span th:text="${taller.direccion}">Dirección</span><span th:if="${!#strings.isEmpty(taller.ciudad)}"> · <span th:text="${taller.ciudad}">Ciudad</span></span>
+                </p>
+                <p class="ficha-nota" th:if="${taller.numValoraciones > 0}">
+                    <span class="ficha-estrellas" th:text="${#strings.repeat('★', estrellasLlenas) + #strings.repeat('☆', 5 - estrellasLlenas)}">★★★★☆</span>
+                    <strong th:text="${#numbers.formatDecimal(taller.calificacionPromedio, 1, 1)}">4.5</strong>
+                    <a href="#valoraciones" th:text="|${taller.numValoraciones} valoraciones|">12 valoraciones</a>
+                </p>
+                <p class="ficha-nota" th:unless="${taller.numValoraciones > 0}">Aún sin valoraciones</p>
+            </div>
+            <div class="ficha-hero-acciones">
+                <a class="boton-principal" th:if="${esCliente}" th:href="@{/solicitar-cita(tallerId=${taller.id})}">Pedir cita</a>
+                <a class="boton-secundario" th:if="${!#strings.isEmpty(taller.telefono)}" th:href="|tel:${taller.telefono}|">Llamar</a>
+                <a class="boton-secundario" th:if="${taller.lat != null and taller.lng != null}" target="_blank" rel="noopener noreferrer"
+                   th:href="|https://www.google.com/maps/dir/?api=1&destination=${taller.lat},${taller.lng}|">Cómo llegar</a>
+            </div>
+        </section>
+
+        <div class="ficha-columnas">
+            <div class="ficha-columna">
+                <section class="ficha-tarjeta" th:if="${!#strings.isEmpty(taller.descripcion)}">
+                    <h2>Sobre el taller</h2>
+                    <p th:text="${taller.descripcion}">Descripción</p>
+                </section>
+
+                <section class="ficha-tarjeta">
+                    <h2>Servicios</h2>
+                    <ul class="ficha-chips" th:if="${!#lists.isEmpty(serviciosLista)}">
+                        <li th:each="sv : ${serviciosLista}" th:text="${sv}">Servicio</li>
+                    </ul>
+                    <p class="texto-secundario" th:if="${#lists.isEmpty(serviciosLista)}">El taller aún no ha publicado sus servicios.</p>
+                </section>
+
+                <section class="ficha-tarjeta" id="valoraciones">
+                    <h2>Valoraciones <span class="mis-citas-contador" th:text="${#lists.size(valoracionesTaller)}">0</span></h2>
+
+                    <div class="ficha-resumen-notas" th:if="${!#lists.isEmpty(valoracionesTaller)}">
+                        <div class="ficha-promedio">
+                            <strong th:text="${#numbers.formatDecimal(taller.calificacionPromedio, 1, 1)}">4.5</strong>
+                            <span class="ficha-estrellas" th:text="${#strings.repeat('★', estrellasLlenas) + #strings.repeat('☆', 5 - estrellasLlenas)}">★★★★☆</span>
+                            <small th:text="|${#lists.size(valoracionesTaller)} valoraciones|">12 valoraciones</small>
+                        </div>
+                        <ul class="ficha-distribucion">
+                            <li th:each="d : ${distribucion}">
+                                <span th:text="|${d[0]} ★|">5 ★</span>
+                                <progress max="100" th:value="${d[2]}" th:attr="aria-label=|${d[1]} valoraciones de ${d[0]} estrellas|"></progress>
+                                <span class="ficha-distribucion-n" th:text="${d[1]}">0</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <p class="texto-secundario" th:if="${#lists.isEmpty(valoracionesTaller)}">Este taller todavía no tiene valoraciones.</p>
+
+                    <article class="ficha-valoracion" th:each="v, it : ${valoracionesTaller}" th:if="${it.index < 8}">
+                        <header>
+                            <strong th:text="${v.cliente}">Cliente</strong>
+                            <span class="ficha-estrellas" th:text="${#strings.repeat('★', v.estrellas) + #strings.repeat('☆', 5 - v.estrellas)}">★★★★★</span>
+                            <small th:text="${v.fecha}">2026-11-01</small>
+                        </header>
+                        <p th:if="${!#strings.isEmpty(v.comentario)}" th:text="${v.comentario}">Comentario</p>
+                    </article>
+                    <details class="ficha-mas" th:if="${#lists.size(valoracionesTaller) > 8}">
+                        <summary th:text="|Ver las ${#lists.size(valoracionesTaller) - 8} valoraciones restantes|">Ver más</summary>
+                        <article class="ficha-valoracion" th:each="v, it : ${valoracionesTaller}" th:if="${it.index >= 8}">
+                            <header>
+                                <strong th:text="${v.cliente}">Cliente</strong>
+                                <span class="ficha-estrellas" th:text="${#strings.repeat('★', v.estrellas) + #strings.repeat('☆', 5 - v.estrellas)}">★★★★★</span>
+                                <small th:text="${v.fecha}">2026-11-01</small>
+                            </header>
+                            <p th:if="${!#strings.isEmpty(v.comentario)}" th:text="${v.comentario}">Comentario</p>
+                        </article>
+                    </details>
+
+                    <!-- Valorar: solo clientes. Con valoraciones verificadas se elige la visita (cita completada) -->
+                    <div class="ficha-valorar" th:if="${esCliente}" id="valorar">
+                        <h3>Valorar este taller</h3>
+                        <form th:action="@{/taller/{id}/valorar(id=${taller.id})}" method="post" class="perfil-form"
+                              th:if="${!#lists.isEmpty(citasPorValorar) or !exigeCita}">
+                            <label class="perfil-campo" th:if="${!#lists.isEmpty(citasPorValorar)}">
+                                <span>¿Qué visita quieres valorar?</span>
+                                <select name="citaId" required>
+                                    <option th:each="c : ${citasPorValorar}" th:value="${c.id}" th:text="|${c.fecha} · ${c.detalle}|">2026-10-01 · Frenos</option>
+                                </select>
+                            </label>
+                            <fieldset class="estrellas-selector">
+                                <legend>Tu calificación</legend>
+                                <input type="radio" name="estrellas" id="est5" value="5" required><label for="est5" title="5 estrellas">★</label>
+                                <input type="radio" name="estrellas" id="est4" value="4"><label for="est4" title="4 estrellas">★</label>
+                                <input type="radio" name="estrellas" id="est3" value="3"><label for="est3" title="3 estrellas">★</label>
+                                <input type="radio" name="estrellas" id="est2" value="2"><label for="est2" title="2 estrellas">★</label>
+                                <input type="radio" name="estrellas" id="est1" value="1"><label for="est1" title="1 estrella">★</label>
+                            </fieldset>
+                            <label class="perfil-campo">
+                                <span>Comentario <em>(opcional)</em></span>
+                                <textarea name="comentario" rows="3" maxlength="500" placeholder="Cuéntanos cómo fue tu experiencia"></textarea>
+                            </label>
+                            <button type="submit" class="boton-principal">Publicar valoración</button>
+                        </form>
+                        <p class="ficha-aviso" th:if="${#lists.isEmpty(citasPorValorar) and exigeCita}">
+                            Podrás valorar este taller cuando completes una cita con ellos. Así todas las opiniones son de clientes reales.
+                        </p>
+                    </div>
+                </section>
+            </div>
+
+            <aside class="ficha-columna ficha-lateral">
+                <section class="ficha-tarjeta">
+                    <h2>Horario</h2>
+                    <table class="ficha-horario">
+                        <tr th:each="f : ${filasHorario}" th:classappend="${f.hoy ? 'ficha-hoy' : ''}">
+                            <th scope="row" th:text="${f.dia}">Lunes</th>
+                            <td th:text="${f.horas}" th:classappend="${f.cerrado ? 'ficha-dia-cerrado' : ''}">08:00 – 18:00</td>
+                        </tr>
+                    </table>
+                </section>
+
+                <section class="ficha-tarjeta">
+                    <h2>Contacto</h2>
+                    <ul class="ficha-contacto">
+                        <li th:if="${!#strings.isEmpty(taller.telefono)}"><span>Teléfono</span><a th:href="|tel:${taller.telefono}|" th:text="${taller.telefono}">300</a></li>
+                        <li th:if="${!#strings.isEmpty(taller.direccion)}"><span>Dirección</span><strong th:text="${taller.direccion}">Dirección</strong></li>
+                        <li th:if="${!#strings.isEmpty(taller.ciudad)}"><span>Ciudad</span><strong th:text="${taller.ciudad}">Ciudad</strong></li>
+                    </ul>
+                </section>
+
+                <section class="ficha-tarjeta ficha-cta" th:if="${esCliente}">
+                    <h2>¿Necesitas este taller?</h2>
+                    <p>Elige el día y la hora, y el taller confirma tu cita.</p>
+                    <a class="boton-principal" th:href="@{/solicitar-cita(tallerId=${taller.id})}">Pedir cita</a>
+                </section>
+            </aside>
+        </div>
+    </main>
+    <th:block th:replace="~{fragments/pie :: pie(${esCliente})}"></th:block>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

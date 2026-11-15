@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<!-- Cliente: perfil con datos personales, seguridad de la cuenta, vehiculos y baja de la cuenta -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" th:href="@{/css/img/logo.ico}" />
+    <title>Mi perfil</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <link rel="stylesheet" th:href="@{/css/marca.css}">
+    <link rel="stylesheet" th:href="@{/css/mis-citas.css}">
+    <link rel="stylesheet" th:href="@{/css/perfil.css}">
+</head>
+<body class="marco-pagina cliente-barra-superior vista-mis-citas vista-perfil pagina-ancho-completo" data-pantalla="perfil" data-rol="user">
+    <header class="barra-superior-cliente contenedor-bloque-externo">
+        <a href="/buscar-talleres" class="barra-marca barra-marca-logo"><img th:src="@{/css/img/logo.png}" alt="" class="barra-logo" width="38" height="25"><span>Asistencia en carretera</span></a>
+        <nav class="barra-superior-acciones" aria-label="Sesión">
+            <a href="/buscar-talleres">Mapa y talleres</a>
+            <a href="/mis-citas">Mis citas</a>
+            <a href="/perfil" class="enlace-perfil" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20c.8-3.6 3.8-5.5 7.5-5.5s6.7 1.9 7.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Perfil</a>
+            <a href="/logout">Salir</a>
+        </nav>
+    </header>
+
+    <main class="contenido-principal perfil-contenido">
+        <section class="perfil-hero">
+            <div class="perfil-avatar" aria-hidden="true" th:text="${perfil.iniciales}">DB</div>
+            <div class="perfil-hero-texto">
+                <h1 th:text="${perfil.nombre}">Nombre</h1>
+                <p class="perfil-hero-correo" th:text="${perfil.email}">correo@ejemplo.com</p>
+                <ul class="perfil-datos-rapidos">
+                    <li th:if="${!#strings.isEmpty(perfil.miembroDesde)}">Miembro desde <strong th:text="${perfil.miembroDesde}">noviembre de 2026</strong></li>
+                    <li th:if="${!#strings.isEmpty(perfil.ciudad)}" th:text="${perfil.ciudad}">Cartagena</li>
+                    <li th:if="${!#strings.isEmpty(perfil.telefono)}" th:text="${perfil.telefono}">300 000 0000</li>
+                </ul>
+            </div>
+            <div class="perfil-hero-acciones">
+                <a class="boton-principal" href="/buscar-talleres">Buscar un taller</a>
+                <a class="boton-secundario" href="/mis-citas">Ver mis citas</a>
+            </div>
+        </section>
+
+        <section class="perfil-resumen" aria-label="Resumen de actividad">
+            <a class="perfil-dato" href="/mis-citas"><strong th:text="${perfil.citasTotales}">0</strong><span>Citas en total</span></a>
+            <a class="perfil-dato" href="/mis-citas#proximas"><strong th:text="${perfil.citasProximas}">0</strong><span>Próximas</span></a>
+            <a class="perfil-dato" href="/mis-citas#historial"><strong th:text="${perfil.citasCompletadas}">0</strong><span>Completadas</span></a>
+            <div class="perfil-dato"><strong th:text="${perfil.valoraciones}">0</strong><span>Valoraciones</span></div>
+        </section>
+
+        <div class="perfil-columnas">
+            <div class="perfil-columna">
+                <section class="perfil-tarjeta" id="datos">
+                    <h2>Datos personales</h2>
+                    <p class="perfil-ayuda">Así te ve el taller cuando pides una cita.</p>
+                <p th:if="${seccion == 'datos' and msgOk != null}" class="aviso-exito" th:text="${msgOk}">OK</p>
+                <p th:if="${seccion == 'datos' and msgError != null}" class="aviso-error" th:text="${msgError}">Error</p>
+                    <form th:action="@{/perfil/datos}" method="post" class="perfil-form">
+                        <label class="perfil-campo">
+                            <span>Nombre completo</span>
+                            <input type="text" name="nombre" th:value="${perfil.nombre}" required minlength="2" maxlength="120" autocomplete="name">
+                        </label>
+                        <label class="perfil-campo">
+                            <span>Correo electrónico</span>
+                            <input type="email" th:value="${perfil.email}" disabled>
+                            <small>Para cambiarlo ve a <a href="#seguridad">Seguridad</a>.</small>
+                        </label>
+                        <div class="perfil-fila">
+                            <label class="perfil-campo">
+                                <span>Teléfono <em>(opcional)</em></span>
+                                <input type="tel" name="telefono" th:value="${perfil.telefono}" maxlength="20" inputmode="tel" autocomplete="tel" placeholder="300 123 4567">
+                            </label>
+                            <label class="perfil-campo">
+                                <span>Ciudad <em>(opcional)</em></span>
+                                <input type="text" name="ciudad" th:value="${perfil.ciudad}" maxlength="80" autocomplete="address-level2" placeholder="Cartagena">
+                            </label>
+                        </div>
+                        <button type="submit" class="boton-principal">Guardar cambios</button>
+                    </form>
+                </section>
+
+                <section class="perfil-tarjeta" id="seguridad">
+                    <h2>Seguridad</h2>
+                    <p class="perfil-ayuda">Cambia tu contraseña o el correo con el que inicias sesión.</p>
+                <p th:if="${seccion == 'seguridad' and msgOk != null}" class="aviso-exito" th:text="${msgOk}">OK</p>
+                <p th:if="${seccion == 'seguridad' and msgError != null}" class="aviso-error" th:text="${msgError}">Error</p>
+                    <form th:action="@{/perfil/clave}" method="post" class="perfil-form" id="form-clave">
+                        <h3>Cambiar contraseña</h3>
+                        <label class="perfil-campo">
+                            <span>Contraseña actual</span>
+                            <span class="perfil-clave">
+                                <input type="password" id="clave-actual" name="actual" required autocomplete="current-password">
+                                <button type="button" class="perfil-ojo" data-ver="clave-actual" aria-label="Mostrar u ocultar la contraseña">Ver</button>
+                            </span>
+                        </label>
+                        <label class="perfil-campo">
+                            <span>Contraseña nueva</span>
+                            <span class="perfil-clave">
+                                <input type="password" id="clave-nueva" name="nueva" required minlength="8" maxlength="72" autocomplete="new-password">
+                                <button type="button" class="perfil-ojo" data-ver="clave-nueva" aria-label="Mostrar u ocultar la contraseña">Ver</button>
+                            </span>
+                            <span class="perfil-fuerza" id="clave-fuerza" data-nivel="0" aria-live="polite">
+                                <i></i><i></i><i></i><i></i><b id="clave-fuerza-texto">Mínimo 8 caracteres</b>
+                            </span>
+                        </label>
+                        <label class="perfil-campo">
+                            <span>Repite la contraseña nueva</span>
+                            <input type="password" id="clave-confirmacion" name="confirmacion" required minlength="8" maxlength="72" autocomplete="new-password">
+                            <small id="clave-aviso" class="perfil-aviso-campo" hidden>Las contraseñas no coinciden.</small>
+                        </label>
+                        <button type="submit" class="boton-principal">Actualizar contraseña</button>
+                    </form>
+
+                    <form th:action="@{/perfil/correo}" method="post" class="perfil-form perfil-form-separado">
+                        <h3>Cambiar correo</h3>
+                        <label class="perfil-campo">
+                            <span>Correo nuevo</span>
+                            <input type="email" name="correo" required maxlength="320" autocomplete="email">
+                        </label>
+                        <label class="perfil-campo">
+                            <span>Tu contraseña (para confirmar)</span>
+                            <span class="perfil-clave">
+                                <input type="password" id="clave-correo" name="clave" required autocomplete="current-password">
+                                <button type="button" class="perfil-ojo" data-ver="clave-correo" aria-label="Mostrar u ocultar la contraseña">Ver</button>
+                            </span>
+                        </label>
+                        <button type="submit" class="boton-secundario">Actualizar correo</button>
+                    </form>
+                </section>
+            </div>
+
+            <div class="perfil-columna">
+                <section class="perfil-tarjeta" id="vehiculos">
+                    <h2>Mis vehículos <span class="mis-citas-contador" th:text="${#lists.size(perfil.vehiculos)}">0</span></h2>
+                    <p class="perfil-ayuda">Guarda hasta 5 vehículos para tenerlos a la mano al pedir asistencia.</p>
+                <p th:if="${seccion == 'vehiculos' and msgOk != null}" class="aviso-exito" th:text="${msgOk}">OK</p>
+                <p th:if="${seccion == 'vehiculos' and msgError != null}" class="aviso-error" th:text="${msgError}">Error</p>
+                    <p class="texto-secundario" th:if="${#lists.isEmpty(perfil.vehiculos)}">Aún no has guardado ningún vehículo.</p>
+                    <article class="perfil-vehiculo" th:each="v : ${perfil.vehiculos}">
+                        <span class="perfil-placa" th:text="${v.placa}">ABC123</span>
+                        <div class="perfil-vehiculo-info">
+                            <strong th:text="${v.descripcion}">Mazda 3 · 2019</strong>
+                            <span class="texto-secundario">
+                                <span th:text="${v.tipoTexto}">Carro</span><span th:if="${!#strings.isEmpty(v.color)}"> · <span th:text="${v.color}">Rojo</span></span>
+                            </span>
+                        </div>
+                        <form th:action="@{/perfil/vehiculos/{id}/eliminar(id=${v.id})}" method="post"
+                              data-confirmar="¿Eliminar este vehículo?">
+                            <button type="submit" class="perfil-quitar" aria-label="Eliminar vehículo">Quitar</button>
+                        </form>
+                    </article>
+
+                    <form th:action="@{/perfil/vehiculos}" method="post" class="perfil-form perfil-form-separado"
+                          th:if="${#lists.size(perfil.vehiculos) lt 5}">
+                        <h3>Agregar vehículo</h3>
+                        <div class="perfil-fila">
+                            <label class="perfil-campo">
+                                <span>Placa</span>
+                                <input type="text" name="placa" required minlength="5" maxlength="8" autocomplete="off" placeholder="ABC123" class="perfil-entrada-placa">
+                            </label>
+                            <label class="perfil-campo">
+                                <span>Tipo</span>
+                                <select name="tipo" required>
+                                    <option value="carro" selected>Carro</option>
+                                    <option value="camioneta">Camioneta</option>
+                                    <option value="moto">Moto</option>
+                                    <option value="camion">Camión</option>
+                                    <option value="otro">Otro</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="perfil-fila">
+                            <label class="perfil-campo">
+                                <span>Marca</span>
+                                <input type="text" name="marca" required maxlength="40" placeholder="Mazda">
+                            </label>
+                            <label class="perfil-campo">
+                                <span>Modelo <em>(opcional)</em></span>
+                                <input type="text" name="modelo" maxlength="40" placeholder="3 Touring">
+                            </label>
+                        </div>
+                        <div class="perfil-fila">
+                            <label class="perfil-campo">
+                                <span>Año <em>(opcional)</em></span>
+                                <input type="number" name="anio" min="1950" th:max="${anioMaximo}" inputmode="numeric" placeholder="2019">
+                            </label>
+                            <label class="perfil-campo">
+                                <span>Color <em>(opcional)</em></span>
+                                <input type="text" name="color" maxlength="30" placeholder="Rojo">
+                            </label>
+                        </div>
+                        <button type="submit" class="boton-principal">Guardar vehículo</button>
+                    </form>
+                    <p class="perfil-ayuda perfil-form-separado" th:unless="${#lists.size(perfil.vehiculos) lt 5}">
+                        Llegaste al máximo de 5 vehículos. Quita uno para agregar otro.
+                    </p>
+                </section>
+
+                <section class="perfil-tarjeta perfil-peligro" id="cuenta">
+                    <h2>Eliminar cuenta</h2>
+                    <p class="perfil-ayuda">
+                        Tu cuenta se desactivará y no podrás volver a entrar. Tus citas futuras se cancelarán
+                        y los turnos quedarán libres. Tu historial de citas y valoraciones se conserva.
+                    </p>
+                <p th:if="${seccion == 'cuenta' and msgOk != null}" class="aviso-exito" th:text="${msgOk}">OK</p>
+                <p th:if="${seccion == 'cuenta' and msgError != null}" class="aviso-error" th:text="${msgError}">Error</p>
+                    <details class="perfil-detalles">
+                        <summary>Quiero eliminar mi cuenta</summary>
+                        <form th:action="@{/perfil/cuenta/eliminar}" method="post" class="perfil-form"
+                              data-confirmar="¿Seguro? Esta acción desactiva tu cuenta y cancela tus citas futuras.">
+                            <label class="perfil-campo">
+                                <span>Escribe tu contraseña para confirmar</span>
+                                <span class="perfil-clave">
+                                    <input type="password" id="clave-cuenta" name="clave" required autocomplete="current-password">
+                                    <button type="button" class="perfil-ojo" data-ver="clave-cuenta" aria-label="Mostrar u ocultar la contraseña">Ver</button>
+                                </span>
+                            </label>
+                            <button type="submit" class="perfil-boton-peligro">Eliminar mi cuenta</button>
+                        </form>
+                    </details>
+                </section>
+            </div>
+        </div>
+    </main>
+    <th:block th:replace="~{fragments/pie :: pie(true)}"></th:block>
+    <script th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/mis-citas.js}"></script>
+    <script th:src="@{/js/perfil.js}"></script>
+</body>
+</html>

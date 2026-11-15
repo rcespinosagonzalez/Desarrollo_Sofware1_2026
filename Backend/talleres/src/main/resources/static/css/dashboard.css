@@ -1,0 +1,384 @@
+/* Dashboards de admin y dueño de taller */
+.dashboard .dash-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.dash-kpi {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.9rem 1rem;
+    border-radius: 14px;
+    border: 1px solid #dbe3ee;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+.dash-kpi-etiqueta {
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.dash-kpi-valor {
+    font-size: 1.7rem;
+    line-height: 1.15;
+    color: #1d4ed8;
+}
+
+.dash-kpi-nota {
+    font-size: 0.78rem;
+    color: #64748b;
+}
+
+.dash-kpi-alerta {
+    border-color: #fde68a;
+    background: #fffbeb;
+}
+
+.dash-kpi-alerta .dash-kpi-valor {
+    color: #b45309;
+}
+
+.dash-kpi-ok {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+}
+
+.dash-kpi-ok .dash-kpi-valor {
+    color: #166534;
+}
+
+.dash-rejilla {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+}
+
+@media (min-width: 900px) {
+    .dash-rejilla {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dash-ancha {
+        grid-column: 1 / -1;
+    }
+}
+
+.dash-tarjeta {
+    padding: 1.1rem 1.25rem;
+    border-radius: 14px;
+    border: 1px solid #dbe3ee;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+    min-width: 0;
+}
+
+.dash-tarjeta h3 {
+    margin: 0 0 0.8rem;
+    font-size: 0.98rem;
+    color: #0f172a;
+}
+
+/* ---------- Graficos ---------- */
+.graf-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.graf-guia {
+    stroke: #e2e8f0;
+    stroke-width: 1;
+}
+
+.graf-barra {
+    fill: #2563eb;
+}
+
+.graf-barra:hover {
+    fill: #1d4ed8;
+}
+
+.graf-valor {
+    font-size: 12px;
+    font-weight: 700;
+    fill: #334155;
+}
+
+.graf-etiqueta {
+    font-size: 11px;
+    fill: #64748b;
+}
+
+.graf-vacio {
+    margin: 1rem 0;
+    text-align: center;
+    font-size: 0.88rem;
+    color: #94a3b8;
+    list-style: none;
+}
+
+.graf-h {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.graf-h li {
+    display: grid;
+    grid-template-columns: minmax(80px, 38%) minmax(0, 1fr) 2.8rem;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.3rem 0;
+    font-size: 0.84rem;
+}
+
+.graf-h-etiqueta {
+    color: #334155;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.graf-h-pista {
+    height: 10px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    overflow: hidden;
+}
+
+.graf-h-relleno {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #1e3a5f, #2563eb);
+}
+
+.graf-h-valor {
+    text-align: right;
+    font-weight: 700;
+    color: #334155;
+}
+
+.graf-donut {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.graf-donut-svg {
+    width: 150px;
+    height: 150px;
+    flex-shrink: 0;
+}
+
+.graf-donut-total {
+    font-size: 26px;
+    font-weight: 800;
+    fill: #0f172a;
+}
+
+.graf-leyenda {
+    flex: 1;
+    min-width: 150px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.graf-leyenda li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0;
+    font-size: 0.84rem;
+}
+
+.graf-leyenda i {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.graf-leyenda-nombre {
+    flex: 1;
+    color: #475569;
+}
+
+/* ---------- Listas ---------- */
+.dash-lista,
+.dash-tarjeta ul,
+.dash-tarjeta ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.dash-item {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.dash-item:last-child {
+    border-bottom: none;
+}
+
+.dash-item-cab {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+}
+
+.dash-item-cab a {
+    font-weight: 700;
+    color: #1d4ed8;
+    text-decoration: none;
+}
+
+.dash-item-cab a:hover {
+    text-decoration: underline;
+}
+
+.dash-item-texto {
+    margin: 0.15rem 0 0;
+    font-size: 0.82rem;
+    color: #64748b;
+    overflow-wrap: anywhere;
+}
+
+.dash-estrellas {
+    color: #d97706;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+/* ---------- Estados de cita ---------- */
+.dash-estado {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    background: #e2e8f0;
+    color: #334155;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.dash-estado.estado-solicitada { background: #fef3c7; color: #92400e; }
+.dash-estado.estado-confirmada { background: #dbeafe; color: #1d4ed8; }
+.dash-estado.estado-completada { background: #dcfce7; color: #166534; }
+.dash-estado.estado-cancelada { background: #fee2e2; color: #b91c1c; }
+
+/* ---------- Agenda del dueño ---------- */
+.dash-agenda {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.dash-tabla-envoltorio {
+    overflow-x: auto;
+}
+
+.dash-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+}
+
+.dash-tabla th,
+.dash-tabla td {
+    padding: 0.55rem 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid #eef2f7;
+    vertical-align: middle;
+}
+
+.dash-tabla th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+}
+
+.dash-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.dash-acciones form {
+    margin: 0;
+}
+
+.dash-boton {
+    padding: 0.3rem 0.7rem;
+    border-radius: 8px;
+    border: 1px solid #bfdbfe;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.dash-boton:hover {
+    background: #dbeafe;
+}
+
+.dash-boton-peligro {
+    border-color: #fecaca;
+    background: #fff;
+    color: #b91c1c;
+}
+
+.dash-boton-peligro:hover {
+    background: #fef2f2;
+}
+
+.dash-boton-ok {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.dash-boton-ok:hover {
+    background: #dcfce7;
+}
+
+/* ---------- Plan destacado (admin) ---------- */
+.plan-etiqueta {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.plan-destacado {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.plan-estandar {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.form-en-linea {
+    display: inline;
+    margin: 0;
+}

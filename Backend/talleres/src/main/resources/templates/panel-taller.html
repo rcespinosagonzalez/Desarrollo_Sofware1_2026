@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<!-- Dueno del taller: resumen, datos del negocio, citas y valoraciones recibidas -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" th:href="@{/css/img/logo.ico}" />
+    <title>Asistencia en carretera — Panel del taller</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <link rel="stylesheet" th:href="@{/css/marca.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body class="marco-pagina cliente-barra-superior vista-admin-gestion vista-panel-taller pagina-ancho-completo"
+      data-pantalla="panel-taller" data-rol="taller">
+    <header class="barra-superior-cliente barra-admin-gestion">
+        <a href="/panel-taller" class="barra-marca barra-marca-logo"><img th:src="@{/css/img/logo.png}" alt="" class="barra-logo" width="38" height="25"><span>Asistencia en carretera</span></a>
+        <nav class="barra-nav-admin" aria-label="Secciones">
+            <a th:if="${miTaller != null}" href="#seccion-dashboard" class="enlace-nav-admin">Resumen</a>
+            <a href="#seccion-mi-taller" class="enlace-nav-admin">Mi taller</a>
+            <a href="#seccion-citas" class="enlace-nav-admin">Citas</a>
+            <a href="#seccion-valoraciones" class="enlace-nav-admin">Valoraciones</a>
+            <a th:if="${miTaller != null}" th:href="@{/registrar-taller(id=${miTaller.id})}"
+               class="enlace-nav-admin enlace-nav-destacado">Editar datos</a>
+        </nav>
+        <nav class="barra-superior-acciones" aria-label="Sesion">
+            <span class="barra-usuario" th:text="${nombreUsuario}">Dueño</span>
+            <a href="/logout">Salir</a>
+        </nav>
+    </header>
+
+    <main class="contenido-principal contenido-admin-gestion">
+        <p th:if="${msgOk}" class="aviso-exito admin-aviso" th:text="${msgOk}">OK</p>
+        <p th:if="${msgError}" class="aviso-error admin-aviso" th:text="${msgError}">Error</p>
+
+        <header class="admin-cabecera-pagina cabecera-panel-taller">
+            <div class="cabecera-panel-taller-texto">
+                <p class="etiqueta-panel-taller">Panel del dueño</p>
+                <h1 th:text="${nombreTaller}">Mi taller</h1>
+                <p class="admin-cabecera-descripcion">Gestiona tu negocio, revisa citas y valoraciones de clientes.</p>
+            </div>
+            <div class="admin-estadisticas admin-estadisticas-panel" role="list">
+                <div class="admin-estadistica admin-estadistica-destacada" role="listitem" th:if="${miTaller != null}">
+                    <span class="admin-estadistica-valor"
+                          th:text="${miTaller.numValoraciones > 0 ? #numbers.formatDecimal(miTaller.calificacionPromedio, 1, 1) : '—'}">—</span>
+                    <span class="admin-estadistica-etiqueta">Calificacion media</span>
+                </div>
+                <div class="admin-estadistica" role="listitem">
+                    <span class="admin-estadistica-valor" th:text="${totalCitas}">0</span>
+                    <span class="admin-estadistica-etiqueta">Citas</span>
+                </div>
+                <div class="admin-estadistica" role="listitem">
+                    <span class="admin-estadistica-valor" th:text="${totalValoraciones}">0</span>
+                    <span class="admin-estadistica-etiqueta">Valoraciones</span>
+                </div>
+            </div>
+        </header>
+
+        <section id="seccion-dashboard" class="panel-admin seccion-admin-ancla dashboard" th:if="${miTaller != null}"
+                 data-dashboard="taller" data-url="/api/taller/dashboard">
+            <div class="panel-admin-cabecera">
+                <div>
+                    <h2 class="titulo-panel-seccion">Resumen de tu taller</h2>
+                    <p class="panel-admin-subtitulo">Cómo va tu agenda, tus clientes y tus valoraciones.</p>
+                </div>
+                <button type="button" id="dash-actualizar" class="btn-admin-secundario">Actualizar</button>
+            </div>
+
+            <div id="dash-kpis" class="dash-kpis" aria-live="polite"><p class="texto-secundario">Cargando resumen…</p></div>
+
+            <div class="dash-agenda">
+                <article class="dash-tarjeta" th:if="${!#lists.isEmpty(citasPorCompletar)}">
+                    <h3>Por completar <span class="plan-etiqueta plan-destacado">ya pasó su hora</span></h3>
+                <div class="dash-tabla-envoltorio">
+                    <table class="dash-tabla">
+                        <thead>
+                            <tr>
+                                <th scope="col">Cliente</th>
+                                <th scope="col">Servicio y vehículo</th>
+                                <th scope="col">Cuándo</th>
+                                <th scope="col">Mecánico</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="c : ${citasPorCompletar}">
+                                <td><strong th:text="${c.cliente}">Cliente</strong></td>
+                                <td>
+                                    <span th:text="${c.detalle}">Servicio</span>
+                                    <span class="celda-detalle" th:if="${!#strings.isEmpty(c.vehiculo)}" th:text="${c.vehiculo}">ABC123</span>
+                                </td>
+                                <td th:text="|${c.fecha} · ${c.hora}|">2026-11-20 · 09:00</td>
+                                <td th:text="${c.mecanicoNombre != null ? c.mecanicoNombre : '—'}">—</td>
+                                <td><span class="dash-estado" th:classappend="${'estado-' + c.estado}" th:text="${c.estadoTexto}">Solicitada</span></td>
+                                <td>
+                                    <div class="dash-acciones">
+                                        <form th:action="@{/panel-taller/citas/{id}/estado(id=${c.id})}" method="post">
+                                            <input type="hidden" name="estado" value="completada">
+                                            <button type="submit" class="dash-boton dash-boton-ok">Completar</button>
+                                        </form>
+                                        <form th:action="@{/panel-taller/citas/{id}/estado(id=${c.id})}" method="post" data-confirmar="¿Cancelar esta cita? El turno quedará libre.">
+                                            <input type="hidden" name="estado" value="cancelada">
+                                            <button type="submit" class="dash-boton dash-boton-peligro">Cancelar</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                </article>
+                <article class="dash-tarjeta">
+                    <h3>Próximas citas</h3>
+                    <p class="texto-secundario" th:if="${#lists.isEmpty(proximasCitas)}">No tienes citas próximas por ahora.</p>
+                    <th:block th:if="${!#lists.isEmpty(proximasCitas)}">
+                <div class="dash-tabla-envoltorio">
+                    <table class="dash-tabla">
+                        <thead>
+                            <tr>
+                                <th scope="col">Cliente</th>
+                                <th scope="col">Servicio y vehículo</th>
+                                <th scope="col">Cuándo</th>
+                                <th scope="col">Mecánico</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="c : ${proximasCitas}">
+                                <td><strong th:text="${c.cliente}">Cliente</strong></td>
+                                <td>
+                                    <span th:text="${c.detalle}">Servicio</span>
+                                    <span class="celda-detalle" th:if="${!#strings.isEmpty(c.vehiculo)}" th:text="${c.vehiculo}">ABC123</span>
+                                </td>
+                                <td th:text="|${c.fecha} · ${c.hora}|">2026-11-20 · 09:00</td>
+                                <td th:text="${c.mecanicoNombre != null ? c.mecanicoNombre : '—'}">—</td>
+                                <td><span class="dash-estado" th:classappend="${'estado-' + c.estado}" th:text="${c.estadoTexto}">Solicitada</span></td>
+                                <td>
+                                    <div class="dash-acciones">
+                                        <form th:action="@{/panel-taller/citas/{id}/estado(id=${c.id})}" method="post" th:if="${c.estado == 'solicitada'}">
+                                            <input type="hidden" name="estado" value="confirmada">
+                                            <button type="submit" class="dash-boton dash-boton-ok">Confirmar</button>
+                                        </form>
+                                        <form th:action="@{/panel-taller/citas/{id}/estado(id=${c.id})}" method="post" data-confirmar="¿Cancelar esta cita? El turno quedará libre.">
+                                            <input type="hidden" name="estado" value="cancelada">
+                                            <button type="submit" class="dash-boton dash-boton-peligro">Cancelar</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                    </th:block>
+                </article>
+            </div>
+
+            <div class="dash-rejilla" style="margin-top:1rem">
+                <article class="dash-tarjeta">
+                    <h3>Citas de los últimos 14 días</h3>
+                    <div id="graf-ultimos14"></div>
+                </article>
+                <article class="dash-tarjeta">
+                    <h3>Agenda de los próximos 7 días</h3>
+                    <div id="graf-proximos7"></div>
+                </article>
+                <article class="dash-tarjeta">
+                    <h3>Citas por estado</h3>
+                    <div id="graf-estados"></div>
+                </article>
+                <article class="dash-tarjeta">
+                    <h3>Citas por mes</h3>
+                    <div id="graf-citas-mes"></div>
+                </article>
+                <article class="dash-tarjeta">
+                    <h3>Tus valoraciones</h3>
+                    <div id="graf-estrellas"></div>
+                </article>
+                <article class="dash-tarjeta">
+                    <h3>Últimas valoraciones</h3>
+                    <ul id="lista-valoraciones-recientes"></ul>
+                </article>
+            </div>
+        </section>
+
+        <section id="seccion-mi-taller" class="panel-admin seccion-admin-ancla panel-taller-mi-negocio">
+            <div class="panel-admin-cabecera">
+                <div>
+                    <h2 class="titulo-panel-seccion">Datos de mi taller</h2>
+                    <p class="panel-admin-subtitulo">Lo que ven los clientes en el mapa y en la ficha del taller.</p>
+                </div>
+            </div>
+
+            <p th:if="${miTaller == null}" class="panel-admin-vacio panel-vacio-centrado">
+                No tienes un taller asociado a tu cuenta. Contacta al administrador de la plataforma.
+            </p>
+
+            <div class="cuadro-datos-taller" th:if="${miTaller != null}">
+                <div class="resumen-taller-cabecera">
+                    <div class="resumen-taller-identidad">
+                        <div class="taller-inicial" aria-hidden="true"
+                             th:text="${#strings.substring(miTaller.nombre, 0, 1)}">T</div>
+                        <div class="resumen-taller-textos">
+                            <h3 class="resumen-taller-nombre" th:text="${miTaller.nombre}">Taller</h3>
+                            <p class="resumen-taller-meta">
+                                <span th:text="${miTaller.ciudad != null ? miTaller.ciudad : 'Ciudad no indicada'}">—</span>
+                                <span class="resumen-taller-separador">·</span>
+                                <span th:if="${miTaller.numValoraciones > 0}"
+                                    th:text="|Nota ${#numbers.formatDecimal(miTaller.calificacionPromedio, 1, 1)}/5 (${miTaller.numValoraciones} opiniones)|">—</span>
+                                <span th:if="${miTaller.numValoraciones == 0}">Sin valoraciones</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="resumen-taller-acciones">
+                        <a th:href="@{/registrar-taller(id=${miTaller.id})}" class="btn-admin-primario">Editar datos</a>
+                        <a th:href="@{/detalle-taller(id=${miTaller.id})}" class="btn-admin-secundario">Ver ficha</a>
+                        <a th:if="${miTaller.lat != null and miTaller.lng != null}"
+                           th:href="|https://www.openstreetmap.org/?mlat=${miTaller.lat}&amp;mlon=${miTaller.lng}#map=16/${miTaller.lat}/${miTaller.lng}|"
+                           class="btn-admin-texto" target="_blank" rel="noopener">Mapa externo</a>
+                    </div>
+                </div>
+
+                <dl class="lista-datos-taller">
+                    <div class="fila-dato-taller">
+                        <dt>Telefono</dt>
+                        <dd th:text="${miTaller.telefono}">—</dd>
+                    </div>
+                    <div class="fila-dato-taller">
+                        <dt>Direccion</dt>
+                        <dd th:text="${miTaller.direccion}">—</dd>
+                    </div>
+                    <div class="fila-dato-taller">
+                        <dt>Ciudad</dt>
+                        <dd th:text="${miTaller.ciudad != null ? miTaller.ciudad : '—'}">—</dd>
+                    </div>
+                    <div class="fila-dato-taller">
+                        <dt>Horario</dt>
+                        <dd th:text="${miTaller.horario != null ? miTaller.horario : 'No indicado'}">—</dd>
+                    </div>
+                    <div class="fila-dato-taller">
+                        <dt>Coordenadas</dt>
+                        <dd>
+                            <span th:if="${miTaller.lat != null and miTaller.lng != null}"
+                                th:text="|${miTaller.lat}, ${miTaller.lng}|">—</span>
+                            <span class="texto-alerta-dato" th:if="${miTaller.lat == null or miTaller.lng == null}">
+                                Sin coordenadas — edita el taller para aparecer en el mapa
+                            </span>
+                        </dd>
+                    </div>
+                    <div class="fila-dato-taller fila-dato-taller-ultima" th:if="${miTaller.servicios != null and !miTaller.servicios.isBlank()}">
+                        <dt>Servicios</dt>
+                        <dd th:text="${miTaller.servicios}">—</dd>
+                    </div>
+                    <div class="fila-dato-taller fila-dato-taller-ultima"
+                         th:if="${miTaller.descripcion != null and !miTaller.descripcion.isBlank()}">
+                        <dt>Descripcion</dt>
+                        <dd th:text="${miTaller.descripcion}">—</dd>
+                    </div>
+                </dl>
+            </div>
+        </section>
+
+        <section id="seccion-mecanicos" class="panel-admin seccion-admin-ancla" th:if="${miTaller != null}">
+            <div class="panel-admin-cabecera">
+                <div>
+                    <h2 class="titulo-panel-seccion">Mecánicos</h2>
+                    <p class="panel-admin-subtitulo">Cada mecánico atiende una cita por turno de 1 hora. Más mecánicos, más citas a la misma hora.</p>
+                </div>
+            </div>
+            <div class="panel-admin-tabla-envoltorio">
+                <table class="tabla-admin tabla-listado tabla-panel-taller">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Teléfono</th>
+                            <th scope="col">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="fila-tabla" th:each="m : ${mecanicos}">
+                            <td><span class="celda-titulo" th:text="${m.nombreCompleto}">—</span></td>
+                            <td th:text="${m.telefono != null ? m.telefono : '—'}">—</td>
+                            <td>
+                                <form th:action="@{/panel-taller/mecanicos/{id}/desactivar(id=${m.id})}" method="post">
+                                    <button type="submit" class="btn-admin-secundario">Dar de baja</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <form th:action="@{/panel-taller/mecanicos}" method="post" class="formulario-seccion-cliente">
+                <h3 class="subtitulo-formulario">Agregar mecánico</h3>
+                <input type="hidden" name="tallerId" th:value="${miTaller.id}">
+                <label for="mec-nombres">Nombres</label>
+                <input type="text" id="mec-nombres" name="nombres" maxlength="120" required>
+                <label for="mec-apellidos">Apellidos</label>
+                <input type="text" id="mec-apellidos" name="apellidos" maxlength="120" required>
+                <label for="mec-telefono">Teléfono (opcional)</label>
+                <input type="text" id="mec-telefono" name="telefono" maxlength="40">
+                <button type="submit" class="boton-principal">Agregar</button>
+            </form>
+        </section>
+
+        <section id="seccion-citas" class="panel-admin seccion-admin-ancla panel-paginable">
+            <div class="panel-admin-cabecera">
+                <div>
+                    <h2 class="titulo-panel-seccion">Citas de clientes</h2>
+                    <p class="panel-admin-subtitulo">Solicitudes recibidas para tu taller.</p>
+                </div>
+                <a href="/panel-taller#seccion-citas" class="btn-admin-secundario">Actualizar</a>
+            </div>
+
+            <div th:if="${#lists.isEmpty(citas)}" class="panel-estado-vacio">
+                <p class="panel-estado-vacio-titulo">Sin citas por ahora</p>
+                <p class="panel-estado-vacio-texto">Cuando un cliente solicite una cita desde el mapa, aparecera aqui.</p>
+            </div>
+
+            <th:block th:if="${!#lists.isEmpty(citas)}">
+                <div class="panel-admin-herramientas">
+                    <label class="panel-admin-buscar">
+                        <span class="panel-admin-buscar-etiqueta">Buscar</span>
+                        <input type="search" class="input-buscar" placeholder="Cliente, servicio, fecha..." autocomplete="off">
+                    </label>
+                    <label class="panel-admin-tam-pagina">
+                        <span class="panel-admin-buscar-etiqueta">Por pagina</span>
+                        <select class="select-por-pagina">
+                            <option value="5">5</option>
+                            <option value="8" selected>8</option>
+                            <option value="15">15</option>
+                        </select>
+                    </label>
+                    <span class="panel-admin-contador texto-contador"></span>
+                </div>
+
+                <p class="panel-admin-sin-coincidencias aviso-sin-resultados" style="display:none">No hay coincidencias con el texto buscado.</p>
+
+                <div class="panel-admin-tabla-envoltorio">
+                    <table class="tabla-admin tabla-listado tabla-panel-taller">
+                        <thead>
+                            <tr>
+                                <th scope="col">Cliente</th>
+                                <th scope="col">Servicio</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Hora</th>
+                                <th scope="col">Mecánico</th>
+                                <th scope="col">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="cuerpo-tabla">
+                            <tr class="fila-tabla" th:each="c : ${citas}"
+                                th:attr="data-texto-busqueda=${c.cliente + ' ' + c.detalle + ' ' + c.fecha + ' ' + c.hora}">
+                                <td><span class="celda-titulo" th:text="${c.cliente}">—</span></td>
+                                <td th:text="${c.detalle}">—</td>
+                                <td><span class="etiqueta-fecha-tabla" th:text="${c.fecha}">—</span></td>
+                                <td><span class="etiqueta-hora-tabla" th:text="${c.hora}">—</span></td>
+                                <td th:text="${c.mecanicoNombre != null ? c.mecanicoNombre : '—'}">—</td>
+                                <td><span class="dash-estado" th:classappend="${'estado-' + c.estado}" th:text="${c.estadoTexto}">Solicitada</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <nav class="paginacion-admin paginacion-botones" aria-label="Paginacion de citas"></nav>
+            </th:block>
+        </section>
+
+        <section id="seccion-valoraciones" class="panel-admin seccion-admin-ancla panel-paginable">
+            <div class="panel-admin-cabecera">
+                <div>
+                    <h2 class="titulo-panel-seccion">Valoraciones</h2>
+                    <p class="panel-admin-subtitulo">Opiniones que los clientes dejaron sobre tu taller.</p>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(valoraciones)}" class="panel-estado-vacio">
+                <p class="panel-estado-vacio-titulo">Sin valoraciones</p>
+                <p class="panel-estado-vacio-texto">Las opiniones de los clientes se mostraran en esta tabla.</p>
+            </div>
+
+            <th:block th:if="${!#lists.isEmpty(valoraciones)}">
+                <div class="panel-admin-herramientas">
+                    <label class="panel-admin-buscar">
+                        <span class="panel-admin-buscar-etiqueta">Buscar</span>
+                        <input type="search" class="input-buscar" placeholder="Cliente, comentario..." autocomplete="off">
+                    </label>
+                    <label class="panel-admin-tam-pagina">
+                        <span class="panel-admin-buscar-etiqueta">Por pagina</span>
+                        <select class="select-por-pagina">
+                            <option value="5">5</option>
+                            <option value="8" selected>8</option>
+                            <option value="15">15</option>
+                        </select>
+                    </label>
+                    <span class="panel-admin-contador texto-contador"></span>
+                </div>
+
+                <p class="panel-admin-sin-coincidencias aviso-sin-resultados" style="display:none">No hay coincidencias con el texto buscado.</p>
+
+                <div class="panel-admin-tabla-envoltorio">
+                    <table class="tabla-admin tabla-listado tabla-panel-taller">
+                        <thead>
+                            <tr>
+                                <th scope="col">Cliente</th>
+                                <th scope="col">Nota</th>
+                                <th scope="col">Comentario</th>
+                                <th scope="col">Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody class="cuerpo-tabla">
+                            <tr class="fila-tabla" th:each="v : ${valoraciones}"
+                                th:attr="data-texto-busqueda=${v.cliente + ' ' + v.comentario + ' ' + v.fecha + ' ' + v.estrellas}">
+                                <td th:text="${v.cliente}">—</td>
+                                <td>
+                                    <span class="insignia-nota-tabla" th:text="|${v.estrellas}/5|">4/5</span>
+                                </td>
+                                <td class="celda-comentario" th:text="${v.comentario}">—</td>
+                                <td class="celda-fecha" th:text="${v.fecha}">—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <nav class="paginacion-admin paginacion-botones" aria-label="Paginacion de valoraciones"></nav>
+            </th:block>
+        </section>
+    </main>
+    <script th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/mis-citas.js}"></script>
+    <script th:src="@{/js/graficos.js}"></script>
+    <script th:src="@{/js/dashboard.js}"></script>
+    <script th:src="@{/js/mi-taller.js}"></script>
+</body>
+</html>

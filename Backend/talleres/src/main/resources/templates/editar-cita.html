@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!-- Cliente: editar fecha, hora, motivo y contacto de una cita (el taller no se puede cambiar) -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" th:href="@{/css/img/logo.ico}" />
+    <title>Editar cita</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <link rel="stylesheet" th:href="@{/css/marca.css}">
+    <link rel="stylesheet" th:href="@{/css/mis-citas.css}">
+</head>
+<body class="marco-pagina cliente-barra-superior vista-mis-citas pagina-ancho-completo" data-pantalla="editar-cita" data-rol="user">
+    <header class="barra-superior-cliente contenedor-bloque-externo">
+        <a href="/buscar-talleres" class="barra-marca barra-marca-logo"><img th:src="@{/css/img/logo.png}" alt="" class="barra-logo" width="38" height="25"><span>Asistencia en carretera</span></a>
+        <nav class="barra-superior-acciones" aria-label="Sesión">
+            <a href="/buscar-talleres">Mapa y talleres</a>
+            <a href="/mis-citas">Mis citas</a>
+            <a href="/perfil" class="enlace-perfil"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20c.8-3.6 3.8-5.5 7.5-5.5s6.7 1.9 7.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Perfil</a>
+            <a href="/logout">Salir</a>
+        </nav>
+    </header>
+
+    <main class="contenido-principal mis-citas-contenido mis-citas-editar">
+        <p th:if="${msgError}" class="aviso-error" th:text="${msgError}">Error</p>
+
+        <h1>Editar cita</h1>
+        <p class="texto-secundario">
+            Taller: <strong th:text="${cita.tallerNombre}">Taller</strong>
+            · Estado: <strong th:text="${cita.estadoTexto}">Solicitada</strong>
+        </p>
+        <p class="texto-secundario">
+            Si cambias la fecha o la hora, la cita vuelve a quedar como <strong>solicitada</strong> para que el taller la revise de nuevo.
+        </p>
+
+        <form th:action="@{/mis-citas/{id}/editar(id=${cita.id})}" method="post" class="formulario-seccion-cliente">
+            <!-- Sin name: no se envia. Solo lo lee cita-disponibilidad.js para pedir las horas libres de este taller -->
+            <input type="hidden" id="select-taller-cita" th:value="${cita.tallerId}" th:attr="data-excluir-cita=${cita.id}">
+
+            <label for="cliente-cita">Nombre de contacto</label>
+            <input type="text" id="cliente-cita" name="cliente" maxlength="120" th:value="${cita.cliente}">
+
+            <label for="fecha-cita">Fecha</label>
+            <input type="date" id="fecha-cita" name="fecha" th:value="${cita.fecha}" required>
+
+            <label for="hora-cita">Hora (turnos de 1 hora)</label>
+            <select id="hora-cita" name="hora" required
+                    th:attr="data-hora-actual=${cita.hora},data-fecha-actual=${cita.fecha}">
+                <option th:value="${cita.hora}" selected th:text="${cita.hora}">09:00</option>
+            </select>
+
+            <label for="motivo-cita">Motivo o servicio</label>
+            <input type="text" id="motivo-cita" name="motivo" maxlength="300" th:value="${cita.detalle}" required>
+
+            <div class="cita-acciones">
+                <button type="submit" class="boton-principal">Guardar cambios</button>
+                <a class="boton-secundario" href="/mis-citas">Volver sin guardar</a>
+            </div>
+        </form>
+    </main>
+    <th:block th:replace="~{fragments/pie :: pie(true)}"></th:block>
+    <script th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/cita-disponibilidad.js}"></script>
+</body>
+</html>

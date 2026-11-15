@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<!-- Cliente: citas proximas e historial, con detalle, edicion y cancelacion -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" th:href="@{/css/img/logo.ico}" />
+    <title>Mis citas</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <link rel="stylesheet" th:href="@{/css/marca.css}">
+    <link rel="stylesheet" th:href="@{/css/mis-citas.css}">
+</head>
+<body class="marco-pagina cliente-barra-superior vista-mis-citas pagina-ancho-completo" data-pantalla="mis-citas" data-rol="user">
+    <header class="barra-superior-cliente contenedor-bloque-externo">
+        <a href="/buscar-talleres" class="barra-marca barra-marca-logo"><img th:src="@{/css/img/logo.png}" alt="" class="barra-logo" width="38" height="25"><span>Asistencia en carretera</span></a>
+        <nav class="barra-superior-acciones" aria-label="Sesión">
+            <a href="/buscar-talleres">Mapa y talleres</a>
+            <a href="/mis-citas">Mis citas</a>
+            <a href="/perfil" class="enlace-perfil"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20c.8-3.6 3.8-5.5 7.5-5.5s6.7 1.9 7.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Perfil</a>
+            <a href="/logout">Salir</a>
+        </nav>
+    </header>
+
+    <main class="contenido-principal mis-citas-contenido">
+        <p th:if="${msgOk}" class="aviso-exito" th:text="${msgOk}">OK</p>
+        <p th:if="${msgError}" class="aviso-error" th:text="${msgError}">Error</p>
+
+        <h1>Mis citas</h1>
+
+        <section class="mis-citas-seccion" id="proximas">
+            <h2>Próximas <span class="mis-citas-contador" th:text="${#lists.size(proximas)}">0</span></h2>
+            <p class="texto-secundario" th:if="${#lists.isEmpty(proximas)}">
+                No tienes citas próximas. <a href="/buscar-talleres">Busca un taller y pide tu cita</a>
+            </p>
+            <article class="cita-ficha" th:each="c : ${proximas}">
+                <header class="cita-ficha-cabecera">
+                    <h3 th:text="${c.tallerNombre}">Taller</h3>
+                    <span class="cita-estado" th:classappend="${'estado-' + c.estado}" th:text="${c.estadoTexto}">Solicitada</span>
+                </header>
+                <dl class="cita-datos">
+                    <div><dt>Fecha</dt><dd th:text="${c.fecha}">2026-11-20</dd></div>
+                    <div><dt>Hora</dt><dd th:text="${c.hora}">09:00</dd></div>
+                    <div><dt>Mecánico</dt><dd th:text="${c.mecanicoNombre != null and !#strings.isEmpty(c.mecanicoNombre)} ? ${c.mecanicoNombre} : 'Por asignar'">—</dd></div>
+                    <div><dt>Contacto</dt><dd th:text="${c.cliente}">Nombre</dd></div>
+                    <div th:if="${!#strings.isEmpty(c.vehiculo)}"><dt>Vehículo</dt><dd th:text="${c.vehiculo}">ABC123 · Mazda 3</dd></div>
+                    <div class="cita-dato-ancho"><dt>Motivo</dt><dd th:text="${c.detalle}">Motivo</dd></div>
+                    <div th:if="${c.creadaEn != null}"><dt>Solicitada el</dt><dd th:text="${c.creadaEn}">—</dd></div>
+                </dl>
+                <div class="cita-acciones">
+                    <a class="boton-principal" th:href="@{/mis-citas/{id}/editar(id=${c.id})}">Editar</a>
+                    <a class="boton-secundario" th:href="@{/detalle-taller(id=${c.tallerId})}">Ver taller</a>
+                    <form th:action="@{/mis-citas/{id}/cancelar(id=${c.id})}" method="post"
+                          data-confirmar="¿Seguro que quieres cancelar esta cita?">
+                        <button type="submit" class="boton-cancelar">Cancelar cita</button>
+                    </form>
+                </div>
+            </article>
+        </section>
+
+        <section class="mis-citas-seccion" id="historial">
+            <h2>Historial <span class="mis-citas-contador" th:text="${#lists.size(historial)}">0</span></h2>
+            <p class="texto-secundario" th:if="${#lists.isEmpty(historial)}">Todavía no tienes citas pasadas.</p>
+            <article class="cita-ficha cita-ficha-pasada" th:each="c : ${historial}">
+                <header class="cita-ficha-cabecera">
+                    <h3 th:text="${c.tallerNombre}">Taller</h3>
+                    <span class="cita-estado" th:classappend="${'estado-' + c.estado}" th:text="${c.estadoTexto}">Completada</span>
+                </header>
+                <dl class="cita-datos">
+                    <div><dt>Fecha</dt><dd th:text="${c.fecha}">2026-10-01</dd></div>
+                    <div><dt>Hora</dt><dd th:text="${c.hora}">09:00</dd></div>
+                    <div><dt>Mecánico</dt><dd th:text="${c.mecanicoNombre != null and !#strings.isEmpty(c.mecanicoNombre)} ? ${c.mecanicoNombre} : 'Sin asignar'">—</dd></div>
+                    <div><dt>Contacto</dt><dd th:text="${c.cliente}">Nombre</dd></div>
+                    <div th:if="${!#strings.isEmpty(c.vehiculo)}"><dt>Vehículo</dt><dd th:text="${c.vehiculo}">ABC123 · Mazda 3</dd></div>
+                    <div class="cita-dato-ancho"><dt>Motivo</dt><dd th:text="${c.detalle}">Motivo</dd></div>
+                    <div th:if="${c.creadaEn != null}"><dt>Solicitada el</dt><dd th:text="${c.creadaEn}">—</dd></div>
+                </dl>
+                <div class="cita-acciones">
+                    <a class="boton-secundario" th:href="@{/detalle-taller(id=${c.tallerId})}">Ver taller</a>
+                    <a class="boton-secundario" th:if="${c.estado == 'completada'}" th:href="@{/detalle-taller(id=${c.tallerId})} + '#valorar'">Valorar</a>
+                    <a class="boton-secundario" th:href="@{/solicitar-cita(tallerId=${c.tallerId})}">Pedir otra cita</a>
+                </div>
+            </article>
+        </section>
+    </main>
+    <th:block th:replace="~{fragments/pie :: pie(true)}"></th:block>
+    <script th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/mis-citas.js}"></script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<!-- Cliente: mapa Leaflet con filtros, punto de partida y talleres destacados (buscar-talleres.js). Pedir cita y valorar se hacen en la ficha de cada taller -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" th:href="@{/css/img/logo.ico}" />
+    <title>Asistencia en carretera</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <link rel="stylesheet" th:href="@{/css/marca.css}">
+    <link rel="stylesheet" th:href="@{/css/filtros-talleres.css}">
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""
+    >
+</head>
+<body class="marco-pagina cliente-barra-superior vista-buscar-talleres pagina-ancho-completo" data-pantalla="buscar-talleres" data-rol="user">
+    <header class="barra-superior-cliente contenedor-bloque-externo">
+        <a href="/buscar-talleres" class="barra-marca barra-marca-logo"><img th:src="@{/css/img/logo.png}" alt="" class="barra-logo" width="38" height="25"><span>Asistencia en carretera</span></a>
+        <nav class="barra-superior-acciones" aria-label="Sesión">
+            <a href="/mis-citas">Mis citas</a>
+            <a href="/perfil" class="enlace-perfil"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20c.8-3.6 3.8-5.5 7.5-5.5s6.7 1.9 7.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Perfil</a>
+            <a href="/logout">Salir</a>
+        </nav>
+    </header>
+
+    <main class="contenido-principal contenido-busqueda-vista">
+        <p th:if="${msgOk}" class="aviso-exito contenedor-bloque" th:text="${msgOk}">OK</p>
+        <p th:if="${msgError}" class="aviso-error contenedor-bloque" th:text="${msgError}">Error</p>
+
+        <div class="contenedor-bloque contenedor-cabecera cabecera-vista-buscar">
+            <h1>Buscar taller en carretera</h1>
+        </div>
+
+        <div id="seccion-mapa" class="contenedor-bloque contenedor-mapa panel-mapa-principal seccion-mapa-ancla">
+            <button type="button" id="boton-abrir-filtros" class="boton-filtros-movil" aria-expanded="false" aria-controls="panel-filtros">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4-2v-4.5L4 5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                Filtros <span id="filtros-contador-movil" class="filtros-contador" hidden>0</span>
+            </button>
+
+            <div class="mapa-con-filtros">
+                <aside id="panel-filtros" class="panel-filtros" aria-label="Filtrar talleres">
+                    <div class="filtros-cabecera">
+                        <h2 class="filtros-titulo">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4-2v-4.5L4 5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                            Filtros <span id="filtros-contador" class="filtros-contador" hidden>0</span>
+                        </h2>
+                        <button type="button" id="filtros-limpiar" class="filtros-limpiar" hidden>Limpiar</button>
+                    </div>
+
+                    <div class="filtros-cuerpo">
+                        <div id="filtros-activos" class="filtros-activos" hidden></div>
+
+                        <section class="filtro-grupo">
+                            <label class="filtro-interruptor">
+                                <input type="checkbox" id="filtro-grua">
+                                <span class="interruptor-icono" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24"><path d="M2.5 17V8h9v9M11.5 11h4l3 3.5V17M2.5 17h2m5 0h5m4 0h2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="17.5" r="2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="16.5" cy="17.5" r="2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+                                </span>
+                                <span class="interruptor-texto"><strong>Con grúa</strong><small>Asistencia en carretera <span class="filtro-conteo" data-conteo="grua"></span></small></span>
+                                <span class="interruptor-pista" aria-hidden="true"></span>
+                            </label>
+                        </section>
+
+                        <section class="filtro-grupo">
+                            <h3 class="filtro-titulo"><label for="filtro-orden">Ordenar por</label></h3>
+                            <select id="filtro-orden" class="filtro-select">
+                                <option value="recomendados" selected>Recomendados</option>
+                                <option value="calificacion">Mejor calificados</option>
+                                <option value="valoraciones">Más valorados</option>
+                                <option value="cercanos">Más cercanos</option>
+                            </select>
+                            <p id="filtro-orden-pista" class="filtro-pista" hidden></p>
+                        </section>
+
+                        <section class="filtro-grupo">
+                            <h3 class="filtro-titulo">Disponibilidad</h3>
+                            <label class="filtro-casilla">
+                                <input type="checkbox" id="filtro-abierto">
+                                <span class="casilla-marca" aria-hidden="true"></span>
+                                <span class="casilla-texto">Abierto ahora</span>
+                                <span class="filtro-conteo" data-conteo="abierto"></span>
+                            </label>
+                            <label class="filtro-casilla">
+                                <input type="checkbox" id="filtro-sabado">
+                                <span class="casilla-marca" aria-hidden="true"></span>
+                                <span class="casilla-texto">Abre sábados</span>
+                                <span class="filtro-conteo" data-conteo="sabado"></span>
+                            </label>
+                            <label class="filtro-casilla">
+                                <input type="checkbox" id="filtro-domingo">
+                                <span class="casilla-marca" aria-hidden="true"></span>
+                                <span class="casilla-texto">Abre domingos</span>
+                                <span class="filtro-conteo" data-conteo="domingo"></span>
+                            </label>
+                        </section>
+
+                        <section class="filtro-grupo">
+                            <h3 class="filtro-titulo">Calificación</h3>
+                            <div class="filtro-pildoras" role="radiogroup" aria-label="Calificación mínima">
+                                <label class="filtro-pildora"><input type="radio" name="filtro-calificacion" id="filtro-cal-0" value="0" checked><span>Todas</span></label>
+                                <label class="filtro-pildora"><input type="radio" name="filtro-calificacion" value="3"><span>3 ★ y más</span></label>
+                                <label class="filtro-pildora"><input type="radio" name="filtro-calificacion" value="4"><span>4 ★ y más</span></label>
+                            </div>
+                        </section>
+
+                        <section class="filtro-grupo">
+                            <div class="filtro-grupo-cabecera">
+                                <h3 class="filtro-titulo">Servicio</h3>
+                                <div class="filtro-modo" role="radiogroup" aria-label="Coincidir con">
+                                    <label><input type="radio" name="filtro-modo" id="filtro-modo-cualquiera" value="cualquiera" checked><span>Cualquiera</span></label>
+                                    <label><input type="radio" name="filtro-modo" value="todos"><span>Todos</span></label>
+                                </div>
+                            </div>
+                            <div id="filtro-servicios" class="filtro-servicios"></div>
+                        </section>
+                    </div>
+                </aside>
+
+                <div class="mapa-con-filtros-centro">
+                    <div class="contenedor-busqueda-mapa">
+                        <div class="busqueda-fila">
+                            <div class="busqueda-campo">
+                                <span class="icono-lupa" aria-hidden="true">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                        <circle cx="11" cy="11" r="7"/>
+                                        <path d="M21 21l-4.3-4.3"/>
+                                    </svg>
+                                </span>
+                                <input type="text" id="entrada-busqueda-lugar" class="entrada-texto-busqueda" placeholder="Ej. Cartagena, Medellín…" autocomplete="off">
+                            </div>
+                            <button type="button" id="boton-buscar-lugar" class="boton-principal boton-buscar-en-linea">Buscar</button>
+                        </div>
+                        <p class="texto-secundario linea-estado-busqueda" id="texto-estado-busqueda"></p>
+                        <div class="partida-controles">
+                            <button type="button" id="boton-mi-ubicacion" class="boton-partida">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                                Usar mi ubicación
+                            </button>
+                            <span id="partida-ayuda" class="partida-ayuda">o haz clic en el mapa para marcar tu punto de partida.</span>
+                            <span id="partida-chip" class="partida-chip" hidden>
+                                <span id="partida-texto"></span>
+                                <button type="button" id="boton-quitar-partida" aria-label="Quitar punto de partida">×</button>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="rejilla-mapa-resultados">
+                        <div class="zona-mapa zona-mapa-compacta contenedor-mapa-mapa">
+                            <div id="mapa-talleres" class="mapa-interactivo" aria-label="Mapa de talleres"></div>
+                        </div>
+                        <aside class="cuadro-resultados-mapa contenedor-mapa-lista">
+                            <div class="cuadro-resultados-mapa-cabecera">
+                                <h2 class="cuadro-resultados-titulo">Talleres en el mapa</h2>
+                                <button type="button" id="boton-ver-mapa-completo" class="boton-ajustar-mapa" title="Ajustar mapa a todos los puntos">Ajustar mapa</button>
+                            </div>
+                            <section id="lista-resultados-talleres" class="lista-resultados-desplazable" aria-live="polite"></section>
+                        </aside>
+                    </div>
+
+                    <section class="destacados" th:if="${!#lists.isEmpty(destacados)}" aria-labelledby="titulo-destacados">
+                        <header class="destacados-cabecera">
+                            <h2 id="titulo-destacados">Talleres destacados</h2>
+                            <span class="etiqueta-patrocinado">Patrocinado</span>
+                        </header>
+                        <p class="destacados-nota">Talleres con plan destacado. No cambian el orden de los resultados del mapa.</p>
+                        <div class="destacados-rejilla">
+                            <article class="destacado-tarjeta" th:each="t : ${destacados}">
+                                <span class="etiqueta-patrocinado etiqueta-chica">Patrocinado</span>
+                                <h3 th:text="${t.nombre}">Taller</h3>
+                                <p class="destacado-ciudad" th:text="${t.ciudad != null ? t.ciudad : ''}">Ciudad</p>
+                                <p class="destacado-nota" th:if="${t.numValoraciones > 0}">
+                                    <span class="destacado-estrella">★</span>
+                                    <strong th:text="${#numbers.formatDecimal(t.calificacionPromedio, 1, 1)}">4.5</strong>
+                                    <span th:text="|(${t.numValoraciones})|">(0)</span>
+                                </p>
+                                <p class="destacado-nota texto-secundario" th:if="${t.numValoraciones == 0}">Sin valoraciones todavía</p>
+                                <ul class="destacado-servicios">
+                                    <li th:each="sv, it : ${t.serviciosLista}" th:if="${it.index < 3}" th:text="${sv}">Servicio</li>
+                                </ul>
+                                <div class="destacado-acciones">
+                                    <a th:href="@{/detalle-taller(id=${t.id})}" class="boton-secundario">Ver taller</a>
+                                    <a th:href="@{/solicitar-cita(tallerId=${t.id})}" class="boton-principal">Pedir cita</a>
+                                </div>
+                            </article>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+    <th:block th:replace="~{fragments/pie :: pie(true)}"></th:block>
+    <script th:src="@{/js/app.js}"></script>
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""
+    ></script>
+    <script th:src="@{/js/filtros-talleres.js}"></script>
+    <script th:src="@{/js/buscar-talleres.js}"></script>
+    <script th:src="@{/js/buscar-talleres-ver.js}"></script>
+</body>
+</html>

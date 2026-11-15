@@ -1,0 +1,448 @@
+/* Página "Perfil" del cliente */
+.perfil-contenido {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 3rem;
+}
+
+/* ---------- Cabecera del perfil ---------- */
+.perfil-hero {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    padding: 1.4rem 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 55%, #2563eb 100%);
+    color: #f8fafc;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.22);
+}
+
+.perfil-avatar {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: #fbbf24;
+    color: #1e293b;
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.25);
+}
+
+.perfil-hero-texto {
+    flex: 1;
+    min-width: 220px;
+}
+
+.perfil-hero-texto h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #fff;
+    overflow-wrap: anywhere;
+}
+
+.perfil-hero-correo {
+    margin: 0.15rem 0 0.6rem;
+    color: #bfdbfe;
+    overflow-wrap: anywhere;
+}
+
+.perfil-datos-rapidos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.perfil-datos-rapidos li {
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    font-size: 0.8rem;
+}
+
+.perfil-hero-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.perfil-hero-acciones .boton-principal,
+.perfil-hero-acciones .boton-secundario {
+    margin: 0;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.92rem;
+    text-decoration: none;
+}
+
+.perfil-hero-acciones .boton-secundario {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.perfil-hero-acciones .boton-secundario:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* ---------- Resumen ---------- */
+.perfil-resumen {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.perfil-dato {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.9rem 1rem;
+    border-radius: 14px;
+    border: 1px solid #dbe3ee;
+    background: #fff;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+a.perfil-dato {
+    transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+a.perfil-dato:hover {
+    border-color: #60a5fa;
+    transform: translateY(-2px);
+}
+
+.perfil-dato strong {
+    font-size: 1.6rem;
+    line-height: 1.1;
+    color: #1d4ed8;
+}
+
+.perfil-dato span {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+/* ---------- Columnas y tarjetas ---------- */
+.perfil-columnas {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+}
+
+@media (min-width: 900px) {
+    .perfil-columnas {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.perfil-columna {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+}
+
+.perfil-tarjeta {
+    padding: 1.25rem 1.4rem;
+    border-radius: 14px;
+    border: 1px solid #dbe3ee;
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+    scroll-margin-top: 1rem;
+}
+
+.perfil-tarjeta h2 {
+    margin: 0 0 0.2rem;
+    font-size: 1.1rem;
+    color: #0f172a;
+}
+
+.perfil-tarjeta h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #1e3a5f;
+}
+
+.perfil-ayuda {
+    margin: 0 0 0.9rem;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+/* ---------- Formularios ---------- */
+.perfil-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.perfil-form-separado {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #eef2f7;
+}
+
+.perfil-fila {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.8rem;
+}
+
+.perfil-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.perfil-campo em {
+    font-weight: 400;
+    font-style: normal;
+    color: #94a3b8;
+}
+
+.perfil-campo small {
+    font-weight: 400;
+    color: #64748b;
+}
+
+.perfil-campo input,
+.perfil-campo select {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #0f172a;
+    font: inherit;
+    font-weight: 400;
+    box-sizing: border-box;
+}
+
+.perfil-campo input:focus,
+.perfil-campo select:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
+    border-color: #2563eb;
+}
+
+.perfil-campo input:disabled {
+    background: #f1f5f9;
+    color: #64748b;
+    cursor: not-allowed;
+}
+
+.perfil-form .boton-principal,
+.perfil-form .boton-secundario {
+    align-self: flex-start;
+    margin: 0;
+    padding: 0.55rem 1.2rem;
+    font-size: 0.92rem;
+}
+
+.perfil-clave {
+    position: relative;
+    display: block;
+}
+
+.perfil-clave input {
+    padding-right: 4.2rem;
+}
+
+.perfil-ojo {
+    position: absolute;
+    top: 50%;
+    right: 0.4rem;
+    transform: translateY(-50%);
+    padding: 0.2rem 0.55rem;
+    border: none;
+    border-radius: 6px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.perfil-ojo:hover {
+    background: #dbeafe;
+}
+
+.perfil-aviso-campo {
+    color: #b91c1c !important;
+    font-weight: 600 !important;
+}
+
+.perfil-aviso-campo[hidden] {
+    display: none;
+}
+
+/* Medidor de fortaleza de la contraseña */
+.perfil-fuerza {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.perfil-fuerza i {
+    flex: 1;
+    max-width: 52px;
+    height: 5px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    transition: background 0.2s ease;
+}
+
+.perfil-fuerza b {
+    margin-left: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.perfil-fuerza[data-nivel="1"] i:nth-of-type(-n+1) { background: #ef4444; }
+.perfil-fuerza[data-nivel="2"] i:nth-of-type(-n+2) { background: #f59e0b; }
+.perfil-fuerza[data-nivel="3"] i:nth-of-type(-n+3) { background: #84cc16; }
+.perfil-fuerza[data-nivel="4"] i:nth-of-type(-n+4) { background: #16a34a; }
+
+/* ---------- Vehículos ---------- */
+.perfil-vehiculo {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.7rem 0.8rem;
+    margin-bottom: 0.6rem;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+/* Placa amarilla, como las colombianas */
+.perfil-placa {
+    flex-shrink: 0;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    border: 2px solid #1e293b;
+    background: #fcd116;
+    color: #1e293b;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+}
+
+.perfil-vehiculo-info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.3;
+}
+
+.perfil-vehiculo-info strong {
+    overflow-wrap: anywhere;
+}
+
+.perfil-vehiculo form {
+    margin: 0;
+}
+
+.perfil-quitar {
+    padding: 0.3rem 0.7rem;
+    border-radius: 8px;
+    border: 1px solid #fecaca;
+    background: #fff;
+    color: #b91c1c;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.perfil-quitar:hover {
+    background: #fef2f2;
+}
+
+.perfil-entrada-placa {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+/* ---------- Eliminar cuenta ---------- */
+.perfil-peligro {
+    border-color: #fecaca;
+}
+
+.perfil-peligro h2 {
+    color: #b91c1c;
+}
+
+.perfil-detalles summary {
+    display: inline-block;
+    padding: 0.45rem 0.95rem;
+    border-radius: 10px;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+}
+
+.perfil-detalles summary::-webkit-details-marker {
+    display: none;
+}
+
+.perfil-detalles summary:hover {
+    background: #fef2f2;
+}
+
+.perfil-detalles[open] summary {
+    margin-bottom: 0.9rem;
+}
+
+.perfil-boton-peligro {
+    align-self: flex-start;
+    padding: 0.55rem 1.2rem;
+    border: none;
+    border-radius: 10px;
+    background: #dc2626;
+    color: #fff;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.perfil-boton-peligro:hover {
+    background: #b91c1c;
+}
+
+@media (max-width: 600px) {
+    .perfil-hero {
+        padding: 1.1rem;
+    }
+
+    .perfil-vehiculo {
+        flex-wrap: wrap;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    a.perfil-dato,
+    .perfil-fuerza i {
+        transition: none;
+    }
+}

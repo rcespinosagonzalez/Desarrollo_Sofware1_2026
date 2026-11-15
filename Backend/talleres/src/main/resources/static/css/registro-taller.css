@@ -1,0 +1,402 @@
+/* Registro y edicion de taller en pasos */
+.rt-contenido {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 3rem;
+}
+
+.rt-cabecera {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+}
+
+.rt-cabecera h1 {
+    margin: 0 0 0.2rem;
+}
+
+.rt-subtitulo {
+    margin: 0;
+    color: #64748b;
+}
+
+/* ---------- Indicador de pasos ---------- */
+.rt-pasos {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    list-style: none;
+    overflow-x: auto;
+}
+
+.rt-paso-item {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 120px;
+    padding: 0.6rem 0.8rem;
+    border-radius: 12px;
+    border: 1px solid #dbe3ee;
+    background: #fff;
+    color: #64748b;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.rt-paso-numero {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    color: #475569;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.rt-paso-activo {
+    border-color: #2563eb;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.rt-paso-activo .rt-paso-numero {
+    background: #2563eb;
+    color: #fff;
+}
+
+.rt-paso-hecho .rt-paso-numero {
+    background: #16a34a;
+    color: #fff;
+}
+
+/* ---------- Distribucion ---------- */
+.rt-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+}
+
+@media (min-width: 1000px) {
+    .rt-layout {
+        grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+    }
+
+    .rt-vista-previa {
+        position: sticky;
+        top: 1rem;
+    }
+}
+
+.rt-form {
+    padding: 1.4rem;
+    border-radius: 14px;
+    border: 1px solid #dbe3ee;
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.rt-paso h2 {
+    margin: 0 0 0.2rem;
+    font-size: 1.15rem;
+    color: #0f172a;
+}
+
+.rt-paso[hidden] {
+    display: none;
+}
+
+.rt-ayuda {
+    margin: 0 0 0.9rem;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.rt-campos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.rt-ancho {
+    grid-column: 1 / -1;
+}
+
+.rt-form .perfil-campo > label,
+.rt-etiqueta {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.rt-form .perfil-campo > input,
+.rt-form .perfil-campo textarea,
+.rt-otros + input {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+.rt-form textarea {
+    resize: vertical;
+}
+
+.rt-form input:focus,
+.rt-form textarea:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
+    border-color: #2563eb;
+}
+
+.rt-contador {
+    align-self: flex-end;
+    color: #94a3b8;
+}
+
+/* Con JS el texto de servicios se arma con las casillas; sin JS queda visible para escribirlo a mano */
+body.con-js .campo-servicios {
+    display: none;
+}
+
+/* ---------- Servicios ---------- */
+.rt-servicios {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 0.75rem;
+}
+
+.rt-grupo-servicios {
+    margin: 0;
+    padding: 0.7rem 0.8rem;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.rt-grupo-servicios legend {
+    padding: 0 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.rt-servicio {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.2rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.rt-servicio input {
+    width: 16px;
+    height: 16px;
+    accent-color: #2563eb;
+}
+
+.rt-otros {
+    display: block;
+    margin-top: 0.8rem;
+    margin-bottom: 0.3rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.rt-otros em {
+    font-weight: 400;
+    font-style: normal;
+    color: #94a3b8;
+}
+
+/* ---------- Dias ---------- */
+.rt-atajos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.4rem 0;
+}
+
+.rt-atajo {
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid #bfdbfe;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.rt-atajo:hover {
+    background: #dbeafe;
+}
+
+.rt-dias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.rt-dias label {
+    cursor: pointer;
+}
+
+.rt-dias input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.rt-dias span {
+    display: inline-block;
+    min-width: 3rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+    transition: background 0.12s ease, color 0.12s ease;
+}
+
+.rt-dias input:checked + span {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+}
+
+.rt-dias input:focus-visible + span {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+/* ---------- Mapa ---------- */
+.rt-fila-coordenadas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.rt-fila-coordenadas .rt-ayuda {
+    margin: 0;
+}
+
+.rt-mapa {
+    height: 320px;
+    border-radius: 12px;
+    border: 1px solid #cbd5e1;
+    overflow: hidden;
+}
+
+/* ---------- Navegacion ---------- */
+.rt-error {
+    margin-top: 1rem;
+}
+
+.rt-navegacion {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 1.4rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid #eef2f7;
+}
+
+.rt-navegacion-relleno {
+    flex: 1;
+}
+
+.rt-navegacion [hidden] {
+    display: none;
+}
+
+/* Sin JS los botones de pasos no aplican: solo se ve "Guardar" */
+body:not(.con-js) #rt-atras,
+body:not(.con-js) #rt-siguiente {
+    display: none;
+}
+
+/* ---------- Vista previa ---------- */
+.rt-vista-previa {
+    padding: 1.1rem;
+    border-radius: 14px;
+    border: 1px dashed #93c5fd;
+    background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+}
+
+.rt-vp-etiqueta {
+    margin: 0 0 0.7rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #1d4ed8;
+}
+
+.rt-vp-tarjeta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+
+.rt-vp-tarjeta h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #0f172a;
+    overflow-wrap: anywhere;
+}
+
+.rt-vp-ciudad,
+.rt-vp-linea {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #64748b;
+    overflow-wrap: anywhere;
+}
+
+.rt-vp-desc {
+    margin: 0.2rem 0 0;
+    font-size: 0.85rem;
+    color: #475569;
+    overflow-wrap: anywhere;
+}
+
+.rt-vp-consejos {
+    margin: 0.9rem 0 0;
+    padding-left: 1.1rem;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: #475569;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rt-dias span {
+        transition: none;
+    }
+}

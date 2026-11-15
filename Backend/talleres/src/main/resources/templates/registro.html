@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<!-- Registro publico de clientes: registro.js llama POST /api/auth/registro -->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro | Asistencia en carretera</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="shortcut icon" th:href="@{/css/img/logo.ico}" />
+</head>
+<body>
+    <div class="contenedor-inicio-sesion">
+        <div class="tarjeta-inicio-sesion">
+            <div class="encabezado-inicio-sesion">
+                <div class="logo-empresa">
+                    <div class="icono-logo">
+                        <img th:src="@{/css/img/logo.png}" alt="Logo de la empresa" width="100">
+                    </div>
+                </div>
+                <h2>Crear cuenta</h2>
+                <p>Regístrate como cliente para buscar talleres y pedir citas</p>
+            </div>
+
+            <form class="formulario-inicio-sesion" id="formularioRegistro" novalidate>
+                <div class="grupo-formulario">
+                    <div class="contenedor-entrada">
+                        <input type="text" id="nombre" name="nombre" required minlength="2" maxlength="120"
+                               autocomplete="name" placeholder=" ">
+                        <label for="nombre">Nombre completo</label>
+                        <span class="borde-entrada"></span>
+                    </div>
+                </div>
+
+                <div class="grupo-formulario">
+                    <div class="contenedor-entrada">
+                        <input type="email" id="correo" name="email" required maxlength="320"
+                               autocomplete="email" placeholder=" ">
+                        <label for="correo">Correo electrónico</label>
+                        <span class="borde-entrada"></span>
+                    </div>
+                </div>
+
+                <div class="grupo-formulario">
+                    <div class="contenedor-entrada">
+                        <input type="password" id="contrasena" name="password" required minlength="8"
+                               autocomplete="new-password" placeholder=" ">
+                        <label for="contrasena">Contraseña (mínimo 8 caracteres)</label>
+                        <span class="borde-entrada"></span>
+                    </div>
+                </div>
+
+                <div class="grupo-formulario">
+                    <div class="contenedor-entrada">
+                        <input type="password" id="confirmar" name="confirmar" required minlength="8"
+                               autocomplete="new-password" placeholder=" ">
+                        <label for="confirmar">Confirmar contraseña</label>
+                        <span class="borde-entrada"></span>
+                    </div>
+                </div>
+
+                <p class="mensaje-error" id="errorRegistro" role="alert"></p>
+                <button type="submit" class="boton-inicio-sesion">
+                    <span class="texto-boton">Crear cuenta</span>
+                    <span class="cargador-boton"></span>
+                </button>
+
+                <div class="contenedor-registro">¿Ya tienes una cuenta?
+                    <a th:href="@{/}" class="enlace-registro">Iniciar sesión</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script th:src="@{/js/registro.js}"></script>
+</body>
+</html>

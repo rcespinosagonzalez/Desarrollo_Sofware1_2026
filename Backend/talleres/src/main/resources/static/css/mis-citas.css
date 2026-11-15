@@ -1,0 +1,198 @@
+/* Pagina "Mis citas" y "Editar cita" del cliente */
+.mis-citas-contenido {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 1.25rem;
+}
+
+.mis-citas-contenido h1 {
+    margin-bottom: 1rem;
+}
+
+.mis-citas-seccion {
+    margin-bottom: 2rem;
+}
+
+.mis-citas-seccion h2 {
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.mis-citas-contador {
+    display: inline-block;
+    min-width: 1.6rem;
+    padding: 0.05rem 0.5rem;
+    margin-left: 0.35rem;
+    border-radius: 999px;
+    background: var(--accent-soft, rgba(37, 99, 235, 0.08));
+    color: var(--primary, #2563eb);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.cita-ficha {
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.85rem;
+    background: var(--card, #fff);
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+.cita-ficha-pasada {
+    background: #f8fafc;
+}
+
+.cita-ficha-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.cita-ficha-cabecera h3 {
+    font-size: 1.05rem;
+}
+
+.cita-estado {
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: #e2e8f0;
+    color: #334155;
+    white-space: nowrap;
+}
+
+.cita-estado.estado-solicitada {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.cita-estado.estado-confirmada {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.cita-estado.estado-completada {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.cita-estado.estado-cancelada {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.cita-datos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 0.6rem 1.25rem;
+    margin: 0;
+}
+
+.cita-datos dt {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted, #64748b);
+}
+
+.cita-datos dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.cita-dato-ancho {
+    grid-column: 1 / -1;
+}
+
+.cita-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.9rem;
+}
+
+.cita-acciones .boton-principal,
+.cita-acciones .boton-secundario {
+    margin-top: 0;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.95rem;
+    text-decoration: none;
+}
+
+.cita-acciones form {
+    margin: 0;
+}
+
+.boton-cancelar {
+    padding: 0.5rem 1.1rem;
+    background: #fff;
+    color: var(--error, #dc2626);
+    border: 2px solid var(--error, #dc2626);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.boton-cancelar:hover {
+    background: #fef2f2;
+}
+
+.mis-citas-editar {
+    max-width: 560px;
+}
+
+.mis-citas-editar .formulario-seccion-cliente {
+    margin-top: 1rem;
+}
+
+/* Cabecera de las páginas del cliente, igual a la del mapa */
+.vista-mis-citas.marco-pagina {
+    background: linear-gradient(165deg, #dce6f5 0%, #eef2f7 35%, #f8fafc 70%, #e8edf4 100%);
+    min-height: 100vh;
+}
+
+.vista-mis-citas .barra-superior-cliente {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 0.85rem 1.5rem;
+    background: linear-gradient(90deg, #0f172a 0%, #1e3a5f 55%, #1d4ed8 100%);
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.25);
+}
+
+.vista-mis-citas .barra-marca {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #f8fafc;
+}
+
+.vista-mis-citas .barra-superior-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.vista-mis-citas .barra-superior-acciones a {
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    color: #e2e8f0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s ease;
+}
+
+.vista-mis-citas .barra-superior-acciones a:hover,
+.vista-mis-citas .barra-superior-acciones a[aria-current="page"] {
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+}

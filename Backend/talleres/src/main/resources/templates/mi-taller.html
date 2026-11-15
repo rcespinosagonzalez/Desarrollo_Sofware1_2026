@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<!-- Admin: tablas de talleres, citas y valoraciones (mi-taller.js pagina en el navegador) -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" th:href="@{/css/img/logo.ico}" />
+    <title>Asistencia en carretera — Administración</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <link rel="stylesheet" th:href="@{/css/marca.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body class="marco-pagina cliente-barra-superior vista-admin-gestion pagina-ancho-completo" data-pantalla="mi-taller" data-rol="admin">
+    <header class="barra-superior-cliente barra-admin-gestion">
+        <a href="/mi-taller" class="barra-marca barra-marca-logo"><img th:src="@{/css/img/logo.png}" alt="" class="barra-logo" width="38" height="25"><span>Asistencia en carretera</span></a>
+        <nav class="barra-nav-admin" aria-label="Secciones">
+            <a href="#seccion-dashboard" class="enlace-nav-admin">Resumen</a>
+            <a href="#seccion-talleres" class="enlace-nav-admin">Talleres</a>
+            <a href="#seccion-citas" class="enlace-nav-admin">Citas</a>
+            <a href="#seccion-valoraciones" class="enlace-nav-admin">Valoraciones</a>
+            <a th:href="@{/registrar-taller}" class="enlace-nav-admin enlace-nav-destacado">Nuevo taller</a>
+        </nav>
+        <nav class="barra-superior-acciones" aria-label="Sesión">
+            <span class="barra-usuario" th:text="${nombreAdmin}">Admin</span>
+            <a href="/logout">Salir</a>
+        </nav>
+    </header>
+
+    <main class="contenido-principal contenido-admin-gestion">
+        <p th:if="${msgOk}" class="aviso-exito admin-aviso" th:text="${msgOk}">OK</p>
+        <p th:if="${msgError}" class="aviso-error admin-aviso" th:text="${msgError}">Error</p>
+
+        <header class="admin-cabecera-pagina">
+            <div>
+                <h1>Administración</h1>
+                <p class="admin-cabecera-descripcion">Panel de gestión de talleres, citas y valoraciones.</p>
+            </div>
+            <div class="admin-estadisticas" role="list">
+                <div class="admin-estadistica" role="listitem">
+                    <span class="admin-estadistica-valor" th:text="${totalTalleres}">0</span>
+                    <span class="admin-estadistica-etiqueta">Talleres</span>
+                </div>
+                <div class="admin-estadistica" role="listitem">
+                    <span class="admin-estadistica-valor" th:text="${#lists.size(citas)}">0</span>
+                    <span class="admin-estadistica-etiqueta">Citas</span>
+                </div>
+                <div class="admin-estadistica" role="listitem">
+                    <span class="admin-estadistica-valor" th:text="${#lists.size(valoraciones)}">0</span>
+                    <span class="admin-estadistica-etiqueta">Valoraciones</span>
+                </div>
+            </div>
+        </header>
+
+        <section id="seccion-dashboard" class="panel-admin seccion-admin-ancla dashboard" data-dashboard="admin" data-url="/api/admin/dashboard">
+            <div class="panel-admin-cabecera">
+                <div>
+                    <h2 class="titulo-panel-seccion">Resumen de la plataforma</h2>
+                    <p class="panel-admin-subtitulo">Actividad y estado general: talleres, clientes, citas y valoraciones.</p>
+                </div>
+                <button type="button" id="dash-actualizar" class="btn-admin-secundario">Actualizar</button>
+            </div>
+
+            <div id="dash-kpis" class="dash-kpis" aria-live="polite"><p class="texto-secundario">Cargando resumen…</p></div>
+
+            <div class="dash-rejilla">
+                <article class="dash-tarjeta">
+                    <h3>Citas por mes</h3>
+                    <div id="graf-citas-mes"></div>
+                </article>
+                <article class="dash-tarjeta">
+                    <h3>Citas por estado</h3>
+                    <div id="graf-estados"></div>
+                </article>
+                <article class="dash-tarjeta">
+                    <h3>Talleres por ciudad</h3>
+                    <div id="graf-ciudades"></div>
+                </article>
+                <article class="dash-tarjeta">
+                    <h3>Servicios más ofrecidos</h3>
+                    <div id="graf-servicios"></div>
+                </article>
+                <article class="dash-tarjeta">
+                    <h3>Mejor valorados</h3>
+                    <ol id="lista-mejores" class="dash-lista"></ol>
+                </article>
+                <article class="dash-tarjeta">
+                    <h3>Últimas citas</h3>
+                    <ul id="lista-citas-recientes"></ul>
+                </article>
+                <article class="dash-tarjeta dash-ancha">
+                    <h3>Últimas valoraciones</h3>
+                    <ul id="lista-valoraciones-recientes"></ul>
+                </article>
+            </div>
+        </section>
+
+        <section id="seccion-talleres" class="panel-admin seccion-admin-ancla panel-paginable">
+            <div class="panel-admin-cabecera">
+                <div>
+                    <h2 class="titulo-panel-seccion">Talleres registrados</h2>
+                    <p class="panel-admin-subtitulo">Listado completo con búsqueda y paginación.</p>
+                </div>
+                <a th:href="@{/registrar-taller}" class="btn-admin-primario">Registrar taller</a>
+            </div>
+
+            <p th:if="${#lists.isEmpty(talleres)}" class="panel-admin-vacio">Sin talleres en la base de datos.</p>
+
+            <th:block th:if="${!#lists.isEmpty(talleres)}">
+                <div class="panel-admin-herramientas">
+                    <label class="panel-admin-buscar">
+                        <span class="panel-admin-buscar-etiqueta">Buscar</span>
+                        <input type="search" class="input-buscar" placeholder="Nombre, ciudad, dueno, correo..." autocomplete="off">
+                    </label>
+                    <label class="panel-admin-tam-pagina">
+                        <span class="panel-admin-buscar-etiqueta">Por pagina</span>
+                        <select class="select-por-pagina">
+                            <option value="5">5</option>
+                            <option value="8" selected>8</option>
+                            <option value="15">15</option>
+                            <option value="25">25</option>
+                        </select>
+                    </label>
+                    <span class="panel-admin-contador texto-contador"></span>
+                </div>
+
+                <p class="panel-admin-sin-coincidencias aviso-sin-resultados" style="display:none">No hay coincidencias con el texto buscado.</p>
+
+                <div class="panel-admin-tabla-envoltorio">
+                    <table class="tabla-admin tabla-listado">
+                        <thead>
+                            <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Taller</th>
+                                <th scope="col">Ciudad</th>
+                                <th scope="col">Dueño</th>
+                                <th scope="col">Teléfono</th>
+                                <th scope="col">Valoración</th>
+                                <th scope="col">Plan</th>
+                                <th scope="col" class="col-acciones">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="cuerpo-tabla">
+                            <tr class="fila-tabla" th:each="t : ${talleres}"
+                                th:attr="data-texto-busqueda=${t.nombre + ' ' + t.ciudad + ' ' + t.direccion + ' ' + t.nombrePropietario + ' ' + t.emailPropietario + ' ' + t.telefono + ' ' + t.servicios}">
+                                <td class="celda-id" th:text="${t.id}">—</td>
+                                <td>
+                                    <span class="celda-titulo" th:text="${t.nombre}">—</span>
+                                    <span class="celda-detalle" th:text="${t.direccion}">—</span>
+                                </td>
+                                <td th:text="${t.ciudad != null ? t.ciudad : '—'}">—</td>
+                                <td>
+                                    <span class="celda-titulo" th:text="${t.nombrePropietario}">—</span>
+                                    <span class="celda-detalle" th:text="${t.emailPropietario}">—</span>
+                                </td>
+                                <td th:text="${t.telefono}">—</td>
+                                <td>
+                                    <span th:if="${t.numValoraciones > 0}"
+                                        th:text="|${#numbers.formatDecimal(t.calificacionPromedio, 1, 1)}/5 (${t.numValoraciones})|">—</span>
+                                    <span class="celda-sin-dato" th:if="${t.numValoraciones == 0}">Sin valoraciones</span>
+                                </td>
+                                <td>
+                                    <span class="plan-etiqueta plan-destacado" th:if="${t.destacado}" th:text="|Destacado hasta ${t.destacadoHasta}|">Destacado</span>
+                                    <span class="plan-etiqueta plan-estandar" th:unless="${t.destacado}">Estándar</span>
+                                </td>
+                                <td class="col-acciones">
+                                    <div class="grupo-acciones-tabla">
+                                        <a th:href="@{/registrar-taller(id=${t.id})}" class="btn-admin-texto">Editar</a>
+                                        <a th:href="@{/detalle-taller(id=${t.id})}" class="btn-admin-texto">Ver</a>
+                                        <form th:action="@{/admin/talleres/{id}/destacar(id=${t.id})}" method="post" class="form-en-linea">
+                                            <input type="hidden" name="dias" value="30">
+                                            <button type="submit" class="btn-admin-texto" th:text="${t.destacado ? '+30 días' : 'Destacar 30 días'}">Destacar</button>
+                                        </form>
+                                        <form th:if="${t.destacado}" th:action="@{/admin/talleres/{id}/quitar-destacado(id=${t.id})}" method="post" class="form-en-linea"
+                                              data-confirmar="¿Quitar el plan destacado de este taller?">
+                                            <button type="submit" class="btn-admin-texto">Quitar plan</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <nav class="paginacion-admin paginacion-botones" aria-label="Paginacion de talleres"></nav>
+            </th:block>
+        </section>
+
+        <section id="seccion-citas" class="panel-admin seccion-admin-ancla panel-paginable">
+            <div class="panel-admin-cabecera">
+                <div>
+                    <h2 class="titulo-panel-seccion">Citas</h2>
+                    <p class="panel-admin-subtitulo">Solicitudes registradas en el sistema.</p>
+                </div>
+                <a href="/mi-taller#seccion-citas" class="btn-admin-secundario">Actualizar</a>
+            </div>
+
+            <p th:if="${#lists.isEmpty(citas)}" class="panel-admin-vacio">Sin citas.</p>
+
+            <th:block th:if="${!#lists.isEmpty(citas)}">
+                <div class="panel-admin-herramientas">
+                    <label class="panel-admin-buscar">
+                        <span class="panel-admin-buscar-etiqueta">Buscar</span>
+                        <input type="search" class="input-buscar" placeholder="Taller, cliente, servicio..." autocomplete="off">
+                    </label>
+                    <label class="panel-admin-tam-pagina">
+                        <span class="panel-admin-buscar-etiqueta">Por pagina</span>
+                        <select class="select-por-pagina">
+                            <option value="5">5</option>
+                            <option value="8" selected>8</option>
+                            <option value="15">15</option>
+                        </select>
+                    </label>
+                    <span class="panel-admin-contador texto-contador"></span>
+                </div>
+
+                <p class="panel-admin-sin-coincidencias aviso-sin-resultados" style="display:none">No hay coincidencias con el texto buscado.</p>
+
+                <div class="panel-admin-tabla-envoltorio">
+                    <table class="tabla-admin tabla-listado">
+                        <thead>
+                            <tr>
+                                <th scope="col">Taller</th>
+                                <th scope="col">Cliente</th>
+                                <th scope="col">Servicio</th>
+                                <th scope="col">Fecha y hora</th>
+                                <th scope="col" class="col-acciones">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody class="cuerpo-tabla">
+                            <tr class="fila-tabla" th:each="c : ${citas}"
+                                th:attr="data-texto-busqueda=${c.tallerNombre + ' ' + c.cliente + ' ' + c.detalle + ' ' + c.fecha + ' ' + c.hora}">
+                                <td><span class="celda-titulo" th:text="${c.tallerNombre}">—</span></td>
+                                <td th:text="${c.cliente}">—</td>
+                                <td th:text="${c.detalle}">—</td>
+                                <td>
+                                    <span th:text="${c.fecha}">—</span>
+                                    <span class="celda-detalle" th:text="${c.hora}">—</span>
+                                </td>
+                                <td class="col-acciones">
+                                    <a th:if="${c.tallerId != null}" th:href="@{/detalle-taller(id=${c.tallerId})}" class="btn-admin-texto">Ver taller</a>
+                                    <span th:if="${c.tallerId == null}" class="celda-sin-dato">—</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <nav class="paginacion-admin paginacion-botones" aria-label="Paginacion de citas"></nav>
+            </th:block>
+        </section>
+
+        <section id="seccion-valoraciones" class="panel-admin seccion-admin-ancla panel-paginable">
+            <div class="panel-admin-cabecera">
+                <div>
+                    <h2 class="titulo-panel-seccion">Valoraciones</h2>
+                    <p class="panel-admin-subtitulo">Opiniones de clientes sobre los talleres.</p>
+                </div>
+            </div>
+
+            <p th:if="${#lists.isEmpty(valoraciones)}" class="panel-admin-vacio">Sin valoraciones.</p>
+
+            <th:block th:if="${!#lists.isEmpty(valoraciones)}">
+                <div class="panel-admin-herramientas">
+                    <label class="panel-admin-buscar">
+                        <span class="panel-admin-buscar-etiqueta">Buscar</span>
+                        <input type="search" class="input-buscar" placeholder="Taller, cliente, comentario..." autocomplete="off">
+                    </label>
+                    <label class="panel-admin-tam-pagina">
+                        <span class="panel-admin-buscar-etiqueta">Por pagina</span>
+                        <select class="select-por-pagina">
+                            <option value="5">5</option>
+                            <option value="8" selected>8</option>
+                            <option value="15">15</option>
+                        </select>
+                    </label>
+                    <span class="panel-admin-contador texto-contador"></span>
+                </div>
+
+                <p class="panel-admin-sin-coincidencias aviso-sin-resultados" style="display:none">No hay coincidencias con el texto buscado.</p>
+
+                <div class="panel-admin-tabla-envoltorio">
+                    <table class="tabla-admin tabla-listado">
+                        <thead>
+                            <tr>
+                                <th scope="col">Taller</th>
+                                <th scope="col">Cliente</th>
+                                <th scope="col">Nota</th>
+                                <th scope="col">Comentario</th>
+                                <th scope="col">Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody class="cuerpo-tabla">
+                            <tr class="fila-tabla" th:each="v : ${valoraciones}"
+                                th:attr="data-texto-busqueda=${v.tallerNombre + ' ' + v.cliente + ' ' + v.comentario + ' ' + v.fecha}">
+                                <td th:text="${v.tallerNombre}">—</td>
+                                <td th:text="${v.cliente}">—</td>
+                                <td><span class="celda-nota" th:text="|${v.estrellas}/5|">—</span></td>
+                                <td class="celda-comentario" th:text="${v.comentario}">—</td>
+                                <td class="celda-fecha" th:text="${v.fecha}">—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <nav class="paginacion-admin paginacion-botones" aria-label="Paginacion de valoraciones"></nav>
+            </th:block>
+        </section>
+    </main>
+    <script th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/mis-citas.js}"></script>
+    <script th:src="@{/js/graficos.js}"></script>
+    <script th:src="@{/js/dashboard.js}"></script>
+    <script th:src="@{/js/mi-taller.js}"></script>
+</body>
+</html>

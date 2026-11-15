@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<!-- Alta o edicion de taller en pasos (Negocio, Servicios y horario, Ubicacion y, para altas del admin, Dueno).
+     El formulario envia los mismos campos de siempre; registrar-taller.js arma el texto de servicios, el mapa y la vista previa. -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" th:href="@{/css/img/logo.ico}" />
+    <title th:text="${taller.id != null ? 'Editar taller — Asistencia en carretera' : 'Nuevo taller — Asistencia en carretera'}">Registrar taller</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <link rel="stylesheet" th:href="@{/css/marca.css}">
+    <link rel="stylesheet" th:href="@{/css/ficha-taller.css}">
+    <link rel="stylesheet" th:href="@{/css/perfil.css}">
+    <link rel="stylesheet" th:href="@{/css/registro-taller.css}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+</head>
+<body class="marco-pagina cliente-barra-superior vista-admin-gestion pagina-ancho-completo" data-pantalla="registrar-taller"
+      th:attr="data-rol=${esPropietario} ? 'taller' : 'admin'">
+    <header class="barra-superior-cliente barra-admin-gestion">
+        <a th:href="${urlVolver}" class="barra-marca barra-marca-logo"><img th:src="@{/css/img/logo.png}" alt="" class="barra-logo" width="38" height="25"><span>← Asistencia en carretera</span></a>
+        <nav class="barra-superior-acciones" aria-label="Sesión">
+            <a href="/logout">Salir</a>
+        </nav>
+    </header>
+
+    <main class="contenido-principal contenido-admin-gestion rt-contenido">
+        <p th:if="${msgError}" class="aviso-error admin-aviso" th:text="${msgError}">Error</p>
+
+        <header class="rt-cabecera">
+            <div>
+                <h1 th:text="${taller.id != null ? 'Editar taller' : 'Registrar taller'}">Registrar taller</h1>
+                <p class="rt-subtitulo" th:if="${taller.id != null}">Actualiza los datos y guarda los cambios.</p>
+                <p class="rt-subtitulo" th:if="${taller.id == null and !esPropietario}">Cuatro pasos para dar de alta un taller y crear la cuenta de su dueño.</p>
+                <p class="rt-subtitulo" th:if="${esPropietario}">Actualiza lo que ven los clientes en el mapa y en la ficha de tu taller.</p>
+            </div>
+            <a th:href="${urlVolver}" class="btn-admin-secundario">Volver al panel</a>
+        </header>
+
+        <ol class="rt-pasos" id="rt-pasos" aria-label="Pasos del registro"></ol>
+
+        <div class="rt-layout">
+            <form th:action="@{/registrar-taller}" th:object="${taller}" method="post" class="rt-form" id="form-taller" novalidate>
+                <input type="hidden" th:if="${taller.id != null}" th:field="*{id}">
+
+                <!-- Paso 1: negocio -->
+                <section class="rt-paso" data-paso="1" data-titulo="Negocio">
+                    <h2>Datos del negocio</h2>
+                    <p class="rt-ayuda">Así se presenta el taller ante los clientes.</p>
+                    <div class="rt-campos">
+                        <div class="perfil-campo">
+                            <label for="nom-taller">Nombre del taller</label>
+                            <input id="nom-taller" type="text" th:field="*{nombre}" required maxlength="120" placeholder="Ej. Taller Los Andes">
+                        </div>
+                        <div class="perfil-campo">
+                            <label for="tel-taller">Teléfono de contacto</label>
+                            <input id="tel-taller" type="tel" th:field="*{telefono}" required maxlength="20" inputmode="tel" placeholder="300 123 4567">
+                        </div>
+                        <div class="perfil-campo rt-ancho">
+                            <label for="desc-taller">Descripción <em>(opcional)</em></label>
+                            <textarea id="desc-taller" th:field="*{descripcion}" rows="4" maxlength="500" placeholder="Cuenta qué hace especial a tu taller: experiencia, garantía, servicio de grúa…"></textarea>
+                            <small class="rt-contador"><span id="desc-contador">0</span> / 500</small>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Paso 2: servicios y horario -->
+                <section class="rt-paso" data-paso="2" data-titulo="Servicios y horario">
+                    <h2>Servicios y horario</h2>
+                    <p class="rt-ayuda">Los servicios que elijas son los que usan los clientes para filtrar en el mapa.</p>
+                    <div class="rt-campos">
+                        <div class="perfil-campo rt-ancho">
+                            <span class="rt-etiqueta">Servicios que ofreces</span>
+                            <div id="rt-servicios" class="rt-servicios" role="group" aria-label="Servicios que ofreces"></div>
+                            <label class="rt-otros" for="otros-servicios">Otros servicios <em>(separados por coma)</em></label>
+                            <input id="otros-servicios" type="text" maxlength="200" placeholder="Ej. Revisión técnico-mecánica, Detailing">
+                            <!-- Texto final de servicios. Con JS se arma solo; sin JS se escribe a mano separado por " - " -->
+                            <input id="serv-taller" type="text" th:field="*{servicios}" class="campo-servicios" placeholder="Frenos - Aceite - Grúa">
+                        </div>
+
+                        <div class="perfil-campo rt-ancho">
+                            <span class="rt-etiqueta" id="etq-dias">Días de atención</span>
+                            <div class="rt-atajos" aria-label="Atajos de días">
+                                <button type="button" class="rt-atajo" data-dias="1,2,3,4,5">Lun–Vie</button>
+                                <button type="button" class="rt-atajo" data-dias="1,2,3,4,5,6">Lun–Sáb</button>
+                                <button type="button" class="rt-atajo" data-dias="1,2,3,4,5,6,7">Todos los días</button>
+                            </div>
+                            <div class="rt-dias" role="group" aria-labelledby="etq-dias">
+                                <label><input type="checkbox" th:field="*{diasAtencion}" value="1"><span>Lun</span></label>
+                                <label><input type="checkbox" th:field="*{diasAtencion}" value="2"><span>Mar</span></label>
+                                <label><input type="checkbox" th:field="*{diasAtencion}" value="3"><span>Mié</span></label>
+                                <label><input type="checkbox" th:field="*{diasAtencion}" value="4"><span>Jue</span></label>
+                                <label><input type="checkbox" th:field="*{diasAtencion}" value="5"><span>Vie</span></label>
+                                <label><input type="checkbox" th:field="*{diasAtencion}" value="6"><span>Sáb</span></label>
+                                <label><input type="checkbox" th:field="*{diasAtencion}" value="7"><span>Dom</span></label>
+                            </div>
+                        </div>
+                        <div class="perfil-campo">
+                            <label for="hor-apertura">Abre</label>
+                            <input id="hor-apertura" type="time" th:field="*{horaApertura}" required>
+                        </div>
+                        <div class="perfil-campo">
+                            <label for="hor-cierre">Cierra</label>
+                            <input id="hor-cierre" type="time" th:field="*{horaCierre}" required>
+                        </div>
+                        <p class="rt-ayuda rt-ancho">Las citas son de 1 hora: la última empieza una hora antes del cierre.</p>
+                    </div>
+                </section>
+
+                <!-- Paso 3: ubicacion -->
+                <section class="rt-paso" data-paso="3" data-titulo="Ubicación">
+                    <h2>Ubicación en el mapa</h2>
+                    <p class="rt-ayuda">Escribe la dirección y busca las coordenadas, o haz clic en el mapa. Puedes arrastrar el marcador para afinar el punto.</p>
+                    <div class="rt-campos">
+                        <div class="perfil-campo">
+                            <label for="dir-taller">Dirección</label>
+                            <input id="dir-taller" type="text" th:field="*{direccion}" required maxlength="160" placeholder="Calle 30 # 20-15">
+                        </div>
+                        <div class="perfil-campo">
+                            <label for="ciudad-taller">Ciudad</label>
+                            <input id="ciudad-taller" type="text" th:field="*{ciudad}" required maxlength="80" placeholder="Cartagena">
+                        </div>
+                        <div class="rt-ancho rt-fila-coordenadas">
+                            <button type="button" id="btn-buscar-coordenadas" class="btn-admin-secundario">Buscar en el mapa (OpenStreetMap)</button>
+                            <span id="texto-buscar-coordenadas" class="rt-ayuda"></span>
+                        </div>
+                        <div class="rt-ancho">
+                            <div id="rt-mapa" class="rt-mapa" role="application" aria-label="Mapa para ubicar el taller"></div>
+                        </div>
+                        <div class="perfil-campo">
+                            <label for="lat-taller">Latitud</label>
+                            <input id="lat-taller" type="number" step="0.000001" th:field="*{lat}" placeholder="10.391049">
+                        </div>
+                        <div class="perfil-campo">
+                            <label for="lng-taller">Longitud</label>
+                            <input id="lng-taller" type="number" step="0.000001" th:field="*{lng}" placeholder="-75.479426">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Paso 4: dueno (solo alta hecha por el admin) -->
+                <section class="rt-paso" data-paso="4" data-titulo="Dueño" th:if="${taller.id == null and !esPropietario}">
+                    <h2>Cuenta del dueño</h2>
+                    <p class="rt-ayuda">Con este correo y contraseña el dueño entra a su panel para ver citas y valoraciones.</p>
+                    <div class="rt-campos">
+                        <div class="perfil-campo">
+                            <label for="nom-dueno">Nombre del dueño</label>
+                            <input id="nom-dueno" type="text" th:field="*{nombreCliente}" required maxlength="120" autocomplete="name">
+                        </div>
+                        <div class="perfil-campo">
+                            <label for="email-dueno">Correo</label>
+                            <input id="email-dueno" type="email" th:field="*{emailCliente}" required maxlength="320" autocomplete="off">
+                        </div>
+                        <div class="perfil-campo rt-ancho">
+                            <label for="clave-dueno">Contraseña inicial</label>
+                            <span class="perfil-clave">
+                                <input id="clave-dueno" type="password" th:field="*{claveCliente}" required minlength="8" maxlength="72" autocomplete="new-password">
+                                <button type="button" class="perfil-ojo" data-ver="clave-dueno" aria-label="Mostrar u ocultar la contraseña">Ver</button>
+                            </span>
+                            <span class="rt-atajos">
+                                <button type="button" class="rt-atajo" id="btn-generar-clave">Generar una contraseña segura</button>
+                            </span>
+                            <small class="rt-ayuda">Mínimo 8 caracteres. Entrégasela al dueño por un canal seguro.</small>
+                        </div>
+                    </div>
+                </section>
+
+                <p class="aviso-error rt-error" id="rt-error" role="alert" hidden></p>
+
+                <div class="rt-navegacion">
+                    <button type="button" class="btn-admin-secundario" id="rt-atras" hidden>← Atrás</button>
+                    <span class="rt-navegacion-relleno"></span>
+                    <a th:href="${urlVolver}" class="btn-admin-secundario rt-cancelar">Cancelar</a>
+                    <button type="button" class="btn-admin-primario" id="rt-siguiente">Siguiente →</button>
+                    <button type="submit" class="btn-admin-primario" id="rt-guardar">Guardar taller</button>
+                </div>
+            </form>
+
+            <aside class="rt-vista-previa" aria-label="Vista previa del taller">
+                <p class="rt-vp-etiqueta">Así verán tu taller los clientes</p>
+                <article class="rt-vp-tarjeta">
+                    <h3 id="vp-nombre">Nombre del taller</h3>
+                    <p class="rt-vp-ciudad" id="vp-ciudad">Ciudad</p>
+                    <p class="rt-vp-linea" id="vp-horario">Horario</p>
+                    <p class="rt-vp-linea" id="vp-telefono">Teléfono</p>
+                    <ul class="ficha-chips" id="vp-servicios"></ul>
+                    <p class="rt-vp-desc" id="vp-descripcion"></p>
+                </article>
+                <ul class="rt-vp-consejos">
+                    <li>Elige todos los servicios que ofreces: los clientes filtran por ellos.</li>
+                    <li>Con coordenadas exactas apareces bien ubicado en el mapa y en «Más cercanos».</li>
+                    <li>El horario define qué horas pueden reservar los clientes.</li>
+                </ul>
+            </aside>
+        </div>
+    </main>
+    <script th:src="@{/js/app.js}"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script th:src="@{/js/perfil.js}"></script>
+    <script th:src="@{/js/registrar-taller.js}"></script>
+</body>
+</html>

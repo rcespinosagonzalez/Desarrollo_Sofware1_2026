@@ -1,0 +1,46 @@
+services:
+  mongo:
+    # Si tu procesador no tiene AVX, MongoDB 5+ no arranca: pon MONGO_IMAGE=mongo:4.4 en .env
+    image: ${MONGO_IMAGE:-mongo:8.0}
+    container_name: asistencia-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      # Base donde corren los scripts de arranque (crear el usuario de la app y cargar los datos demo)
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+      MONGO_APP_USER: ${MONGO_APP_USER}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
+      TZ: ${TZ}
+    ports:
+      # Solo accesible desde tu computador (por ejemplo con mongosh o Compass)
+      - "127.0.0.1:${MONGO_HOST_PORT}:27017"
+    volumes:
+      - mongo_data:/data/db
+      # Los scripts de /docker-entrypoint-initdb.d corren una sola vez, en orden, cuando el volumen esta vacio
+      - ./mongo/init/01-usuario-app.js:/docker-entrypoint-initdb.d/01-usuario-app.js:ro
+      - ./mongo/seed.js:/docker-entrypoint-initdb.d/02-seed.js:ro
+    healthcheck:
+      # mongosh en MongoDB 5+; el shell "mongo" en 4.4
+      test: ["CMD-SHELL", "(mongosh --quiet --eval \"db.adminCommand('ping').ok\" || mongo --quiet --eval \"db.adminCommand('ping').ok\") | grep -q 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build: ./Backend/talleres
+    container_name: asistencia-app
+    ports:
+      - "${APP_PORT}:8080"
+    environment:
+      # Si la clave tiene caracteres especiales (@ : / ? # %) escribela codificada en la URL (ver .env.example)
+      MONGODB_URI: mongodb://${MONGO_APP_USER}:${MONGO_APP_PASSWORD}@mongo:27017/${MONGO_DB}?authSource=${MONGO_DB}
+      # El JVM y la agenda usan la misma zona horaria
+      TZ: ${TZ}
+      APP_TZ: ${TZ}
+      JWT_SECRET: ${JWT_SECRET:?Define JWT_SECRET en .env (32+ caracteres)}
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+volumes:
+  mongo_data:
