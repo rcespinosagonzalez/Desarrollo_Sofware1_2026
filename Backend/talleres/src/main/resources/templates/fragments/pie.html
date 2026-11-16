@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!-- Pie de pagina compartido: logo, notas de informacion, redes y enlaces. Se usa con
+     <th:block th:replace="~{fragments/pie :: pie(true)}"> (true = mostrar enlaces del cliente).
+     Los enlaces de las redes salen de app.redes.* (DatosGlobalesAdvice). -->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer th:fragment="pie(enlaces)" class="pie-sitio">
+    <div class="pie-contenido">
+        <div class="pie-marca">
+            <img th:src="@{/css/img/logo.png}" alt="Logo de Asistencia en carretera" class="pie-logo" width="92" height="61">
+            <p class="pie-nombre">Asistencia en carretera</p>
+            <p class="pie-lema">Encuentra un taller cerca de ti, pide tu cita y recibe ayuda cuando más la necesitas.</p>
+            <ul class="pie-redes" aria-label="Redes sociales">
+                <li>
+                    <a th:href="${redes != null ? redes['facebook'] : 'https://www.facebook.com/'}" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.6 21v-7.6h2.6l.5-3.1h-3.1V8.4c0-.9.4-1.6 1.7-1.6h1.5V4.1c-.3 0-1.2-.2-2.3-.2-2.3 0-3.9 1.4-3.9 4v2.4H8v3.1h2.6V21h3z"/></svg>
+                    </a>
+                </li>
+                <li>
+                    <a th:href="${redes != null ? redes['x'] : 'https://x.com/'}" target="_blank" rel="noopener noreferrer" aria-label="X (antes Twitter)">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.8 3.5h2.9l-6.3 7.2 7.4 9.8h-5.8l-4.5-6-5.2 6H3.4l6.7-7.7L3 3.5h5.9l4.1 5.4 4.8-5.4zm-1 15.3h1.6L7.3 5.1H5.6l11.2 13.7z"/></svg>
+                    </a>
+                </li>
+                <li>
+                    <a th:href="${redes != null ? redes['instagram'] : 'https://www.instagram.com/'}" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor"/></svg>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <section class="pie-notas" aria-labelledby="pie-notas-titulo">
+            <h2 id="pie-notas-titulo">Información importante</h2>
+            <ul>
+                <li><strong>Tus citas.</strong> El taller revisa cada solicitud y la confirma. Puedes cambiar o cancelar una cita futura desde «Mis citas».</li>
+                <li><strong>Valoraciones verificadas.</strong> Solo se valora un taller después de una cita completada, y cada visita se valora una vez.</li>
+                <li><strong>Talleres patrocinados.</strong> Algunos talleres tienen un plan destacado y se muestran con la etiqueta «Patrocinado». No cambia el orden de los resultados del mapa.</li>
+                <li><strong>Tus datos.</strong> Usamos tu ubicación solo cuando tú la compartes, para calcular distancias a los talleres. Puedes quitarla en cualquier momento.</li>
+                <li><strong>Emergencias.</strong> Si hay riesgo para las personas, llama primero a la línea de emergencias 123.</li>
+            </ul>
+        </section>
+
+        <nav class="pie-enlaces" aria-label="Enlaces" th:if="${enlaces}">
+            <h2>Tu cuenta</h2>
+            <ul>
+                <li><a href="/buscar-talleres">Mapa y talleres</a></li>
+                <li><a href="/mis-citas">Mis citas</a></li>
+                <li><a href="/perfil">Mi perfil</a></li>
+                <li><a href="/logout">Cerrar sesión</a></li>
+            </ul>
+        </nav>
+    </div>
+    <p class="pie-legal">© <span th:text="${#dates.year(#dates.createNow())}">2026</span> Asistencia en carretera. Todos los derechos reservados.</p>
+</footer>
+</body>
+</html>
